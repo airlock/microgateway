@@ -1,0 +1,15 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: SidecarGateway
+metadata:
+  name: template
+spec:
+  podSelector:
+    matchLabels:
+      app: <YOUR_APP_LABEL>
+  applications:
+    - containerPort: <YOUR_CONTAINER_PORT>
+      routes:
+        - pathPrefix: /
+          secured:
+            contentSecurityRef:
+              name: template

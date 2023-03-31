@@ -1,0 +1,10 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: template
+spec:
+  filter:
+    denyRulesRef:
+      name: template
+  headerRewritesRef:
+    name: template

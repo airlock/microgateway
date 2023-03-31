@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.0.0-beta1
+  name: airlock-microgateway-operator-webhook
+spec:
+  ports:
+    - appProtocol: https
+      name: webhook
+      port: 443
+      protocol: TCP
+      targetPort: 9443
+  selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.0.0-beta1
+    control-plane: airlock-microgateway-operator

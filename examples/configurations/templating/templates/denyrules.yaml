@@ -1,0 +1,10 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: DenyRules
+metadata:
+  name: template
+spec:
+  request:
+    builtIn:
+      settings:
+        level: standard
+        threatHandlingMode: block

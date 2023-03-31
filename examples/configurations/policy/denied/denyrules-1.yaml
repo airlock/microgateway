@@ -1,0 +1,11 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: DenyRules
+metadata:
+  annotations:
+  name: denyrule1-nok
+spec:
+  request:
+    builtIn:
+      settings:
+        level: strict
+        threatHandlingMode: logOnly

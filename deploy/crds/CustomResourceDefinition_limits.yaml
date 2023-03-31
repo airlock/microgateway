@@ -1,0 +1,151 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.3
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.0.0-beta1
+  name: limits.microgateway.airlock.com
+spec:
+  group: microgateway.airlock.com
+  names:
+    categories:
+      - airlock-microgateway
+    kind: Limits
+    listKind: LimitsList
+    plural: limits
+    singular: limits
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: Limits contains the configuration for limits.
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: Specification of the desired limits behavior.
+              properties:
+                request:
+                  description: Request defines the limits for requests.
+                  properties:
+                    limited:
+                      description: Limited enables limits on request scope.
+                      properties:
+                        general:
+                          description: General defines general request limits.
+                          properties:
+                            bodySize:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: 100Mi
+                              description: BodySize limits the total size of the request body. It specifies the number of bytes from 0 (unlimited) to 2145483647 (2GB). To restrict the size of file uploades, set this limit to the maximum combined size of all files uploaded at once.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            pathLength:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: 1Ki
+                              description: PathLength defines the maximum path length for requests.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                          type: object
+                        json:
+                          description: JSON defines the limits for JSON requests.
+                          properties:
+                            elementCount:
+                              default: 150000
+                              description: ElementCount defines the maximum number of keys and array items in the whole JSON document (recursive).
+                              format: int64
+                              type: integer
+                            keyCount:
+                              default: 250
+                              description: KeyCount defines the maximum number of keys of a single JSON object (non-recursive).
+                              format: int64
+                              type: integer
+                            keyLength:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: "128"
+                              description: KeyLength defines the maximum length for JSON keys.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            nestingDepth:
+                              default: 100
+                              description: NestingDepth defines the maximum depth of nesting for JSON objects and JSON arrays.
+                              format: int64
+                              type: integer
+                            valueLength:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: 1Ki
+                              description: ValueLength defines the maximum length for JSON values.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                          type: object
+                        parameter:
+                          description: Parameter defines the limits for request parameters.
+                          properties:
+                            count:
+                              default: 128
+                              description: Count defines the maximum number of request parameters.
+                              format: int64
+                              type: integer
+                            nameLength:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: "128"
+                              description: NameLength defines the maximum length for parameter names.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            valueLength:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              default: 1Ki
+                              description: ValueLength defines the maximum length for parameter values.
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                          type: object
+                      type: object
+                    unlimited:
+                      description: Unlimited disables all limits on request scope.
+                      type: object
+                  type: object
+                settings:
+                  description: Settings configures the limits filter.
+                  properties:
+                    operationalMode:
+                      default: production
+                      description: OperationalMode defines the behavior of the filter. In integration mode more information is logged about the requests and responses.
+                      enum:
+                        - production
+                        - integration
+                      type: string
+                    threatHandlingMode:
+                      default: block
+                      description: ThreatHandlingMode specifies how threats should be handled when a limit hits.
+                      enum:
+                        - block
+                        - logOnly
+                      type: string
+                  type: object
+              type: object
+          type: object
+      served: true
+      storage: true

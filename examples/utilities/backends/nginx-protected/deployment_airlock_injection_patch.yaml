@@ -1,0 +1,10 @@
+# This patch injects the 'sidecar.microgateway.airlock.com/inject: "true"' annotation into the deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.microgateway.airlock.com/inject: "true"

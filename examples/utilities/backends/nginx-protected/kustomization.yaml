@@ -1,0 +1,5 @@
+resources:
+- ../nginx
+
+patches:
+  - path: deployment_airlock_injection_patch.yaml

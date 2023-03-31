@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ClusterRole_airlock-microgateway-operator-contentsecurity-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-contentsecurity-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-denyrules-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-denyrules-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-envoycluster-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-envoycluster-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-envoyconfiguration-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-envoyhttpfilter-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-envoyhttpfilter-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-headerrewrites-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-headerrewrites-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-limits-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-limits-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-parser-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-parser-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-sidecargateway-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-sidecargateway-viewer.yaml

@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.0.0-beta1
+  name: airlock-microgateway-operator-selfsigned-issuer
+spec:
+  selfSigned: {}

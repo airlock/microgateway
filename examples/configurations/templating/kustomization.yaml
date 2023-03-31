@@ -1,0 +1,79 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - templates
+
+commonAnnotations:
+  mycompany.com/owner: "Project X"
+  mycompany.com/contact: "+41 00 123 45 67"
+
+commonLabels:
+  app.kubernetes.io/name: my-application
+  app.kubernetes.io/part-of: my-application-i-belong-too
+
+patchesJSON6902:
+  - target:
+      group: microgateway.airlock.com
+      version: v1alpha1
+      kind: SidecarGateway
+      name: template
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: my-app
+      - op: replace
+        path: /spec/podSelector/matchLabels/app
+        value: my-app-label
+      - op: replace
+        path: /spec/applications
+        value:
+          - containerPort: 8080
+            routes:
+              - pathPrefix: /
+                secured:
+                  contentSecurityRef:
+                    name: my-app
+  - target:
+      group: microgateway.airlock.com
+      version: v1alpha1
+      kind: ContentSecurity
+      name: template
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: my-app
+      - op: replace
+        path: /spec/filter/denyRulesRef/name
+        value: my-app
+      - op: replace
+        path: /spec/headerRewritesRef/name
+        value: my-app
+  - target:
+      group: microgateway.airlock.com
+      version: v1alpha1
+      kind: DenyRules
+      name: template
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: my-app
+      - op: add
+        path: /spec/request/builtIn/exceptions
+        value:
+          - blockedData:
+              header:
+                name:
+                  matcher:
+                    exact: User-Agent
+            ruleKeys:
+              - XSS
+  - target:
+      group: microgateway.airlock.com
+      version: v1alpha1
+      kind: HeaderRewrites
+      name: template
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: my-app

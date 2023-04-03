@@ -80,10 +80,8 @@ Airlock<sup>&#174;</sup> - Security Innovation by Ergon Informatik AG
 <!-- Airlock SAH Logo (different image for light/dark mode) -->
 <picture>
   <source media="(prefers-color-scheme: dark)" 
-          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png"
-          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode@2x.png 2x">
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png">
   <source media="(prefers-color-scheme: light)" 
-          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png" 
-          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme@2x.png 2x">
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
   <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
 </picture>

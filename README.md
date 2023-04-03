@@ -1,3 +1,4 @@
+![Microgateway Icon](https://www.airlock.com/fileadmin/content/upload/Microgateway_Icon_No_Padding.svg)
 # Airlock Microgateway
 
 Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.
@@ -72,4 +73,17 @@ View the [detailed license terms](https://www.airlock.com/en/airlock-license) fo
 * Decompiling or reverse engineering is not permitted.
 * Using any of the deny rules or parts of these filter patterns outside of the image is not permitted.
 
-![Airlock Logo](https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png)
+
+
+Airlock<sup>&#174;</sup> - Security Innovation by Ergon Informatik AG
+
+<!-- Airlock SAH Logo (different image for light/dark mode) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" 
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png"
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode@2x.png 2x">
+  <source media="(prefers-color-scheme: light)" 
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png" 
+          srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme@2x.png 2x">
+  <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
+</picture>

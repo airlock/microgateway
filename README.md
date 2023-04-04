@@ -76,9 +76,7 @@ View the [detailed license terms](https://www.airlock.com/en/airlock-license) fo
 * Decompiling or reverse engineering is not permitted.
 * Using any of the deny rules or parts of these filter patterns outside of the image is not permitted.
 
-
-
-Airlock<sup>&#174;</sup> - Security Innovation by Ergon Informatik AG
+Airlock<sup>&#174;</sup> is a security innovation by [ergon](https://www.ergon.ch/en)
 
 <!-- Airlock SAH Logo (different image for light/dark mode) -->
 <picture>
@@ -86,5 +84,5 @@ Airlock<sup>&#174;</sup> - Security Innovation by Ergon Informatik AG
           srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png">
   <source media="(prefers-color-scheme: light)" 
           srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
-  <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
+  <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png" width="150">
 </picture>

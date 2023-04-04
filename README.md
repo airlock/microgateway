@@ -15,7 +15,7 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 
 ## What is Airlock Microgateway?
 
-Modern application security is embedded in the development workflow and follows DevSecOps paradigms. The Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance and can be used in Kubernetes environments. Airlock Microgateway enables you to protect your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
+Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
 
 More information: **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**
 

@@ -1,4 +1,7 @@
-![Microgateway Icon](https://www.airlock.com/fileadmin/content/upload/Microgateway_Icon_No_Padding.svg)
+<picture>
+  <a href="https://www.airlock.com/en/microgateway"> <img alt="Microgatway logo" align="right" src="https://www.airlock.com/fileadmin/content/upload/Microgateway_Icon_No_Padding.svg" width="50"> </a>
+</picture>
+
 # Airlock Microgateway
 
 Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.

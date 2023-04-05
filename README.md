@@ -1,7 +1,3 @@
-<picture>
-  <a href="https://www.airlock.com/en/microgateway"> <img alt="Microgatway logo" align="right" src="https://www.airlock.com/fileadmin/content/upload/Microgateway_Icon_No_Padding.svg" width="50"> </a>
-</picture>
-
 # Airlock Microgateway
 
 Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.
@@ -15,7 +11,11 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 
 ## What is Airlock Microgateway?
 <picture>
-  <a href="https://www.airlock.com/en/microgateway"> <img alt="Microgatway logo" align="right" src="Microgateway_Labeled_Logo_Left.svg"> </a>
+  <source media="(prefers-color-scheme: dark)" 
+          srcset="Microgateway_Labeled_AlignRight_Negative.svg">
+  <source media="(prefers-color-scheme: light)" 
+          srcset="Microgateway_Labeled_AlignRight.svg">
+  <img alt="Microgateway Logo" src="Microgateway_Labeled_AlignRight.svg" align="right" width="250">
 </picture>
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
 

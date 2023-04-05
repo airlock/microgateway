@@ -14,7 +14,9 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 * [Installation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html)
 
 ## What is Airlock Microgateway?
-
+<picture>
+  <a href="https://www.airlock.com/en/microgateway"> <img alt="Microgatway logo" align="right" src="Microgateway_Labeled_Logo_Left_150.png"> </a>
+</picture>
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
 
 More information: **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**

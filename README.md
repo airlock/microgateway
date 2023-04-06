@@ -1,19 +1,19 @@
 # Airlock Microgateway
 
-Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.
+*Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
-## Documentation
+<picture>
+  <source media="(prefers-color-scheme: dark)" 
+          srcset="logo/Microgateway_Labeled_AlignRight_Negative.svg">
+  <source media="(prefers-color-scheme: light)" 
+          srcset="logo/Microgateway_Labeled_AlignRight.svg">
+  <img alt="Microgateway Logo" src="logo/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
+</picture>
 
-Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or follow one of these links:
-* [Getting Started](https://docs.airlock.com/microgateway/latest/#data/1660804708742.html)
-* [System Architecture](https://docs.airlock.com/microgateway/latest/#data/1660804709650.html)
-* [Installation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html)
 
-## What is Airlock Microgateway?
+Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
 
-Modern application security is embedded in the development workflow and follows DevSecOps paradigms. The Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance and can be used in Kubernetes environments. Airlock Microgateway enables you to protect your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
 
-More information: **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**
 
 ### Features
 * Kubernetes native integration with its Operator, Custom Resource Definitions, hot-reload, automatic sidecar injection.
@@ -24,6 +24,14 @@ More information: **[airlock.com/microgateway](https://www.airlock.com/en/microg
 * API security features like JSON parsing or OpenAPI specification enforcement
 
 For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html)**.
+
+## Documentation and links
+
+Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
+
+* [Getting Started](https://docs.airlock.com/microgateway/latest/#data/1660804708742.html)
+* [System Architecture](https://docs.airlock.com/microgateway/latest/#data/1660804709650.html)
+* [Installation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html)
 
 # Quick start guide
 
@@ -59,17 +67,29 @@ kubectl -n airlock-microgateway-system wait --for=condition=Available deployment
 > The minimum supported Kustomize version is [v4.5.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.3).
 
 
-## How to get help
+## Support
 
-### Community edition
-For the community edition, check our **[Airlock community forum](https://forum.airlock.com/)** for FAQs or register to post your question.
-
-### Premium edition
+### Premium support
 If you have a paid license, please follow the [premium support process](https://techzone.ergon.ch/support-process).
+
+### Community support
+For the community edition, check our **[Airlock community forum](https://forum.airlock.com/)** for FAQs or register to post your question.
 
 ## License
 View the [detailed license terms](https://www.airlock.com/en/airlock-license) for the software contained in this image.
 * Decompiling or reverse engineering is not permitted.
 * Using any of the deny rules or parts of these filter patterns outside of the image is not permitted.
 
-![Airlock Logo](https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png)
+
+Airlock<sup>&#174;</sup> is a security innovation by [ergon](https://www.ergon.ch/en)
+
+<!-- Airlock SAH Logo (different image for light/dark mode) -->
+<a href="https://www.airlock.com/en/secure-access-hub/">
+<picture>
+    <source media="(prefers-color-scheme: dark)"
+        srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png">
+    <source media="(prefers-color-scheme: light)"
+        srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
+    <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png" width="150"> 
+</picture>
+</a>

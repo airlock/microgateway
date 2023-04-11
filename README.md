@@ -4,10 +4,10 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" 
-          srcset="logo/Microgateway_Labeled_AlignRight_Negative.svg">
+          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight_Negative.svg">
   <source media="(prefers-color-scheme: light)" 
-          srcset="logo/Microgateway_Labeled_AlignRight.svg">
-  <img alt="Microgateway Logo" src="logo/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
+          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg">
+  <img alt="Microgateway Logo" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
 </picture>
 
 
@@ -87,9 +87,9 @@ Airlock<sup>&#174;</sup> is a security innovation by [ergon](https://www.ergon.c
 <a href="https://www.airlock.com/en/secure-access-hub/">
 <picture>
     <source media="(prefers-color-scheme: dark)"
-        srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme_DarkMode.png">
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Negative.png">
     <source media="(prefers-color-scheme: light)"
-        srcset="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png">
-    <img alt="Logo of Airlock Secure Access Hub" src="https://www.airlock.com/fileadmin/content/upload/Airlock_Logo_Docker_Hub_Microgateway_Readme.png" width="150"> 
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock.png">
+    <img alt="Logo of Airlock Secure Access Hub" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock.png" width="150">
 </picture>
 </a>

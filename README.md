@@ -85,9 +85,9 @@ Airlock<sup>&#174;</sup> is a security innovation by [ergon](https://www.ergon.c
 <a href="https://www.airlock.com/en/secure-access-hub/">
 <picture>
     <source media="(prefers-color-scheme: dark)"
-        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Negative.png">
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo_Negative.png">
     <source media="(prefers-color-scheme: light)"
-        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock.png">
-    <img alt="Logo of Airlock Secure Access Hub" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock.png" width="150">
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo.png">
+    <img alt="Logo of Airlock Secure Access Hub" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo.png" width="150">
 </picture>
 </a>

@@ -2,12 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.3
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.12.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: sidecargateways.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -58,7 +57,7 @@ spec:
                         description: Downstream defines the downstream configuration for this application
                         properties:
                           protocol:
-                            description: Protocol defines the exposed HTTP protocol version. At most one of http1, http2 and auto can be set. Defaults to auto.
+                            description: 'Protocol defines the exposed HTTP protocol version. At most one of http1, http2 and auto can be set. Default: auto: {}'
                             properties:
                               auto:
                                 description: Auto specifies that the protocol should be inferred.
@@ -71,7 +70,7 @@ spec:
                                 type: object
                             type: object
                           remoteIP:
-                            description: RemoteIP defines how the remote IP of a client is propagated. Default is XFF.
+                            description: 'RemoteIP defines how the remote IP of a client is propagated. Default: xff: {...}'
                             properties:
                               connectionIP:
                                 description: ConnectionIP configures to use the source IP address of the direct downstream connection.
@@ -139,7 +138,7 @@ spec:
                                 minItems: 1
                                 type: array
                               clientCertificate:
-                                description: 'ClientCertificate defines the TLS settings for verification of client certificates. At most one of ignored, optional and required can be set. Default: ignored'
+                                description: 'ClientCertificate defines the TLS settings for verification of client certificates. At most one of ignored, optional and required can be set. Default: ignored: {}'
                                 properties:
                                   ignored:
                                     description: Ignored disables verification of the client certificate.
@@ -170,11 +169,11 @@ spec:
                                             minItems: 1
                                             type: array
                                           validationMode:
-                                            default: verifyChain
-                                            description: 'ValidationMode defines whether only the leaf certificate or also the CA certs should be checked. Default: verifyChain'
+                                            default: VerifyChain
+                                            description: ValidationMode defines whether only the leaf certificate or also the CA certs should be checked.
                                             enum:
-                                              - verifyLeafCertOnly
-                                              - verifyChain
+                                              - VerifyLeafCertOnly
+                                              - VerifyChain
                                             type: string
                                         type: object
                                       trustedCA:
@@ -204,13 +203,17 @@ spec:
                                             description: VerificationDepth specifies the hops in the certificate chain at which validation is performed. 1 means that either the leaf or the signing CA must be in the set of trusted certificates.
                                             format: int32
                                             type: integer
+                                        required:
+                                          - certificates
                                         type: object
+                                    required:
+                                      - trustedCA
                                     type: object
                                   required:
-                                    description: Required contains settings for client certificate verification. A client must present a valid certificate.
+                                    description: Required contains settings for client certificate verification. A client must present a valid certificate. At least one of trustedCA and certificatePinning must be set.
                                     properties:
                                       allowedSANs:
-                                        description: AllowedSANs is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the Subject Alternative Name of the presented certificate matches one of the specified matchers. The matching uses “any” semantics, that is to say, the SAN is verified if at least one matcher is matched.
+                                        description: AllowedSANs is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the Subject Alternative Name of the presented certificate matches one of the specified matchers. The matching uses “any” semantics, that is to say, the SAN is verified if at least one matcher is matched. AllowedSANS requires trustedCA to be set.
                                         items:
                                           description: TLSValidationContextSANMatcher is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the Subject Alternative Name of the presented certificate matches one of the specified matchers.
                                           properties:
@@ -243,12 +246,12 @@ spec:
                                                   type: string
                                               type: object
                                             sanType:
-                                              description: SanType defines the type of SAN matcher. Allowed values are DNS, EMAIL, URI, IP_ADDRESS.
+                                              description: SanType defines the type of SAN matcher.
                                               enum:
                                                 - DNS
-                                                - EMAIL
+                                                - Email
                                                 - URI
-                                                - IP_ADDRESS
+                                                - IPAddress
                                               type: string
                                           required:
                                             - matcher
@@ -257,7 +260,7 @@ spec:
                                         minItems: 1
                                         type: array
                                       certificatePinning:
-                                        description: CertificatePinning defines the constraints a client certificate must fulfill. If more than one constraint is configured only one must be satisfied.
+                                        description: CertificatePinning defines the constraints a client certificate must fulfill. If more than one constraint is configured only one must be satisfied. At least one of allowedSPKIs and allowedHashes must be set.
                                         properties:
                                           allowedHashes:
                                             description: AllowedHashes is a list of hex-encoded SHA-256 hashes. If specified, it will verify that the SHA-256 of the DER-encoded presented certificate matches one of the specified values.
@@ -295,11 +298,11 @@ spec:
                                             minItems: 1
                                             type: array
                                           validationMode:
-                                            default: verifyChain
-                                            description: 'ValidationMode defines whether only the leaf certificate or also the CA certs should be checked. Default: verifyChain'
+                                            default: VerifyChain
+                                            description: ValidationMode defines whether only the leaf certificate or also the CA certs should be checked.
                                             enum:
-                                              - verifyLeafCertOnly
-                                              - verifyChain
+                                              - VerifyLeafCertOnly
+                                              - VerifyChain
                                             type: string
                                         type: object
                                       trustedCA:
@@ -329,6 +332,8 @@ spec:
                                             description: VerificationDepth specifies the hops in the certificate chain at which validation is performed. 1 means that either the leaf or the signing CA must be in the set of trusted certificates.
                                             format: int32
                                             type: integer
+                                        required:
+                                          - certificates
                                         type: object
                                     type: object
                                 type: object
@@ -369,10 +374,10 @@ spec:
                             type: object
                         type: object
                       envoyHTTPFilterRefs:
-                        description: EnvoyHTTPFilterRefs defines which EnvoyHTTPFilter references will be applied.
+                        description: EnvoyHTTPFilterRefs selects the relevant EnvoyHTTPFilters.
                         properties:
                           prepend:
-                            description: Prepend defines the referenced Envoy HTTP filters which are added before those configured by the Airlock Microgateway.
+                            description: Prepend selects the relevant EnvoyHTTPFilters which are added before those configured by the Airlock Microgateway.
                             items:
                               properties:
                                 name:
@@ -387,7 +392,7 @@ spec:
                       routes:
                         description: Routes defines the security configurations for different paths. The first matching route (from top to bottom) applies.
                         items:
-                          description: SidecarGatewayApplicationRoute defines the security configurations for different paths. At most one of secured and unsecured can be set. Defaults to secured if not specified.
+                          description: 'SidecarGatewayApplicationRoute defines the security configurations for different paths. At most one of secured and unsecured can be set. Default: secured: {...}'
                           properties:
                             pathPrefix:
                               default: /
@@ -395,10 +400,10 @@ spec:
                               minLength: 1
                               type: string
                             secured:
-                              description: 'Secured enables WAF processing for this route. At most one of secured and unsecured can be set (Default: secured: {...})'
+                              description: Secured enables WAF processing for this route.
                               properties:
                                 contentSecurityRef:
-                                  description: ContentSecurityRef selects the applied ContentSecurity configuration resource.
+                                  description: ContentSecurityRef selects the relevant ContentSecurity configuration resource. If undefined, default settings are applied, designed to work with most upstream web application services.
                                   properties:
                                     name:
                                       description: Name of the resource
@@ -409,7 +414,7 @@ spec:
                                   type: object
                               type: object
                             unsecured:
-                              description: 'Unsecured disables all WAF functionality and therefore protection for this route. WARNING: Using this setting when the application is exposed to untrusted downstream traffic is highly discouraged. At most one of secured and unsecured can be set (Default: secured: {...})'
+                              description: 'Unsecured disables all WAF functionality and therefore protection for this route. WARNING: Using this setting when the application is exposed to untrusted downstream traffic is highly discouraged.'
                               type: object
                           type: object
                         type: array
@@ -417,7 +422,7 @@ spec:
                           - pathPrefix
                         x-kubernetes-list-type: map
                       telemetryRef:
-                        description: TelemetryRef selects the applied Telemetry configuration resource.
+                        description: TelemetryRef selects the relevant Telemetry configuration resource. If undefined, default settings are applied, designed to work with most upstream web application services.
                         properties:
                           name:
                             description: Name of the resource
@@ -430,7 +435,7 @@ spec:
                         description: Upstream defines the upstream configuration for this application
                         properties:
                           protocol:
-                            description: Protocol defines HTTP protocol version used to communicate with the upstream. At most one of http1, http2 and auto can be set. Defaults to auto.
+                            description: 'Protocol defines HTTP protocol version used to communicate with the upstream. At most one of http1, http2 and auto can be set. Default: auto: {}'
                             properties:
                               auto:
                                 description: Auto specifies to use the protocol negotiated via TLS ALPN (if supported) or HTTP/1.1 as fallback.
@@ -484,7 +489,7 @@ spec:
                     - containerPort
                   x-kubernetes-list-type: map
                 envoyClusterRefs:
-                  description: EnvoyClusterRefs defines a list of references to EnvoyClusters which are added to the envoy configuration.
+                  description: EnvoyClusterRefs selects the relevant EnvoyClusters.
                   items:
                     properties:
                       name:

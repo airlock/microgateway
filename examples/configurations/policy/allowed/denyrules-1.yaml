@@ -7,5 +7,5 @@ spec:
   request:
     builtIn:
       settings:
-        level: strict
-        threatHandlingMode: block
+        level: Strict
+        threatHandlingMode: Block

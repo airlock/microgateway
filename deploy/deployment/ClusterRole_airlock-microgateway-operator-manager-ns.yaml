@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: airlock-microgateway-operator-manager-ns
 rules:
   - apiGroups:
@@ -55,6 +55,14 @@ rules:
       - get
       - list
       - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
       - watch
   - apiGroups:
       - microgateway.airlock.com

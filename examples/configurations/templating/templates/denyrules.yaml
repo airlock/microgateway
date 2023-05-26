@@ -6,5 +6,5 @@ spec:
   request:
     builtIn:
       settings:
-        level: standard
-        threatHandlingMode: block
+        level: Standard
+        threatHandlingMode: Block

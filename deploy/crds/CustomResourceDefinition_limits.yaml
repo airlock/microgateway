@@ -2,12 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.3
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.12.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: limits.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -49,8 +48,8 @@ spec:
                               anyOf:
                                 - type: integer
                                 - type: string
-                              default: 100Mi
-                              description: BodySize limits the total size of the request body. It specifies the number of bytes from 0 (unlimited) to 2145483647 (2GB). To restrict the size of file uploades, set this limit to the maximum combined size of all files uploaded at once.
+                              default: 100Ki
+                              description: BodySize limits the total size of the request body. It specifies the number of bytes (0 = unlimited). This limit is effective only for requests that are parsed (e.g. JSON data). File uploads are not affected by this limit.
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
                             pathLength:
@@ -66,7 +65,7 @@ spec:
                           description: JSON defines the limits for JSON requests.
                           properties:
                             elementCount:
-                              default: 150000
+                              default: 10000
                               description: ElementCount defines the maximum number of keys and array items in the whole JSON document (recursive).
                               format: int64
                               type: integer
@@ -92,7 +91,7 @@ spec:
                               anyOf:
                                 - type: integer
                                 - type: string
-                              default: 1Ki
+                              default: 8Ki
                               description: ValueLength defines the maximum length for JSON values.
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
@@ -117,7 +116,7 @@ spec:
                               anyOf:
                                 - type: integer
                                 - type: string
-                              default: 1Ki
+                              default: 8Ki
                               description: ValueLength defines the maximum length for parameter values.
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
@@ -130,19 +129,12 @@ spec:
                 settings:
                   description: Settings configures the limits filter.
                   properties:
-                    operationalMode:
-                      default: production
-                      description: OperationalMode defines the behavior of the filter. In integration mode more information is logged about the requests and responses.
-                      enum:
-                        - production
-                        - integration
-                      type: string
                     threatHandlingMode:
-                      default: block
+                      default: Block
                       description: ThreatHandlingMode specifies how threats should be handled when a limit hits.
                       enum:
-                        - block
-                        - logOnly
+                        - Block
+                        - LogOnly
                       type: string
                   type: object
               type: object

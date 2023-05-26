@@ -2,12 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.3
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.12.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: contentsecurities.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -27,7 +26,7 @@ spec:
       name: v1alpha1
       schema:
         openAPIV3Schema:
-          description: ContentSecurity is the Schema for the contentsecurities API
+          description: ContentSecurity specifies the options to secure an upstream web application with a Microgateway Engine container. Must be in same namespace as the protected Pod.
           properties:
             apiVersion:
               description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
@@ -38,13 +37,13 @@ spec:
             metadata:
               type: object
             spec:
-              description: Specification of the desired content security behavior.
+              description: Specifies the options to secure an upstream web application with a Microgateway Engine container.
               properties:
                 filter:
-                  description: Filter defines various filters which will be applied to downstream requests.
+                  description: Filter defines the set of filters, e.g. Airlock Deny Rules, to be applied to incoming requests to protect against various attack patterns. If undefined, default settings are applied, designed to work with most upstream web application services.
                   properties:
                     denyRulesRef:
-                      description: DenyRulesRef selects the applied DenyRules configuration resource.
+                      description: DenyRulesRef selects the relevant DenyRules configuration resource. If undefined, default settings are applied, designed to work with most upstream web application services.
                       properties:
                         name:
                           description: Name of the resource
@@ -55,7 +54,7 @@ spec:
                       type: object
                   type: object
                 headerRewritesRef:
-                  description: HeaderRewritesRef selects the applied HeaderRewrites configuration resource.
+                  description: HeaderRewritesRef selects the relevant HeaderRewrites. If undefined, default settings are applied, designed to work with most upstream web application services.
                   properties:
                     name:
                       description: Name of the resource
@@ -65,7 +64,7 @@ spec:
                     - name
                   type: object
                 limitsRef:
-                  description: LimitsRef selects the applied limits configuration resource.
+                  description: LimitsRef selects the relevant Limits configuration resource. If undefined, default settings are applied, designed to work with most upstream web application services.
                   properties:
                     name:
                       description: Name of the resource
@@ -75,7 +74,7 @@ spec:
                     - name
                   type: object
                 parserRef:
-                  description: ParserRef selects the applied Parser configuration resource.
+                  description: ParserRef selects the relevant Parser configuration resource. If undefined, default settings are applied, designed to work with most upstream web application services.
                   properties:
                     name:
                       description: Name of the resource

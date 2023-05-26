@@ -141,9 +141,13 @@ data:
                     path: /etc/envoy/validation_context_sds_secret.yaml
                     watched_directory:
                       path: /etc/envoy/
+              tls_certificate_sds_secret_configs:
+                - name: tls_certificate_sds
+                  sds_config:
+                    path: /etc/envoy/tls_certificate_sds_secret.yaml
       - name: airlock_microgateway_engine_admin
         connect_timeout: 1s
-        type: LOGICAL_DNS
+        type: STATIC
         load_assignment:
           cluster_name: airlock_microgateway_engine_admin
           endpoints:
@@ -236,6 +240,8 @@ data:
       allowPrivilegeEscalation: false
       privileged: false
       readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
       capabilities:
         drop: ["ALL"]
     resources:
@@ -271,7 +277,7 @@ data:
       limits:
         cpu: "200m"
         memory: "256Mi"
-  operator_config.yaml: |-
+  operator_config.yaml: |
     apiVersion: config.airlock.com/v1alpha1
     kind: OperatorConfig
     health:
@@ -280,9 +286,6 @@ data:
       bindAddress: 127.0.0.1:8080
     webhook:
       port: 9443
-    leaderElection:
-      leaderElect: true
-      resourceName: leader.airlock.com
     deployment:
       sidecar:
         engineContainerTemplate: "/sidecar/engine_container_template.yaml"
@@ -291,10 +294,12 @@ data:
       bootstrapConfigTemplate: "/engine_bootstrap_config_template.yaml"
     log:
       level: info
+    licensing:
+      throughputCheckTimeout: 50ms
 kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: airlock-microgateway-operator-operator-config

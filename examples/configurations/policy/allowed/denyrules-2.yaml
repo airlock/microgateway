@@ -7,4 +7,4 @@ spec:
   request:
     builtIn:
       settings:
-        threatHandlingMode: block
+        threatHandlingMode: Block

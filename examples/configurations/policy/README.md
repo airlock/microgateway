@@ -44,7 +44,7 @@ resource DenyRules/default/denyrule1-nok was blocked due to the following polici
 
 disallow-insecure-denyrules:
   disallow-insecure-threatHandlingMode: 'DenyRules with ''threatHandlingMode'' other
-    than ''block'' is not allowed. '
+    than ''Block'' is not allowed. '
 
 Error from server: error when creating "https://github.com/airlock/microgateway/examples/configurations/policy/denied/denyrules-2.yaml": admission webhook "validate.kyverno.svc-fail" denied the request: 
 
@@ -52,7 +52,7 @@ resource DenyRules/default/denyrule2-nok was blocked due to the following polici
 
 disallow-insecure-denyrules:
   disallow-denyRules-with-insecure-security-level: 'DenyRules with ''level'' other
-    than ''standard'' or ''strict'' is not allowed. '
+    than ''Standard'' or ''Strict'' is not allowed. '
 
 ```
 

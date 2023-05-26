@@ -2,12 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.3
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.12.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: denyrules.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -27,7 +26,7 @@ spec:
       name: v1alpha1
       schema:
         openAPIV3Schema:
-          description: DenyRules is the Schema for the denyrules API
+          description: DenyRules configures request filtering using Airlock built-in and custom deny rules. Deny rules establish a negative security model. They define prohibited patterns which, when a match is found in a request, lead to it being blocked from reaching the upstream web application. To handle possible false positives, lower the security level or define fine-granular deny rule exceptions If undefined, default settings are applied, designed to work with most upstream web application services.
           properties:
             apiVersion:
               description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
@@ -236,12 +235,12 @@ spec:
                                           - matcher
                                         type: object
                                       source:
-                                        default: any
-                                        description: Source defines the source of the parameter. Defaults to any.
+                                        default: Any
+                                        description: Source defines the source of the parameter.
                                         enum:
-                                          - query
-                                          - post
-                                          - any
+                                          - Query
+                                          - Post
+                                          - Any
                                         type: string
                                       value:
                                         description: Value defines the value of a parameter.
@@ -550,12 +549,12 @@ spec:
                                   types:
                                     description: Types defines the type of attributes the override should be applied on. If Types are defined without any RuleKeys the override is applied to all deny rules.
                                     items:
-                                      description: 'A deny rule override type name can be any of the following values: header | parameter | path | json'
+                                      description: 'A deny rule override type name can be any of the following values: Header | Parameter | Path | JSON'
                                       enum:
-                                        - header
-                                        - parameter
-                                        - path
-                                        - json
+                                        - Header
+                                        - Parameter
+                                        - Path
+                                        - JSON
                                       type: string
                                     minItems: 0
                                     type: array
@@ -566,16 +565,16 @@ spec:
                                   level:
                                     description: Level specifies the filter strength.
                                     enum:
-                                      - unfiltered
-                                      - basic
-                                      - standard
-                                      - strict
+                                      - Unfiltered
+                                      - Basic
+                                      - Standard
+                                      - Strict
                                     type: string
                                   threatHandlingMode:
                                     description: ThreatHandlingMode specifies how threats should be handled.
                                     enum:
-                                      - block
-                                      - logOnly
+                                      - Block
+                                      - LogOnly
                                     type: string
                                 type: object
                             type: object
@@ -584,20 +583,20 @@ spec:
                           description: Settings contains the keys which will be adjusted.
                           properties:
                             level:
-                              default: standard
+                              default: Standard
                               description: Level represents a set of deny rules with different filter strengths.
                               enum:
-                                - unfiltered
-                                - basic
-                                - standard
-                                - strict
+                                - Unfiltered
+                                - Basic
+                                - Standard
+                                - Strict
                               type: string
                             threatHandlingMode:
-                              default: block
+                              default: Block
                               description: ThreatHandlingMode specifies how threats should be handled when a deny rule matches.
                               enum:
-                                - block
-                                - logOnly
+                                - Block
+                                - LogOnly
                               type: string
                           type: object
                       type: object
@@ -1038,11 +1037,11 @@ spec:
                                 pattern: ^[A-Z][A-Z0-9_]*$
                                 type: string
                               threatHandlingMode:
-                                default: block
+                                default: Block
                                 description: ThreatHandlingMode specifies how threats should be handled when a deny rule matches.
                                 enum:
-                                  - block
-                                  - logOnly
+                                  - Block
+                                  - LogOnly
                                 type: string
                             required:
                               - blockData
@@ -1053,17 +1052,6 @@ spec:
                             - ruleKey
                           x-kubernetes-list-type: map
                       type: object
-                  type: object
-                settings:
-                  description: Settings configures the DenyRules filter.
-                  properties:
-                    operationalMode:
-                      default: production
-                      description: OperationalMode defines the behavior of the filter. In integration mode more information is logged about the requests and responses.
-                      enum:
-                        - production
-                        - integration
-                      type: string
                   type: object
               type: object
           type: object

@@ -30,14 +30,14 @@ spec:
             value: DELETE
       validate:
         message: >-
-          DenyRules with 'threatHandlingMode' other than 'block' is not allowed.
+          DenyRules with 'threatHandlingMode' other than 'Block' is not allowed.
         deny:
           conditions:
             all:
               - key: "{{ request.object.spec.request.builtIn.settings.threatHandlingMode }}"
                 operator: AnyNotIn
                 value:
-                  - block
+                  - Block
     - name: disallow-denyRules-with-insecure-security-level
       match:
         any:
@@ -51,12 +51,12 @@ spec:
             value: DELETE
       validate:
         message: >-
-          DenyRules with 'level' other than 'standard' or 'strict' is not allowed.
+          DenyRules with 'level' other than 'Standard' or 'Strict' is not allowed.
         deny:
           conditions:
             all:
               - key: "{{ request.object.spec.request.builtIn.settings.level }}"
                 operator: AnyNotIn
                 value:
-                  - standard
-                  - strict
+                  - Standard
+                  - Strict

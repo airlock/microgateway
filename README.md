@@ -3,16 +3,14 @@
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" 
+  <source media="(prefers-color-scheme: dark)"
           srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight_Negative.svg">
-  <source media="(prefers-color-scheme: light)" 
+  <source media="(prefers-color-scheme: light)"
           srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg">
   <img alt="Microgateway Logo" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
 </picture>
 
-
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
-
 
 
 ### Features
@@ -61,7 +59,7 @@ kubectl apply -k https://github.com/airlock/microgateway/deploy/deployment/
 
 Wait for the airlock-microgateway-operator deployment to be ready
 ```
-kubectl -n airlock-microgateway-system wait --for=condition=Available deployments.app/airlock-microgateway-operator-controller-manager --timeout=2m
+kubectl -n airlock-microgateway-system wait --for=condition=Available deployments.app/airlock-microgateway-operator-controller-manager --timeout=3m
 ```
 
 > The minimum supported Kustomize version is [v4.5.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.3).

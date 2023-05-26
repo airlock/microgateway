@@ -2,12 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.3
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.12.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.0-beta1
+    app.kubernetes.io/version: 4.0.0
   name: headerrewrites.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -65,11 +64,11 @@ spec:
                                 minItems: 1
                                 type: array
                               mode:
-                                default: addIfAbsent
+                                default: AddIfAbsent
                                 description: Mode defines the header addition strategy.
                                 enum:
-                                  - addIfAbsent
-                                  - overwriteOrAdd
+                                  - AddIfAbsent
+                                  - OverwriteOrAdd
                                 type: string
                               name:
                                 description: Name describing the configured operation.
@@ -356,11 +355,11 @@ spec:
                                 minItems: 1
                                 type: array
                               mode:
-                                default: addIfAbsent
+                                default: AddIfAbsent
                                 description: Mode defines the header addition strategy.
                                 enum:
-                                  - addIfAbsent
-                                  - overwriteOrAdd
+                                  - AddIfAbsent
+                                  - OverwriteOrAdd
                                 type: string
                               name:
                                 description: Name describing the configured operation.
@@ -618,11 +617,11 @@ spec:
                   description: Settings configures the HeaderRewrites filter.
                   properties:
                     operationalMode:
-                      default: production
+                      default: Production
                       description: OperationalMode defines the behavior of the filter. In integration mode more information is logged about the requests and responses.
                       enum:
-                        - production
-                        - integration
+                        - Production
+                        - Integration
                       type: string
                   type: object
               type: object

@@ -4,10 +4,10 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight_Negative.svg">
+          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled_AlignRight_Negative.svg">
   <source media="(prefers-color-scheme: light)"
-          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg">
-  <img alt="Microgateway Logo" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
+          srcset="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled_AlignRight.svg">
+  <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled_AlignRight.svg" align="right" width="250">
 </picture>
 
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
@@ -22,6 +22,13 @@ Modern application security is embedded in the development workflow and follows 
 * API security features like JSON parsing or OpenAPI specification enforcement
 
 For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html)**.
+
+## Labs
+We offer a growing number of [Airlock Microgateway labs](https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=github.com) that are designed to be easy-to-follow tutorials. All labs are fully guided and cover aspects of Airlock Microgateway from installation to configuration in a preconfigured cloud-based Kubernetes environment.
+
+[![Airlock Microgateway labs](https://raw.githubusercontent.com/airlock/microgateway/main/media/airlock-microgateway-instruqt-tracks.gif)](https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=github.com)
+
+Learn the basics and expand existing knowledge without any administration effort in a secure environment.
 
 ## Documentation and links
 
@@ -85,9 +92,9 @@ Airlock<sup>&#174;</sup> is a security innovation by [ergon](https://www.ergon.c
 <a href="https://www.airlock.com/en/secure-access-hub/">
 <picture>
     <source media="(prefers-color-scheme: dark)"
-        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo_Negative.png">
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/media/Airlock_Logo_Negative.png">
     <source media="(prefers-color-scheme: light)"
-        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo.png">
-    <img alt="Logo of Airlock Secure Access Hub" src="https://raw.githubusercontent.com/airlock/microgateway/main/logo/Airlock_Logo.png" width="150">
+        srcset="https://raw.githubusercontent.com/airlock/microgateway/main/media/Airlock_Logo.png">
+    <img alt="Airlock Secure Access Hub" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Airlock_Logo.png" width="150">
 </picture>
 </a>

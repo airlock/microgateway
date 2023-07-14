@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.0.0
+    app.kubernetes.io/version: 4.0.1
   name: airlock-microgateway-license-guard-redis
 spec:
   ports:
@@ -14,4 +14,4 @@ spec:
   selector:
     app.kubernetes.io/component: cache
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.0.0
+    app.kubernetes.io/version: 4.0.1

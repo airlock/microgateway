@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.0.0
+    app.kubernetes.io/version: 4.0.1
   name: airlock-microgateway-license-guard
 spec:
   ports:
@@ -16,5 +16,5 @@ spec:
   selector:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.0.0
+    app.kubernetes.io/version: 4.0.1
   type: ClusterIP

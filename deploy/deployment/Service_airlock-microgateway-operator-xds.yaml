@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.1
+    app.kubernetes.io/version: 4.0.2
   name: airlock-microgateway-operator-xds
 spec:
   ports:
@@ -16,5 +16,5 @@ spec:
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.1
+    app.kubernetes.io/version: 4.0.2
     control-plane: airlock-microgateway-operator

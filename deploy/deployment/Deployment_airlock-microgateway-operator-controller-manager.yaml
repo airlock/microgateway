@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.1
+    app.kubernetes.io/version: 4.0.2
     control-plane: airlock-microgateway-operator
   name: airlock-microgateway-operator-controller-manager
 spec:
@@ -13,7 +13,7 @@ spec:
     matchLabels:
       app.kubernetes.io/component: controller
       app.kubernetes.io/name: airlock-microgateway-operator
-      app.kubernetes.io/version: 4.0.1
+      app.kubernetes.io/version: 4.0.2
       control-plane: airlock-microgateway-operator
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: airlock-microgateway-operator
-        app.kubernetes.io/version: 4.0.1
+        app.kubernetes.io/version: 4.0.2
         control-plane: airlock-microgateway-operator
     spec:
       containers:
@@ -51,16 +51,16 @@ spec:
             - --config=operator_config.yaml
           env:
             - name: NETWORK_MANAGER_IMAGE
-              value: docker.io/ergon/airlock-microgateway-network-manager:4.0.1@sha256:0c900d107dece464a9840be58dfdb39d556cfbbe39bb2f9850671f7bf97b182a
+              value: docker.io/ergon/airlock-microgateway-network-manager:4.0.2@sha256:dbad370016a447ef06b1187039447cb1b6b312dcf3b41460833a41eb61243724
             - name: ENGINE_IMAGE
-              value: docker.io/ergon/airlock-microgateway-engine:4.0.1@sha256:27216650c3912920a6b8a4ddb9d427e4170fc594e1529fd4529697bf77a72297
+              value: docker.io/ergon/airlock-microgateway-engine:4.0.2@sha256:67f091d265c020962d7b1a82cdd9ec652c087ce5e874d38a4ab3a210d06b5513
             - name: OPERATOR_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: WATCH_NAMESPACE
               value: ""
-          image: docker.io/ergon/airlock-microgateway-operator:4.0.1@sha256:b0b58aa36e099c5d1b5beb0491f9327d2d0ceca74bfcc161c076d2d187470b43
+          image: docker.io/ergon/airlock-microgateway-operator:4.0.2@sha256:f3e47f88f43234bd84ab60a94ef24224e3d63873c0671a4243bc4262a29cddbe
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

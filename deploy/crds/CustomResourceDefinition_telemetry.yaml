@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.1
+    app.kubernetes.io/version: 4.0.2
   name: telemetries.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "nameOverride": {
+      "type": "string"
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string"
+        },
+        "pullPolicy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest",
+        "pullPolicy",
+        "repository",
+        "tag"
+      ],
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object"
+    },
+    "affinity": {
+      "type": "object"
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "createSCCRole": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "create",
+        "createSCCRole"
+      ],
+      "additionalProperties": false
+    },
+    "privileged": {
+      "type": "boolean"
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "create",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "multusNetworkAttachmentDefinition": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "create",
+        "namespace"
+      ],
+      "additionalProperties": false
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "installMode": {
+          "type": "string",
+          "enum": [
+            "chained",
+            "standalone"
+          ]
+        },
+        "logLevel": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
+        },
+        "cniNetDir": {
+          "type": "string"
+        },
+        "cniBinDir": {
+          "type": "string"
+        },
+        "excludeNamespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "cniBinDir",
+        "cniNetDir",
+        "excludeNamespaces",
+        "installMode",
+        "logLevel"
+      ],
+      "additionalProperties": false
+    },
+    "tests": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "affinity",
+    "config",
+    "fullnameOverride",
+    "image",
+    "multusNetworkAttachmentDefinition",
+    "nameOverride",
+    "privileged",
+    "rbac",
+    "resources",
+    "serviceAccount",
+    "tests"
+  ],
+  "additionalProperties": false
+}

@@ -14,6 +14,8 @@ resources:
   - ClusterRole_airlock-microgateway-operator-headerrewrites-viewer.yaml
   - ClusterRole_airlock-microgateway-operator-limits-editor.yaml
   - ClusterRole_airlock-microgateway-operator-limits-viewer.yaml
+  - ClusterRole_airlock-microgateway-operator-openapis-editor.yaml
+  - ClusterRole_airlock-microgateway-operator-openapis-viewer.yaml
   - ClusterRole_airlock-microgateway-operator-parser-editor.yaml
   - ClusterRole_airlock-microgateway-operator-parser-viewer.yaml
   - ClusterRole_airlock-microgateway-operator-sidecargateway-editor.yaml

@@ -2,11 +2,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.12.1
+    controller-gen.kubebuilder.io/version: v0.13.0
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.0.2
+    app.kubernetes.io/version: 4.1.0
   name: sidecargateways.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -61,12 +61,26 @@ spec:
                             properties:
                               auto:
                                 description: Auto specifies that the protocol should be inferred.
+                                properties:
+                                  http2:
+                                    description: HTTP2 specifies the settings for when HTTP/2 is inferred.
+                                    properties:
+                                      allowConnect:
+                                        default: false
+                                        description: Allows proxying Websocket and other upgrades over H2 connect.
+                                        type: boolean
+                                    type: object
                                 type: object
                               http1:
                                 description: HTTP1 specifies that the client is assumed to speak HTTP/1.1.
                                 type: object
                               http2:
                                 description: HTTP2 specifies that the client is assumed to speak HTTP/2.
+                                properties:
+                                  allowConnect:
+                                    default: false
+                                    description: Allows proxying Websocket and other upgrades over H2 connect.
+                                    type: boolean
                                 type: object
                             type: object
                           remoteIP:
@@ -126,6 +140,26 @@ spec:
                                     description: HeadersLength defines maximum size of all request headers combined. Requests that exceed this limit will receive a 431 response.
                                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                     x-kubernetes-int-or-string: true
+                                type: object
+                            type: object
+                          timeouts:
+                            description: Timeouts defines timeouts for downstream
+                            properties:
+                              http:
+                                description: HTTP defines the settings for HTTP timeouts.
+                                properties:
+                                  idle:
+                                    default: 5m
+                                    description: 'Idle defines the settings for the idle timeout when no data is sent or received. A value of 0 will completely disable the timeout. Default: 5m'
+                                    type: string
+                                  maxDuration:
+                                    default: 5m
+                                    description: 'MaxDuration defines the total duration for a HTTP request/response stream. A value of 0 will completely disable the timeout. Default: 5m'
+                                    type: string
+                                  requestHeaders:
+                                    default: 10s
+                                    description: 'RequestHeaders defines the duration before all request headers must be received. A value of 0 will completely disable the timeout. Default: 10s'
+                                    type: string
                                 type: object
                             type: object
                           tls:
@@ -237,7 +271,7 @@ spec:
                                                   minLength: 1
                                                   type: string
                                                 regex:
-                                                  description: Regex defines a regex match on the regular expression specified here. Google's RE2 regex engine is used (https://github.com/google/re2/wiki/Syntax). Only one of exact, prefix, suffix, regex or contains can be set.
+                                                  description: Regex defines a regex match on the regular expression specified here. Google's RE2 regex engine is used (https://github.com/google/re2/wiki/Syntax). The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex. Only one of exact, prefix, suffix, regex or contains can be set.
                                                   minLength: 1
                                                   type: string
                                                 suffix:
@@ -345,7 +379,7 @@ spec:
                                 description: Protocol defines the supported TLS protocol versions.
                                 properties:
                                   maximum:
-                                    description: Maximum supported TLS version
+                                    description: Maximum supported TLS version.
                                     enum:
                                       - TLSv1_0
                                       - TLSv1_1
@@ -353,7 +387,7 @@ spec:
                                       - TLSv1_3
                                     type: string
                                   minimum:
-                                    description: Minimum supported TLS version
+                                    description: Minimum supported TLS version.
                                     enum:
                                       - TLSv1_0
                                       - TLSv1_1
@@ -371,6 +405,15 @@ spec:
                                 required:
                                   - name
                                 type: object
+                              xfcc:
+                                description: 'XFCC defines the handling of X-Forwarded-Client-Cert header. Meaning of the possible values: _Sanitize_: Do not send the XFCC header to the next hop. This is the default value. _ForwardOnly_: When the client connection is mTLS (Mutual TLS), forward the XFCC header in the request. _AppendAndForward_: When the client connection is mTLS, append the client certificate information to the request’s XFCC header and forward it. _SanitizeAndSet_: When the client connection is mTLS, reset the XFCC header with the client certificate information and send it to the next hop. _AlwaysForwardOnly_: Always forward the XFCC header in the request, regardless of whether the client connection is mTLS. Note: When forwarding the XFCC header in the request you might have to adjust the header length restrictions (See sidecargateway.spec.applications.downstream.restrictions.http)'
+                                enum:
+                                  - Sanitize
+                                  - ForwardOnly
+                                  - AppendAndForward
+                                  - SanitizeAndSet
+                                  - AlwaysForwardOnly
+                                type: string
                             type: object
                         type: object
                       envoyHTTPFilterRefs:
@@ -439,12 +482,41 @@ spec:
                             properties:
                               auto:
                                 description: Auto specifies to use the protocol negotiated via TLS ALPN (if supported) or HTTP/1.1 as fallback.
+                                properties:
+                                  http2:
+                                    description: HTTP2 specifies the settings for when HTTP/2 is inferred.
+                                    properties:
+                                      allowConnect:
+                                        default: false
+                                        description: Allows proxying Websocket and other upgrades over H2 connect.
+                                        type: boolean
+                                    type: object
                                 type: object
                               http1:
                                 description: HTTP1 specifies to use HTTP/1.1.
                                 type: object
                               http2:
                                 description: HTTP2 specifies to use HTTP/2.
+                                properties:
+                                  allowConnect:
+                                    default: false
+                                    description: Allows proxying Websocket and other upgrades over H2 connect.
+                                    type: boolean
+                                type: object
+                            type: object
+                          timeouts:
+                            description: Timeouts defines the timeout settings.
+                            properties:
+                              http:
+                                description: HTTP defines the settings for HTTP timeouts.
+                                properties:
+                                  idle:
+                                    description: Timeout defines the settings for http timeouts. If this setting is not specified, the value of applications[].downstream.timeouts.http.idle is inherited. A value of 0 will completely disable the timeout.
+                                    type: string
+                                  maxDuration:
+                                    default: 15s
+                                    description: 'MaxDuration defines the total duration for a HTTP request/response stream. Default: 15s'
+                                    type: string
                                 type: object
                             type: object
                           tls:
@@ -464,7 +536,7 @@ spec:
                                 description: Protocol defines the supported TLS protocol versions.
                                 properties:
                                   maximum:
-                                    description: Maximum supported TLS version
+                                    description: Maximum supported TLS version.
                                     enum:
                                       - TLSv1_0
                                       - TLSv1_1
@@ -472,7 +544,7 @@ spec:
                                       - TLSv1_3
                                     type: string
                                   minimum:
-                                    description: Minimum supported TLS version
+                                    description: Minimum supported TLS version.
                                     enum:
                                       - TLSv1_0
                                       - TLSv1_1

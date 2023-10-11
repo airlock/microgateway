@@ -1,0 +1,17 @@
+{{- if .Values.rbac.createSCCRole -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: cni-plugin-installer
+    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
+  name: {{ include "airlock-microgateway-cni.fullname" . }}-privileged
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "airlock-microgateway-cni.fullname" . }}-privileged
+subjects:
+- kind: ServiceAccount
+  name: {{ include "airlock-microgateway-cni.serviceAccountName" . }}
+{{- end -}}

@@ -56,6 +56,21 @@ Wait for the cert-manager to be up and running
 kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/instance=cert-manager
 ```
 
+## Deploy Airlock Microgateway CNI
+Install the CNI DaemonSet and required RBAC manifests with kustomize:
+
+```
+kubectl kustomize --enable-helm https://github.com/airlock/microgateway/deploy/cni/<environment> | kubectl apply -f -
+```
+
+Consult our [documentation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html) to verify the installation or to see other installation methods. 
+
+### OpenShift
+
+- Use the preset environment `openshift` when installing the CNI plugin
+- It is recommended to install the CNI plugin into the namespace `openshift-operators` instead of `kube-system`
+- **Important**: All pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/latest/#data/1658483168033.html) for details).
+
 ## Deploy Airlock Microgateway
 Install the Custom Resource Definitions, the CRD RBAC manifests and the deployment of the Airlock Microgateway Operator.
 ```
@@ -66,7 +81,7 @@ kubectl apply -k https://github.com/airlock/microgateway/deploy/deployment/
 
 Wait for the airlock-microgateway-operator deployment to be ready
 ```
-kubectl -n airlock-microgateway-system wait --for=condition=Available deployments.app/airlock-microgateway-operator-controller-manager --timeout=3m
+kubectl -n airlock-microgateway-system wait --for=condition=Available deployments --all --timeout=3m
 ```
 
 > The minimum supported Kustomize version is [v4.5.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.3).

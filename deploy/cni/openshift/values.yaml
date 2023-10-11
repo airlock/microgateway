@@ -1,0 +1,15 @@
+# values preset for OpenShift support
+
+rbac:
+  createSCCRole: true
+
+privileged: true
+
+multusNetworkAttachmentDefinition:
+  create: true
+  namespace: default
+
+config:
+  installMode: "standalone"
+  cniNetDir: "/etc/cni/multus/net.d"
+  cniBinDir: "/opt/multus/bin"

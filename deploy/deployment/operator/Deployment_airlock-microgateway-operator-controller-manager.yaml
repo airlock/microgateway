@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.1.0
+    control-plane: airlock-microgateway-operator
+  name: airlock-microgateway-operator-controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/name: airlock-microgateway-operator
+      control-plane: airlock-microgateway-operator
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/name: airlock-microgateway-operator
+        app.kubernetes.io/version: 4.1.0
+        control-plane: airlock-microgateway-operator
+    spec:
+      containers:
+        - args:
+            - --config=operator_config.yaml
+          env:
+            - name: ENGINE_IMAGE
+              value: docker.io/ergon/airlock-microgateway-engine:4.1.0@sha256:731b73413e0a40cf05ff4a23698233f3195c2bbbeed3c6006cd37c1dc5e74c2a
+            - name: OPERATOR_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: docker.io/ergon/airlock-microgateway-operator:4.1.0@sha256:6398d3223458d698c2e5847e9ec3705a513bf1ca6ea94396c6ba0b70a775f68b
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+          name: manager
+          ports:
+            - containerPort: 9443
+              name: webhook-server
+              protocol: TCP
+            - containerPort: 13377
+              name: xds-server
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8081
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /tmp/k8s-webhook-server/serving-certs
+              name: cert
+              readOnly: true
+            - mountPath: /opt/airlock/license/
+              name: airlock-microgateway-license
+              readOnly: true
+            - mountPath: /operator_config.yaml
+              name: operator-config
+              subPath: operator_config.yaml
+            - mountPath: /sidecar/engine_container_template.yaml
+              name: operator-config
+              subPath: engine_container_template.yaml
+            - mountPath: /engine_bootstrap_config_template.yaml
+              name: operator-config
+              subPath: engine_bootstrap_config_template.yaml
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: airlock-microgateway-operator-controller-manager
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: webhook-server-cert
+        - name: airlock-microgateway-license
+          secret:
+            defaultMode: 292
+            optional: true
+            secretName: airlock-microgateway-license
+        - configMap:
+            name: airlock-microgateway-operator-operator-config
+          name: operator-config

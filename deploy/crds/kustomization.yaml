@@ -8,6 +8,7 @@ resources:
   - CustomResourceDefinition_envoyhttpfilter.yaml
   - CustomResourceDefinition_headerrewrites.yaml
   - CustomResourceDefinition_limits.yaml
+  - CustomResourceDefinition_openapi.yaml
   - CustomResourceDefinition_parser.yaml
   - CustomResourceDefinition_sidecargateway.yaml
   - CustomResourceDefinition_telemetry.yaml

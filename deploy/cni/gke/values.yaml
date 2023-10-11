@@ -1,0 +1,4 @@
+# values preset for GKE support
+
+config:
+  cniBinDir: "/home/kubernetes/bin"

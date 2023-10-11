@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: airlock-microgateway-system
+resources:
+  - Certificate_airlock-microgateway-operator-serving-cert.yaml
+  - ClusterRoleBinding_airlock-microgateway-operator-manager-ns.yaml
+  - ClusterRole_airlock-microgateway-operator-manager-ns.yaml
+  - ConfigMap_airlock-microgateway-license-guard-redis-config.yaml
+  - ConfigMap_airlock-microgateway-operator-operator-config.yaml
+  - Deployment_airlock-microgateway-license-guard-redis.yaml
+  - Deployment_airlock-microgateway-license-guard.yaml
+  - Deployment_airlock-microgateway-operator-controller-manager.yaml
+  - Issuer_airlock-microgateway-operator-selfsigned-issuer.yaml
+  - MutatingWebhookConfiguration_airlock-microgateway-operator-webhook-ns.yaml
+  - Namespace_airlock-microgateway-system.yaml
+  - RoleBinding_airlock-microgateway-operator-leader-election.yaml
+  - Role_airlock-microgateway-operator-leader-election.yaml
+  - ServiceAccount_airlock-microgateway-operator-controller-manager.yaml
+  - Service_airlock-microgateway-license-guard-redis.yaml
+  - Service_airlock-microgateway-license-guard.yaml
+  - Service_airlock-microgateway-operator-metrics.yaml
+  - Service_airlock-microgateway-operator-webhook.yaml
+  - Service_airlock-microgateway-operator-xds.yaml
+  - ValidatingWebhookConfiguration_airlock-microgateway-operator-webhook-ns.yaml
+replacements:
+  - path: replacement_operator_namespace.yaml

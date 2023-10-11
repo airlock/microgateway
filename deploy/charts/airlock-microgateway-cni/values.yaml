@@ -1,0 +1,66 @@
+# Default values for airlock-microgateway-cni
+
+# nameOverride (optional) allows overriding the name to use instead of airlock-microgateway-cni
+nameOverride: ""
+# fullnameOverride (optional) allows overriding the name to use as full name of resources
+fullnameOverride: ""
+# image specifies the Airlock Microgateway CNI image
+image:
+  # repository specifies the docker image repository from which to pull
+  repository: "docker.io/ergon/airlock-microgateway-cni"
+  # tag specifies the image tag to pull
+  tag: "4.1.0"
+  # digest (optional) specifies the sha256 image digest (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a") to pull.
+  # Overrides tag when specified.
+  digest: "sha256:91660189e4885f07810950575ff41a3ff6b8a8257cf26dda48d4049e2e5f9d98"
+  # pullPolicy specifies the image pull policy for the CNI image
+  pullPolicy: IfNotPresent
+# resources overrides the DaemonSet's resource limits
+resources:
+  requests:
+    cpu: 10m
+    memory: 100Mi
+# affinity allows setting a custom affinity for the DaemonSet to only deploy the CNI plugin on specific nodes
+affinity: {}
+# rbac configures the generation of RBAC roles and role bindings
+rbac:
+  # create specifies whether to create RBAC resources which are required for the CNI plugin to function
+  create: true
+  # createSCCRole (OpenShift) specifies whether to create RBAC resources which allow the CNI installer to use the "privileged" security context constraint
+  createSCCRole: false
+# privileged enables running the DaemonSet in privileged mode for environments which require it for writing files to the host (e.g. OpenShift)
+privileged: false
+# serviceAccount configures the generation of the service account
+serviceAccount:
+  # create specifies whether a service account should be created
+  create: true
+  # name (optional) specifies the name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+# multusNetworkAttachmentDefinition configures the generation of a NetworkAttachmentDefinition for use with Multus CNI
+multusNetworkAttachmentDefinition:
+  # create enables creation of a NetworkAttachmentDefinition CR for applying the CNI plugin to pods
+  create: false
+  # namespace specifies the namespace in which the NetworkAttachmentDefinition is deployed.
+  # Note: If namespace is set to a custom value, referencing the created NetworkAttachmentDefinition from other namespaces
+  # may not work if Multus namespace isolation is enabled. https://github.com/k8snetworkplumbingwg/multus-cni/blob/v4.0.2/docs/configuration.md#namespace-isolation
+  namespace: default
+# config specifies the CNI installer configuration
+config:
+  # installMode specifies whether to install the CNI plugin as a "chained" plugin (default, required with most interface CNI providers)
+  # or as a "standalone" plugin (required for use with Multus CNI, e.g. on OpenShift)
+  installMode: "chained"
+  # logLevel configures the log level for the CNI installer and plugin
+  logLevel: info
+  # cniNetDir specifies the directory where the CNI config files reside on the host
+  cniNetDir: "/etc/cni/net.d"
+  # cniBinDir specifies the directory where the CNI plugin binaries reside on the host
+  cniBinDir: "/opt/cni/bin"
+  # excludeNamespaces specifies the namespaces for which this CNI plugin should not apply any modifications
+  excludeNamespaces:
+    - kube-system
+    - airlock-microgateway-system
+tests:
+  # enabled specifies whether additional resources required for running `helm test` (e.g. Roles and ServiceAccounts) should be created.
+  # If set to false, `helm test` will not run any tests.
+  enabled: false

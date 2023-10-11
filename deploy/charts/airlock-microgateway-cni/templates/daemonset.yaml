@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/component: cni-plugin-installer
+    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
+  name: {{ include "airlock-microgateway-cni.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: cni-plugin-installer
+      {{- include "airlock-microgateway-cni.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: cni-plugin-installer
+        {{- include "airlock-microgateway-cni.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - args:
+            - --log-level
+            - "{{ .Values.config.logLevel }}"
+          env:
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  key: plugin-conf.json
+                  name: {{ include "airlock-microgateway-cni.fullname" . }}
+            - name: CNI_BIN_DIR
+              value: /host/opt/cni/bin
+            - name: CNI_NET_DIR
+              value: /host/etc/cni/net.d
+            - name: KUBECONFIG_FILE_NAME
+              value: "{{ include "airlock-microgateway-cni.fullname" . }}-kubeconfig"
+            - name: INSTALL_MODE
+              value: {{ .Values.config.installMode }}
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: {{ include "airlock-microgateway-cni.image" .Values.image }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: cni-installer
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: {{ .Values.privileged }}
+            capabilities:
+              drop:
+                - ALL
+            privileged: {{ .Values.privileged }}
+            readOnlyRootFilesystem: true
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /host/opt/cni/bin
+              name: cni-bin-dir
+            - mountPath: /host/etc/cni/net.d
+              name: cni-net-dir
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      serviceAccountName: {{ include "airlock-microgateway-cni.serviceAccountName" . }}
+      terminationGracePeriodSeconds: 5
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
+      volumes:
+        - hostPath:
+            path: "{{ .Values.config.cniBinDir }}"
+            type: Directory
+          name: cni-bin-dir
+        - hostPath:
+            path: "{{ .Values.config.cniNetDir }}"
+            type: Directory
+          name: cni-net-dir

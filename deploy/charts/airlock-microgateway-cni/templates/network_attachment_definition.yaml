@@ -1,0 +1,10 @@
+{{- if .Values.multusNetworkAttachmentDefinition.create -}}
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: "{{ include "airlock-microgateway-cni.fullname" . }}"
+  namespace: {{ .Values.multusNetworkAttachmentDefinition.namespace }}
+  labels:
+    app.kubernetes.io/component: cni-plugin
+    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
+{{- end -}}

@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.1.0
+    app.kubernetes.io/version: 4.1.1
     control-plane: airlock-microgateway-operator
   name: airlock-microgateway-operator-controller-manager
 spec:
@@ -21,7 +21,7 @@ spec:
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: airlock-microgateway-operator
-        app.kubernetes.io/version: 4.1.0
+        app.kubernetes.io/version: 4.1.1
         control-plane: airlock-microgateway-operator
     spec:
       containers:
@@ -29,7 +29,7 @@ spec:
             - --config=operator_config.yaml
           env:
             - name: ENGINE_IMAGE
-              value: docker.io/ergon/airlock-microgateway-engine:4.1.0@sha256:731b73413e0a40cf05ff4a23698233f3195c2bbbeed3c6006cd37c1dc5e74c2a
+              value: docker.io/ergon/airlock-microgateway-engine:4.1.1@sha256:3a2357f10b70c0568551eb036f3193080e9f612abf04d7d5f312d89bc08c38d2
             - name: OPERATOR_NAME
               valueFrom:
                 fieldRef:
@@ -38,7 +38,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: docker.io/ergon/airlock-microgateway-operator:4.1.0@sha256:6398d3223458d698c2e5847e9ec3705a513bf1ca6ea94396c6ba0b70a775f68b
+          image: docker.io/ergon/airlock-microgateway-operator:4.1.1@sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

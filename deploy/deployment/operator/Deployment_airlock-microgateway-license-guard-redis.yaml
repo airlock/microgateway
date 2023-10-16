@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: cache
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.1.0
+    app.kubernetes.io/version: 4.1.1
   name: airlock-microgateway-license-guard-redis
 spec:
   replicas: 1
@@ -17,7 +17,7 @@ spec:
       labels:
         app.kubernetes.io/component: cache
         app.kubernetes.io/name: airlock-microgateway-license-guard
-        app.kubernetes.io/version: 4.1.0
+        app.kubernetes.io/version: 4.1.1
     spec:
       containers:
         - args:

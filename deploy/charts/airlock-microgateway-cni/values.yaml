@@ -9,10 +9,10 @@ image:
   # repository specifies the docker image repository from which to pull
   repository: "docker.io/ergon/airlock-microgateway-cni"
   # tag specifies the image tag to pull
-  tag: "4.1.1"
+  tag: "4.1.2"
   # digest (optional) specifies the sha256 image digest (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a") to pull.
   # Overrides tag when specified.
-  digest: "sha256:2bd4ca716fe2cd81ba1d9f23dae2804a723ae3204a4ccf1eb7249948243fa022"
+  digest: "sha256:4e1479613f02292ac838837778165eead1fe7ed69e3a78bc8e08007994a0d318"
   # pullPolicy specifies the image pull policy for the CNI image
   pullPolicy: IfNotPresent
 # resources overrides the DaemonSet's resource limits
@@ -47,8 +47,9 @@ multusNetworkAttachmentDefinition:
   namespace: default
 # config specifies the CNI installer configuration
 config:
-  # installMode specifies whether to install the CNI plugin as a "chained" plugin (default, required with most interface CNI providers)
-  # or as a "standalone" plugin (required for use with Multus CNI, e.g. on OpenShift)
+  # installMode specifies whether to install the CNI plugin as a "chained" plugin (default, required with most interface CNI providers),
+  # as a "standalone" plugin (required for use with Multus CNI, e.g. on OpenShift)
+  # or in "manual" mode, where no CNI network configuration is written.
   installMode: "chained"
   # logLevel configures the log level for the CNI installer and plugin
   logLevel: info

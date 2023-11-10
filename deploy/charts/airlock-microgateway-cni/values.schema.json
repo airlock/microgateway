@@ -96,7 +96,8 @@
           "type": "string",
           "enum": [
             "chained",
-            "standalone"
+            "standalone",
+            "manual"
           ]
         },
         "logLevel": {

@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: cache
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.1.1
+    app.kubernetes.io/version: 4.1.2
   name: airlock-microgateway-license-guard-redis
 spec:
   replicas: 1
@@ -17,12 +17,12 @@ spec:
       labels:
         app.kubernetes.io/component: cache
         app.kubernetes.io/name: airlock-microgateway-license-guard
-        app.kubernetes.io/version: 4.1.1
+        app.kubernetes.io/version: 4.1.2
     spec:
       containers:
         - args:
             - /redis-config-dir/redis.conf
-          image: cgr.dev/chainguard/redis@sha256:31e5ad71a315a1d6b75a93dfabcbfbe2cfcd6fe295cb605bad7441c17a2c48e8
+          image: cgr.dev/chainguard/redis@sha256:bcc9e78c13cc356f113c297dffc28c72e72348ded0c14485d83ae705e90d4952
           livenessProbe:
             exec:
               command:

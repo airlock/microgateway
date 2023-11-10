@@ -12,5 +12,5 @@ kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.1.1
+    app.kubernetes.io/version: 4.1.2
   name: airlock-microgateway-license-guard-redis-config

@@ -43,10 +43,19 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 The instructions below provide a quick start guide. Detailed information are provided in the **[manual](https://docs.airlock.com/microgateway/latest/)**.
 
 ## Prerequisites
+* [Airlock Microgateway License](#obtain-airlock-microgateway-license)
+* [cert-manager](https://cert-manager.io/)
 
+In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
 For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
+### Obtain Airlock Microgateway License
+1. Either request a community or premium license
+   * Community license: [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
+   * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
+2. Check your inbox and save the license file microgateway-license.txt locally.
 
-### Deploy the cert-manager
+> See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
+### Deploy cert-manager
 ```
 kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/
 ```
@@ -86,6 +95,12 @@ kubectl -n airlock-microgateway-system wait --for=condition=Available deployment
 
 > The minimum supported Kustomize version is [v4.5.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.3).
 
+## Deploy Airlock Microgateway License
+Create the required secret from the license file that you created in the prerequisite step.
+```
+kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license 
+--from-file=microgateway-license.txt=<my-local-microgateway-license.txt>
+```
 
 ## Support
 

@@ -50,6 +50,10 @@ data:
               '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               stat_prefix: http
               codec_type: AUTO
+              http2_protocol_options:
+                initial_connection_window_size: 1048576
+                initial_stream_window_size: 65536
+                max_concurrent_streams: 100
               route_config:
                 name: probe
                 virtual_hosts:
@@ -82,6 +86,10 @@ data:
                   '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                   stat_prefix: http
                   codec_type: AUTO
+                  http2_protocol_options:
+                    initial_connection_window_size: 1048576
+                    initial_stream_window_size: 65536
+                    max_concurrent_streams: 100
                   route_config:
                     name: metrics
                     virtual_hosts:
@@ -267,6 +275,28 @@ data:
       requests:
         cpu: "10m"
         memory: "40Mi"
+  network_validator_container_template.yaml: |
+    name: "$(NETWORK_VALIDATOR_NAME)"
+    image: "$(NETWORK_VALIDATOR_IMAGE)"
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh", "-c"]
+    args:
+    - |-
+      echo 'pong' | nc -v -l localhost -p 13378 &
+      if ! r=$(echo 'ping' | nc localhost 19003) || [ $r != pong ]; then
+        echo -en 'Traffic redirection to Airlock Microgateway Engine is not working.\nRestart the pod after ensuring that hostNetwork is disabled and a compatible Airlock Microgateway CNI version is installed on the node.\nCertain environments may also require additional configuration (see docs.airlock.com for more information).' > /dev/termination-log
+        exit 1
+      fi
+    securityContext:
+      runAsUser: $(SECURITYCONTEXT_UID)
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop: ["ALL"]
   operator_config.yaml: |
     apiVersion: config.airlock.com/v1alpha1
     kind: OperatorConfig
@@ -279,6 +309,7 @@ data:
     deployment:
       sidecar:
         engineContainerTemplate: "/sidecar/engine_container_template.yaml"
+        networkValidatorContainerTemplate: "/sidecar/network_validator_container_template.yaml"
     engine:
       bootstrapConfigTemplate: "/engine_bootstrap_config_template.yaml"
     log:
@@ -290,5 +321,5 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.1.1
+    app.kubernetes.io/version: 4.1.2
   name: airlock-microgateway-operator-operator-config

@@ -10,25 +10,10 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - nodes
-      - namespaces
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
       - pods
     verbs:
       - get
       - list
       - watch
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-    verbs:
       - patch
 {{- end -}}

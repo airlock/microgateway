@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.1.1
+    app.kubernetes.io/version: 4.1.2
     control-plane: airlock-microgateway-operator
   name: airlock-microgateway-operator-controller-manager
 spec:
@@ -21,7 +21,7 @@ spec:
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: airlock-microgateway-operator
-        app.kubernetes.io/version: 4.1.1
+        app.kubernetes.io/version: 4.1.2
         control-plane: airlock-microgateway-operator
     spec:
       containers:
@@ -29,7 +29,9 @@ spec:
             - --config=operator_config.yaml
           env:
             - name: ENGINE_IMAGE
-              value: docker.io/ergon/airlock-microgateway-engine:4.1.1@sha256:3a2357f10b70c0568551eb036f3193080e9f612abf04d7d5f312d89bc08c38d2
+              value: docker.io/ergon/airlock-microgateway-engine:4.1.2@sha256:fe32efa7801d3b3efa2a42626f0965708a3b4ef3f0577292163848a37c22232b
+            - name: NETWORK_VALIDATOR_IMAGE
+              value: busybox:1.36.1-musl@sha256:f553b7484625f0c73bfa3888e013e70e99ec6ae1c424ee0e8a85052bd135a28a
             - name: OPERATOR_NAME
               valueFrom:
                 fieldRef:
@@ -38,7 +40,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: docker.io/ergon/airlock-microgateway-operator:4.1.1@sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63
+          image: docker.io/ergon/airlock-microgateway-operator:4.1.2@sha256:e4c78c5bd144016bf2fab8d1de6394f4e998abdff535ad97406564dfd724d1be
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -98,6 +100,9 @@ spec:
             - mountPath: /sidecar/engine_container_template.yaml
               name: operator-config
               subPath: engine_container_template.yaml
+            - mountPath: /sidecar/network_validator_container_template.yaml
+              name: operator-config
+              subPath: network_validator_container_template.yaml
             - mountPath: /engine_bootstrap_config_template.yaml
               name: operator-config
               subPath: engine_bootstrap_config_template.yaml

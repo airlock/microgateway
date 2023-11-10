@@ -71,6 +71,7 @@ spec:
               name: cni-net-dir
       nodeSelector:
         kubernetes.io/os: linux
+      hostNetwork: true
       priorityClassName: system-node-critical
       restartPolicy: Always
       securityContext:

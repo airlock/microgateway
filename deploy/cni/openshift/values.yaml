@@ -12,4 +12,4 @@ multusNetworkAttachmentDefinition:
 config:
   installMode: "standalone"
   cniNetDir: "/etc/cni/multus/net.d"
-  cniBinDir: "/opt/multus/bin"
+  cniBinDir: "/var/lib/cni/bin"

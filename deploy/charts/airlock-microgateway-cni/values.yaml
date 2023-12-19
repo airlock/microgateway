@@ -9,10 +9,10 @@ image:
   # repository specifies the docker image repository from which to pull
   repository: "docker.io/ergon/airlock-microgateway-cni"
   # tag specifies the image tag to pull
-  tag: "4.1.2"
+  tag: "4.1.3"
   # digest (optional) specifies the sha256 image digest (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a") to pull.
   # Overrides tag when specified.
-  digest: "sha256:4e1479613f02292ac838837778165eead1fe7ed69e3a78bc8e08007994a0d318"
+  digest: "sha256:d70ad209d3908d22f3c35dcc3e9913900946709339e3241b6e1f90bb84445924"
   # pullPolicy specifies the image pull policy for the CNI image
   pullPolicy: IfNotPresent
 # resources overrides the DaemonSet's resource limits

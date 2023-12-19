@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.1.2
+    app.kubernetes.io/version: 4.1.3
   name: airlock-microgateway-license-guard
 spec:
   replicas: 2
@@ -19,7 +19,7 @@ spec:
       labels:
         app.kubernetes.io/component: server
         app.kubernetes.io/name: airlock-microgateway-license-guard
-        app.kubernetes.io/version: 4.1.2
+        app.kubernetes.io/version: 4.1.3
     spec:
       affinity:
         podAntiAffinity:
@@ -45,7 +45,7 @@ spec:
               value: "9125"
             - name: GOSTATS_FLUSH_INTERVAL_SECONDS
               value: "5"
-          image: docker.io/ergon/airlock-microgateway-license-guard:4.1.2@sha256:f2e10ac70b316953b78ebe3f63eb4342cb26667f5911cba619736811e082de6f
+          image: docker.io/ergon/airlock-microgateway-license-guard:4.1.3@sha256:a311674992c7d06301255dc1579f5006ee32c8d42347cc2c44719a17dda04432
           livenessProbe:
             httpGet:
               path: /healthcheck

@@ -1,0 +1,54 @@
+suite: helm.cni.TestCommonLabelsAndAnnotations
+templates:
+  - clusterrole.yaml
+  - clusterrolebinding.yaml
+  - configmap.yaml
+  - daemonset.yaml
+  - network-attachment-definition.yaml
+  - scc-role.yaml
+  - scc-rolebinding.yaml
+  - serviceaccount.yaml
+set:
+  rbac.createSCCRole: true
+  multusNetworkAttachmentDefinition.create: true
+  tests.enabled: true
+tests:
+  - it: should set recommended labels and selector labels
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    chart:
+      version: 3.21.1
+      appVersion: 4.3.12
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            helm.sh/chart: airlock-microgateway-cni-3.21.1
+            app.kubernetes.io/version: "4.3.12"
+            app.kubernetes.io/name: somename
+            app.kubernetes.io/instance: mycniplugin
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/component: cni-plugin-installer
+
+  - it: should set common labels
+    set:
+      commonLabels:
+        commonLabel: foo
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            commonLabel: foo
+
+  - it: should set common annotations
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            commonAnnotation: bar

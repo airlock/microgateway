@@ -1,0 +1,79 @@
+suite: helm.license-guard.TestService
+templates:
+  - license-guard/service.yaml
+tests:
+  - it: should set namespace and leave name unchanged
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: airlock-microgateway-license-guard
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should not override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: operator-test-release
+    asserts:
+      - equal:
+          path: metadata.name
+          value: airlock-microgateway-license-guard
+
+  - it: should set recommended labels and selector labels
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: airlock-microgateway-license-guard
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: server
+
+  - it: should set specific and common labels
+    set:
+      commonLabels:
+        commonLabel: foo
+      licenseGuard.serviceLabels:
+        serviceLabel: bar
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            commonLabel: foo
+            serviceLabel: bar
+
+  - it: should set specific and common annotations
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+      licenseGuard.serviceAnnotations:
+        serviceAnnotation: foo
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            commonAnnotation: bar
+            serviceAnnotation: foo
+
+  - it: should merge annotations giving precedence to service annotations over common annotations
+    set:
+      commonAnnotations:
+        myAnnotation: common2
+      licenseGuard.serviceAnnotations:
+        serviceAnnotation: foo
+        myAnnotation: service
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            serviceAnnotation: foo
+            myAnnotation: service
+

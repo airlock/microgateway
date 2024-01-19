@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: airlock-microgateway-operator
+    app.kubernetes.io/version: 4.2.0-alpha1
+  name: airlock-microgateway-operator-sidecargateway-editor
+rules:
+- apiGroups:
+  - microgateway.airlock.com
+  resources:
+  - sidecargateways
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - microgateway.airlock.com
+  resources:
+  - sidecargateways/status
+  verbs:
+  - get

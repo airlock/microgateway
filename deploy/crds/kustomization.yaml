@@ -1,14 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - CustomResourceDefinition_contentsecurity.yaml
-  - CustomResourceDefinition_denyrules.yaml
-  - CustomResourceDefinition_envoycluster.yaml
-  - CustomResourceDefinition_envoyconfiguration.yaml
-  - CustomResourceDefinition_envoyhttpfilter.yaml
-  - CustomResourceDefinition_headerrewrites.yaml
-  - CustomResourceDefinition_limits.yaml
-  - CustomResourceDefinition_openapi.yaml
-  - CustomResourceDefinition_parser.yaml
-  - CustomResourceDefinition_sidecargateway.yaml
-  - CustomResourceDefinition_telemetry.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_contentsecurities.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_denyrules.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_envoyclusters.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_envoyconfigurations.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_envoyhttpfilters.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_headerrewrites.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_limits.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_openapis.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_parsers.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_sidecargateways.microgateway.airlock.com.yaml
+- apiextensions.k8s.io_v1_customresourcedefinition_telemetries.microgateway.airlock.com.yaml

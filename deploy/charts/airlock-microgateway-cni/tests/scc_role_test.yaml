@@ -1,0 +1,46 @@
+suite: helm.cni.TestSCCRole
+templates:
+  - scc-role.yaml
+tests:
+  - it: should not create SCC Role by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create SCC Role if enabled and set name and namespace
+    set:
+      rbac.createSCCRole: true
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Role
+      - equal:
+          path: metadata.name
+          value: mycniplugin-airlock-microgateway-cni-privileged
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should override fullname if provided
+    set:
+      rbac.createSCCRole: true
+      nameOverride: mycnipluginname
+      fullnameOverride: myfancycnifullname
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myfancycnifullname-privileged
+
+  - it: should set rules
+    set:
+      rbac.createSCCRole: true
+    asserts:
+      - isNotNullOrEmpty:
+          path: rules

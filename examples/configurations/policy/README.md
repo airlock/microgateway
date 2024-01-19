@@ -5,12 +5,9 @@ Basically, the mentioned tools do the same but in detail, they differ in their p
 
 ## Examples
 ### Prerequisites
-First install the Kyverno operator:
-```
-kubectl apply --server-side=true -k https://github.com/airlock/microgateway/examples/utilities/kyverno/
-```
+1. Install the Kyverno operator as described in [utilities/kyverno](/examples/utilities/kyverno/README.md).
 
-Apply the Kyverno policy:
+2. Apply the Kyverno policy:
 ```
 kubectl apply -k https://github.com/airlock/microgateway/examples/configurations/policy
 ```

@@ -5,8 +5,8 @@ metadata:
   name: "{{ include "airlock-microgateway-cni.fullname" . }}-test-install"
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "airlock-microgateway-cni.labelsWithoutComponent" . | nindent 4 }}
     app.kubernetes.io/component: test-install
-    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
   annotations:
     helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation

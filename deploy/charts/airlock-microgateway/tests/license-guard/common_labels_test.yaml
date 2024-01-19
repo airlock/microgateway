@@ -1,0 +1,18 @@
+suite: helm.license-guard.TestCommonLabels
+templates:
+  - license-guard/*
+set:
+  tests.enabled: true
+  licenseGuard.serviceMonitor.create: true
+tests:
+  - it: should set recommended labels
+    release:
+      name: myoperator
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            app.kubernetes.io/component: server
+            app.kubernetes.io/name: somename-license-guard

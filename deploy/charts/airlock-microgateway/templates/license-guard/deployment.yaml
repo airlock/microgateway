@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "airlock-microgateway.license-guard.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.license-guard.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.licenseGuard.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "airlock-microgateway.license-guard.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: ratelimit
+        {{- with mustMerge .Values.licenseGuard.podAnnotations .Values.commonAnnotations }}
+          {{- toYaml . | nindent 8 }}
+         {{- end }}
+      labels:
+        {{- include "airlock-microgateway.license-guard.labels" . | nindent 8 }}
+        {{- with.Values.licenseGuard.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - command:
+        - /license-guard
+        env:
+        - name: LOG_LEVEL
+          value: info
+        - name: LOG_FORMAT
+          value: json
+        - name: USE_STATSD
+          value: "true"
+        - name: STATSD_PORT
+          value: "9125"
+        - name: GOSTATS_FLUSH_INTERVAL_SECONDS
+          value: "5"
+        image: {{ include "airlock-microgateway.image" .Values.licenseGuard.image }}
+        imagePullPolicy: {{ .Values.licenseGuard.image.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 5
+        name: ratelimit
+        ports:
+        - containerPort: 18295
+          protocol: TCP
+        - containerPort: 9102
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+        {{- with .Values.licenseGuard.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        securityContext:
+          {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 10 }}
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: airlock-microgateway-license-guard-cert
+          readOnly: true
+      securityContext:
+        runAsNonRoot: true
+      terminationGracePeriodSeconds: 10
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.licenseGuard.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.licenseGuard.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+        {{- include "airlock-microgateway.license-guard.affinity" . | nindent 8 }}
+      volumes:
+      - name: airlock-microgateway-license-guard-cert
+        secret:
+          secretName: airlock-microgateway-license-guard-cert

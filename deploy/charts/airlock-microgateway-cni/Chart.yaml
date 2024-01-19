@@ -1,10 +1,10 @@
 apiVersion: v2
-name: airlock-microgateway-cni
+name: airlock-microgateway-cni-helm
 description: A Helm chart for deploying the Airlock Microgateway CNI plugin
 type: application
 home: https://www.airlock.com/microgateway
-version: "0.2.0"
-appVersion: "4.1.4"
+version: "4.2.0-alpha1"
+appVersion: "4.2.0-alpha1"
 annotations:
   charts.openshift.io/name: Airlock Microgateway CNI
 sources:

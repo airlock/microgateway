@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: airlock-microgateway-license-guard-redis
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.license-guard-redis.labels" . | nindent 4 }}
+    {{- with .Values.licenseGuardRedis.serviceLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with mustMerge .Values.licenseGuardRedis.serviceAnnotations .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ports:
+  - name: redis
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    {{- include "airlock-microgateway.license-guard-redis.selectorLabels" . | nindent 4 }}

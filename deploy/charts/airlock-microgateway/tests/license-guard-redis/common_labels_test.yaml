@@ -1,0 +1,17 @@
+suite: helm.license-guard-redis.TestCommonLabels
+templates:
+  - license-guard-redis/*
+set:
+  tests.enabled: true
+tests:
+  - it: should set recommended labels
+    release:
+      name: myoperator
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            app.kubernetes.io/component: cache
+            app.kubernetes.io/name: somename-license-guard

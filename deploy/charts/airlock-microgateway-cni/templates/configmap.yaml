@@ -1,11 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  labels:
-    app.kubernetes.io/component: cni-plugin-config
-    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
   name: {{ include "airlock-microgateway-cni.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 data:
   plugin-conf.json: |-
     {

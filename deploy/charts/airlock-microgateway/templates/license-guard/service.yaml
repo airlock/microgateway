@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: airlock-microgateway-license-guard
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.license-guard.labels" . | nindent 4 }}
+    {{- with .Values.licenseGuard.serviceLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with mustMerge .Values.licenseGuard.serviceAnnotations .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ports:
+  - appProtocol: grpc
+    name: ratelimit
+    port: 13378
+    protocol: TCP
+    targetPort: 18295
+  - appProtocol: http
+    name: metrics
+    port: 9102
+    protocol: TCP
+  selector:
+    {{- include "airlock-microgateway.license-guard.selectorLabels" . | nindent 4 }}
+  type: ClusterIP

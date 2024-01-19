@@ -1,0 +1,299 @@
+suite: helm.license-guard-redis.TestDeployment
+# as a workaround to a limitation in the helm unittest framework while working with 'gotpl'
+# the template is specified for each test job
+tests:
+  - it: should set name and namespace
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myoperator-airlock-microgateway-license-guard-redis
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: operator-test-release
+    asserts:
+      - equal:
+          path: metadata.name
+          value: operatorfullname-license-guard-redis
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set selector labels
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels
+          value:
+            app.kubernetes.io/name: airlock-microgateway-license-guard
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: cache
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set recommended labels on pod template spec
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    chart:
+      version: 1.2.3
+      appVersion: 4.5.6
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            helm.sh/chart: airlock-microgateway-1.2.3
+            app.kubernetes.io/version: "4.5.6"
+            app.kubernetes.io/name: airlock-microgateway-license-guard
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/component: cache
+            app.kubernetes.io/part-of: airlock-microgateway
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set specific and common labels on pod template spec
+    set:
+      commonLabels:
+        commonLabel: foo
+      licenseGuardRedis.podLabels:
+        podLabel: bar
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            commonLabel: foo
+            podLabel: bar
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set specific and common annotations on pod template spec
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+      licenseGuardRedis.podAnnotations:
+        podAnnotation: foo
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            commonAnnotation: bar
+            podAnnotation: foo
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should merge annotations giving precedence on pod template spec to pod annotations over common annotations
+    set:
+      commonAnnotations:
+        myAnnotation: common2
+      licenseGuardRedis.podAnnotations:
+        podAnnotation: foo
+        myAnnotation: pod
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            podAnnotation: foo
+            myAnnotation: pod
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should create checksum for configmap in annotations on pod spec
+    asserts:
+      - exists:
+          path: spec.template.metadata.annotations.checksum/config
+      - matchRegex:
+          path: spec.template.metadata.annotations.checksum/config
+          pattern: ^.{64}$
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should make sure image uses tag
+    set:
+      licenseGuardRedis.image.tag: 4.5.6
+      licenseGuardRedis.image.digest: ""
+      licenseGuardRedis.image.repository: cgr.dev/chainguard/redis
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: cgr.dev/chainguard/redis:4.5.6
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should make sure digest takes precedence over image tag
+    set:
+      licenseGuardRedis.image.tag: latest
+      licenseGuardRedis.image.digest: sha256:bcc9e78c13cc356f113c297dffc28c72e72348ded0c14485d83ae705e90d4952
+      licenseGuardRedis.image.repository: cgr.dev/chainguard/redis
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: cgr.dev/chainguard/redis@sha256:bcc9e78c13cc356f113c297dffc28c72e72348ded0c14485d83ae705e90d4952
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should make sure digest is also used if no tag is available
+    set:
+      licenseGuardRedis.image.tag: ""
+      licenseGuardRedis.image.digest: sha256:bcc9e78c13cc356f113c297dffc28c72e72348ded0c14485d83ae705e90d4952
+      licenseGuardRedis.image.repository: cgr.dev/chainguard/redis
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: cgr.dev/chainguard/redis@sha256:bcc9e78c13cc356f113c297dffc28c72e72348ded0c14485d83ae705e90d4952
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set imagePullPolicy for container in pod spec
+    set:
+      licenseGuardRedis.image.pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does not create requests and limits resources if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set specified requests and limits resources for memory and cpu in pod spec
+    set:
+      licenseGuardRedis.resources:
+       limits:
+         memory: 64Mi
+       requests:
+         cpu: 50m
+         memory: 64Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 64Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 64Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 50m
+      - isNotSubset:
+          path: spec.template.spec.containers[0].resources.limits
+          content:
+            cpu: 50m
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does not create imagePullSecrets if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should create imagePullSecrets if set
+    set:
+      imagePullSecrets:
+      - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does not create node selectors if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.nodeSelector
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should create node selectors if set
+    set:
+      licenseGuardRedis.nodeSelector:
+        label: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.label
+          value: foo
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does not create tolerations if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.tolerations
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should render tolerations if set
+    set:
+      licenseGuardRedis.tolerations:
+        - key: "example-key"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "example-key2"
+          operator: "Exists"
+          effect: "NoSchedule"
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].key
+          value: example-key
+      - equal:
+          path: spec.template.spec.tolerations[1].key
+          value: example-key2
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does not create affinity if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: does render affinity
+    set:
+      licenseGuardRedis.affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].topologyKey
+          value: kubernetes.io/hostname
+    templates:
+      - license-guard-redis/deployment.yaml
+
+  - it: should set name of referenced configMap in volumes
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+    - contains:
+        path: spec.template.spec.volumes
+        content:
+          configMap:
+            name: myoperator-airlock-microgateway-license-guard-redis-config
+        count: 1
+        any: true
+    templates:
+      - license-guard-redis/deployment.yaml

@@ -21,7 +21,7 @@ Modern application security is embedded in the development workflow and follows 
 * Access control to allow only authenticated users to access the protected services
 * API security features like JSON parsing or OpenAPI specification enforcement
 
-For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html)**.
+For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1675772882054.html)**.
 
 ## Labs
 We offer a growing number of [Airlock Microgateway labs](https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=github.com) that are designed to be easy-to-follow tutorials. All labs are fully guided and cover aspects of Airlock Microgateway from installation to configuration in a preconfigured cloud-based Kubernetes environment.
@@ -32,19 +32,21 @@ Learn the basics and expand existing knowledge without any administration effort
 
 ## Documentation and links
 
-Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
+Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/4.2-alpha1/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
 
-* [Getting Started](https://docs.airlock.com/microgateway/latest/#data/1660804708742.html)
-* [System Architecture](https://docs.airlock.com/microgateway/latest/#data/1660804709650.html)
-* [Installation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html)
+* [Getting Started](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1660804708742.html)
+* [System Architecture](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1660804709650.html)
+* [Installation](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1660804708637.html)
+* [Troubleshooting](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1659430054787.html)
 
 # Quick start guide
 
-The instructions below provide a quick start guide. Detailed information are provided in the **[manual](https://docs.airlock.com/microgateway/latest/)**.
+The instructions below provide a quick start guide. Detailed information are provided in the **[manual](https://docs.airlock.com/microgateway/4.2-alpha1/)**.
 
 ## Prerequisites
 * [Airlock Microgateway License](#obtain-airlock-microgateway-license)
 * [cert-manager](https://cert-manager.io/)
+* [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
 
 In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
 For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
@@ -54,53 +56,83 @@ For an easy start in non-production environments, you may deploy the same cert-m
    * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
 2. Check your inbox and save the license file microgateway-license.txt locally.
 
-> See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
+> See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1675772882054.html) to choose the right license type.
 ### Deploy cert-manager
-```
-kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/
-```
+```bash
+# Install cert-manager
+kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/?ref=4.2.0-alpha1
 
-Wait for the cert-manager to be up and running
-```
+# Wait for the cert-manager to be up and running
 kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/instance=cert-manager
 ```
 
 ## Deploy Airlock Microgateway CNI
-Install the CNI DaemonSet and required RBAC manifests with kustomize:
+1. Install the CNI Plugin with Helm.
+   > **Note**: Certain environments such as OpenShift or GKE require non-default configurations when installing the CNI plugin. For the most common setups, values files are provided in the [chart folder](/deploy/charts/airlock-microgateway-cni).
+   ```bash
+   # Standard setup
+   helm install airlock-microgateway-cni -n kube-system oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1'
+   kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni 
+   ```
+   ```bash
+   # GKE setup
+   helm install airlock-microgateway-cni -n kube-system oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1' -f https://raw.githubusercontent.com/airlock/microgateway/4.2.0-alpha1/deploy/charts/airlock-microgateway-cni/gke-values.yaml
+   kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni 
+   ```
+   ```bash
+   # OpenShift setup
+   helm install airlock-microgateway-cni -n openshift-operators oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1' -f https://raw.githubusercontent.com/airlock/microgateway/4.2.0-alpha1/deploy/charts/airlock-microgateway-cni/openshift-values.yaml
+   kubectl -n openshift-operators rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni 
+   ```
+   **Important:** On OpenShift, all pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1658483168033.html) for details).
 
-```
-kubectl kustomize --enable-helm https://github.com/airlock/microgateway/deploy/cni/<environment> | kubectl apply -f -
-```
+2. (Recommended) You can verify the correctness of the installation with `helm test`.
+   ```bash
+   # Standard and GKE setup
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1'
+   helm test airlock-microgateway-cni -n kube-system --logs
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm  --version '4.2.0-alpha1'
+   ```
+   ```bash
+   # OpenShift setup
+   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=true --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1'
+   helm test airlock-microgateway-cni -n openshift-operators --logs
+   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=false --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-cni-helm --version '4.2.0-alpha1'
+   ```
 
-Consult our [documentation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html) to verify the installation or to see other installation methods. 
+   Consult our [documentation](https://docs.airlock.com/microgateway/4.2-alpha1/#data/1699611533587.html) in case of any installation error.
+## Deploy Airlock Microgateway Operator
 
-### OpenShift
+> This guide assumes a microgateway-license.txt file is present in the working directory.
 
-- Use the preset environment `openshift` when installing the CNI plugin
-- It is recommended to install the CNI plugin into the namespace `openshift-operators` instead of `kube-system`
-- **Important**: All pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/latest/#data/1658483168033.html) for details).
+1. Install CRDs and Operator.
+   ```bash
+   # Install CRDs
+   kubectl apply -k https://github.com/airlock/microgateway/deploy/crds/?ref=4.2.0-alpha1
+   
+   # Create namespace
+   kubectl create namespace airlock-microgateway-system
+   
+   # Install License
+   kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
+   
+   # Install Operator
+   helm install airlock-microgateway -n airlock-microgateway-system oci://registry-1.docker.io/ergon/airlock-microgateway-operator-helm --version '4.2.0-alpha1' --wait
+   ```
 
-## Deploy Airlock Microgateway
-Install the Custom Resource Definitions, the CRD RBAC manifests and the deployment of the Airlock Microgateway Operator.
-```
-kubectl apply -k https://github.com/airlock/microgateway/deploy/crds/
-kubectl apply -k https://github.com/airlock/microgateway/deploy/crd-rbac/
-kubectl apply -k https://github.com/airlock/microgateway/deploy/deployment/
-```
+2. (Recommended) You can verify the correctness of the installation with `helm test`.
+   ```bash
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-operator-helm --version '4.2.0-alpha1'
+   helm test airlock-microgateway -n airlock-microgateway-system --logs
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://registry-1.docker.io/ergon/airlock-microgateway-operator-helm --version '4.2.0-alpha1'
+   ```
 
-Wait for the airlock-microgateway-operator deployment to be ready
+## CRD ClusterRoles
+For your convenience we provide an `-editor` and a `-viewer` ClusterRole for each Custom Resource Definition. If desired, you may install them with the following command:
+```bash
+kubectl apply -k https://github.com/airlock/microgateway/deploy/crd-rbac/?ref=4.2.0-alpha1
 ```
-kubectl -n airlock-microgateway-system wait --for=condition=Available deployments --all --timeout=3m
-```
-
-> The minimum supported Kustomize version is [v4.5.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.3).
-
-## Deploy Airlock Microgateway License
-Create the required secret from the license file that you created in the prerequisite step.
-```
-kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license 
---from-file=microgateway-license.txt=<my-local-microgateway-license.txt>
-```
+Users who must be able to create and view Airlock Microgateway CRs need the required `-editor` ClusterRoles assigned to their user. Users who only need to view (read-only rights) Airlock Microgateway CRs need the required `-viewer` ClusterRoles assigned to their user.
 
 ## Support
 

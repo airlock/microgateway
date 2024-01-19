@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "airlock-microgateway.license-guard-redis.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.license-guard-redis.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "airlock-microgateway.license-guard-redis.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/license-guard-redis/configmap.yaml") . | sha256sum }}
+      {{- with mustMerge .Values.licenseGuardRedis.podAnnotations .Values.commonAnnotations}}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "airlock-microgateway.license-guard-redis.labels" . | nindent 8 }}
+        {{- with .Values.licenseGuardRedis.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - args:
+        - /redis-config-dir/redis.conf
+        image: {{ include "airlock-microgateway.image" .Values.licenseGuardRedis.image }}
+        imagePullPolicy: {{ .Values.licenseGuardRedis.image.pullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - '[ "$(redis-cli --tls --insecure ping)" = "PONG" ]'
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: redis
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - '[ "$(redis-cli --tls --insecure ping)" = "PONG" ]'
+          periodSeconds: 5
+          timeoutSeconds: 5
+        {{- with .Values.licenseGuardRedis.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        securityContext:
+          {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 10 }}
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data-dir
+        - mountPath: /etc/certs
+          name: certificates
+        - mountPath: redis-config-dir
+          name: redis-config
+      terminationGracePeriodSeconds: 10
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.licenseGuardRedis.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.licenseGuardRedis.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.licenseGuardRedis.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - emptyDir: {}
+        name: redis-data-dir
+      - name: certificates
+        secret:
+          secretName: airlock-microgateway-license-guard-redis-cert
+      - configMap:
+          name: {{ include "airlock-microgateway.license-guard-redis.fullname" . }}-config
+        name: redis-config

@@ -1,0 +1,64 @@
+suite: helm.operator.TestServiceMonitor
+templates:
+  - license-guard/servicemonitor.yaml
+tests:
+  - it: should not create service monitor by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create service monitor if enabled and set name and namespace
+    set:
+      licenseGuard.serviceMonitor.create: true
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ServiceMonitor
+      - equal:
+          path: metadata.name
+          value: myoperator-airlock-microgateway-license-guard
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should override fullname if provided
+    set:
+      licenseGuard.serviceMonitor.create: true
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: operatorfullname-license-guard
+
+  - it: should set recommended labels and selector labels
+    set:
+      licenseGuard.serviceMonitor.create: true
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels
+          value:
+            app.kubernetes.io/name: airlock-microgateway-license-guard
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: server
+
+  - it: should set serviceMonitor.labels
+    set:
+      licenseGuard.serviceMonitor.create: true
+      licenseGuard.serviceMonitor.labels:
+        release: yes
+    asserts:
+    - isSubset:
+        path: metadata.labels
+        content:
+          release: yes

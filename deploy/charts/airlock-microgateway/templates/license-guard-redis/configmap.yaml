@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "airlock-microgateway.license-guard-redis.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.license-guard-redis.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  redis.conf: |-
+    port 0
+    tls-port 6379
+    tls-cert-file /etc/certs/server.crt
+    tls-key-file /etc/certs/server.key
+    tls-ca-cert-file /etc/certs/ca.crt
+    tls-auth-clients no
+    tls-protocols "TLSv1.3"

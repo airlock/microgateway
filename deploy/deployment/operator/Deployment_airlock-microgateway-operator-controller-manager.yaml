@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.1.5
+    app.kubernetes.io/version: 4.1.6
     control-plane: airlock-microgateway-operator
   name: airlock-microgateway-operator-controller-manager
 spec:
@@ -21,7 +21,7 @@ spec:
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: airlock-microgateway-operator
-        app.kubernetes.io/version: 4.1.5
+        app.kubernetes.io/version: 4.1.6
         control-plane: airlock-microgateway-operator
     spec:
       containers:
@@ -29,9 +29,9 @@ spec:
             - --config=operator_config.yaml
           env:
             - name: ENGINE_IMAGE
-              value: docker.io/ergon/airlock-microgateway-engine:4.1.5@sha256:db6ae21614ccbeb4c1b64357c9143e12fee9583d78b0d83e563e092ad22c713b
+              value: docker.io/ergon/airlock-microgateway-engine:4.1.6@sha256:0e14d1fe977c57399ecdf75a33cd4ad163930c25cb93b12db7e52d8e97f1e448
             - name: NETWORK_VALIDATOR_IMAGE
-              value: busybox:1.36.1-musl@sha256:bc6e0c5c7fdd36de6af8274b26b60d1a1c5d2cef748bebcba5395227d8525050
+              value: busybox:1.36.1-musl@sha256:84fbdf15839802266b3ff1420959c2efb8d10ab1f8122c31f714f977969cc801
             - name: OPERATOR_NAME
               valueFrom:
                 fieldRef:
@@ -40,7 +40,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: docker.io/ergon/airlock-microgateway-operator:4.1.5@sha256:2f89570f8d0a204b299a5ca5a484bf5c41cb667e039a2535836048e798a15161
+          image: docker.io/ergon/airlock-microgateway-operator:4.1.6@sha256:a76fd6037c131df317d6f3e8c3f41f008b087de5bb2528eb49ec59bc97d5a17e
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

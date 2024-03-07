@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: airlock-microgateway-license-guard
-    app.kubernetes.io/version: 4.1.5
+    app.kubernetes.io/version: 4.1.6
   name: airlock-microgateway-license-guard
 spec:
   ports:

@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.1.5
+    app.kubernetes.io/version: 4.1.6
   name: airlock-microgateway-operator-limits-viewer
 rules:
   - apiGroups:

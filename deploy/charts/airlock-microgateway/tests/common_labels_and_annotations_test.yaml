@@ -1,0 +1,46 @@
+suite: helm.TestCommonLabelsAndAnnotations
+templates:
+  - operator/*
+set:
+  operator.serviceMonitor.create: true
+  engine.sidecar.podMonitor.create: true
+  tests.enabled: true
+tests:
+  - it: should set recommended labels and selector labels
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    chart:
+      version: 3.21.1
+      appVersion: 4.3.12
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            helm.sh/chart: microgateway-3.21.1
+            app.kubernetes.io/version: "4.3.12"
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/part-of: microgateway
+
+  - it: should set common labels
+    set:
+      commonLabels:
+        commonLabel: foo
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            commonLabel: foo
+
+  - it: should set common annotations
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            commonAnnotation: bar

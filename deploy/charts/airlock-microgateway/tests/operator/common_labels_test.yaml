@@ -1,0 +1,19 @@
+suite: helm.operator.TestCommonLabels
+templates:
+  - operator/*
+set:
+  operator.serviceMonitor.create: true
+  engine.sidecar.podMonitor.create: true
+  tests.enabled: true
+tests:
+  - it: should set recommended labels
+    release:
+      name: myoperator
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            app.kubernetes.io/component: controller
+            app.kubernetes.io/name: somename-operator

@@ -1,21 +1,31 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  labels:
-    app.kubernetes.io/component: cni-plugin-installer
-    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
   name: {{ include "airlock-microgateway-cni.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/component: cni-plugin-installer
       {{- include "airlock-microgateway-cni.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        kubectl.kubernetes.io/default-container: cni-installer
+        {{- with mustMerge .Values.podAnnotations .Values.commonAnnotations}}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
-        app.kubernetes.io/component: cni-plugin-installer
         {{- include "airlock-microgateway-cni.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.affinity }}
       affinity:
@@ -50,6 +60,23 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          startupProbe:
+            exec:
+              command:
+                - /cni-installer
+                - probe
+            failureThreshold: 5
+            initialDelaySeconds: 3
+            periodSeconds: 3
+            timeoutSeconds: 3
+          readinessProbe:
+            exec:
+              command:
+                - /cni-installer
+                - probe
+            failureThreshold: 1
+            periodSeconds: 60
+            timeoutSeconds: 3
           securityContext:
             allowPrivilegeEscalation: {{ .Values.privileged }}
             capabilities:
@@ -69,8 +96,8 @@ spec:
               name: cni-bin-dir
             - mountPath: /host/etc/cni/net.d
               name: cni-net-dir
-      nodeSelector:
-        kubernetes.io/os: linux
+            - mountPath: /run/cni-installer
+              name: cni-installer-status
       hostNetwork: true
       priorityClassName: system-node-critical
       restartPolicy: Always
@@ -81,6 +108,14 @@ spec:
         runAsUser: 0
       serviceAccountName: {{ include "airlock-microgateway-cni.serviceAccountName" . }}
       terminationGracePeriodSeconds: 5
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       tolerations:
         - effect: NoSchedule
           operator: Exists
@@ -97,3 +132,5 @@ spec:
             path: "{{ .Values.config.cniNetDir }}"
             type: Directory
           name: cni-net-dir
+        - emptyDir: {}
+          name: cni-installer-status

@@ -64,6 +64,7 @@ spec:
       builtIn:
         csp: true
         featurePolicy: true
+        permissionsPolicy: true
         hsts: true
         hstsPreload: false
         referrerPolicy: true

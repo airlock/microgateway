@@ -1,0 +1,122 @@
+suite: helm.operator.TestService
+templates:
+  - operator/xds-service.yaml
+  - operator/webhook-service.yaml
+  - operator/metrics-service.yaml
+tests:
+  - it: should set namespace and leave name unchanged
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: ^airlock-microgateway-operator-
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should not override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: operator-test-release
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: ^airlock-microgateway-operator-
+
+  - it: should set webhook service selector labels
+    templates:
+      - operator/webhook-service.yaml
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: controller
+
+  - it: should set metric service selector labels
+    templates:
+      - operator/metrics-service.yaml
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: controller
+        documentIndex: 0
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: controller
+            operator.microgateway.airlock.com/isLeader: "true"
+        documentIndex: 1
+
+  - it: xds_service should additionally include leader label in selector
+    templates:
+      - operator/xds-service.yaml
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: controller
+            operator.microgateway.airlock.com/isLeader: "true"
+
+
+  - it: should set specific and common labels
+    set:
+      commonLabels:
+        commonLabel: foo
+      operator.serviceLabels:
+        serviceLabel: bar
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            commonLabel: foo
+            serviceLabel: bar
+
+  - it: should set specific and common annotations
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+      operator.serviceAnnotations:
+        serviceAnnotation: foo
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            commonAnnotation: bar
+            serviceAnnotation: foo
+
+  - it: should merge annotations giving precedence to service annotations over common annotations
+    set:
+      commonAnnotations:
+        myAnnotation: common2
+      operator.serviceAnnotations:
+        serviceAnnotation: foo
+        myAnnotation: service
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            serviceAnnotation: foo
+            myAnnotation: service
+

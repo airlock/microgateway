@@ -1,0 +1,59 @@
+suite: helm.operator.TestCertificate
+templates:
+  - operator/serving-certificate.yaml
+tests:
+  - it: should set name and namespace
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator-serving-cert
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: operatorfullname-operator-serving-cert
+
+  - it: should set the correct dnsNames entries
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.dnsNames[0]
+          value: airlock-microgateway-operator-webhook.mytestnamespace.svc
+      - equal:
+          path: spec.dnsNames[1]
+          value: airlock-microgateway-operator-webhook.mytestnamespace.svc.cluster.local
+
+  - it: should reference the correct issuer
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.issuerRef.kind
+          value: Issuer
+      - equal:
+          path: spec.issuerRef.name
+          value: myoperator-microgateway-operator-selfsigned-issuer
+
+  - it: should reference the correct certificate via secret name
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.secretName
+          value: myoperator-microgateway-operator-webhook-server-cert

@@ -1,0 +1,60 @@
+suite: helm.cni.TestClusterRoleBinding
+templates:
+  - clusterrolebinding.yaml
+tests:
+  - it: should create cluster role binding by default and set name
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterRoleBinding
+      - equal:
+          path: metadata.name
+          value: mycniplugin-microgateway-cni
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: mycnipluginname
+      fullnameOverride: myfancycnifullname
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myfancycnifullname
+
+  - it: should not create cluster role binding if creation is disabled
+    set:
+      rbac.create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should reference the correct role resource and name
+    release:
+      name: mycniplugin
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: roleRef.kind
+          value: ClusterRole
+      - equal:
+          path: roleRef.name
+          value: mycniplugin-microgateway-cni
+
+  - it: should reference the correct service account
+    release:
+      name: mycniplugin
+    set:
+      serviceAccount.name: my-service-account
+    asserts:
+      - equal:
+          path: subjects[0].kind
+          value: ServiceAccount
+      - equal:
+          path: subjects[0].name
+          value: my-service-account

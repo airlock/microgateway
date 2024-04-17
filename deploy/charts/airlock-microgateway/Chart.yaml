@@ -1,0 +1,40 @@
+apiVersion: v2
+name: microgateway
+description: A Helm chart for deploying the Airlock Microgateway
+type: application
+home: https://www.airlock.com/en/microgateway
+version: "4.2.0"
+appVersion: "4.2.0"
+annotations:
+  charts.openshift.io/name: Airlock Microgateway
+  artifacthub.io/category: security
+  artifacthub.io/links: |
+    - name: Airlock Microgateway Documentation
+      url: https://docs.airlock.com/microgateway/4.2/
+    - name: Airlock Microgateway Labs
+      url: https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=artifacthub.io
+    - name: Airlock Microgateway Forum
+      url: https://forum.airlock.com/
+  artifacthub.io/license: MIT
+sources:
+  - https://github.com/airlock/microgateway
+icon: https://raw.githubusercontent.com/airlock/microgateway/main/media/icon.svg
+keywords:
+  - WAF
+  - Web Application Firewall
+  - WAAP
+  - Web Application and API protection
+  - OWASP
+  - Airlock
+  - Microgateway
+  - Security
+  - Filtering
+  - DevSecOps
+  - shift left
+  - control plane
+  - Operator
+maintainers:
+  - email: support@airlock.com
+    name: Airlock
+    url: https://www.airlock.com/
+kubeVersion: ">=1.25.0-0"

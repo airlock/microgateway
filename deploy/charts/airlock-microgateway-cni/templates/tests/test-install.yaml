@@ -5,8 +5,8 @@ metadata:
   name: "{{ include "airlock-microgateway-cni.fullname" . }}-test-install"
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "airlock-microgateway-cni.labelsWithoutComponent" . | nindent 4 }}
     app.kubernetes.io/component: test-install
-    {{- include "airlock-microgateway-cni.labels" . | nindent 4 }}
   annotations:
     helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation
@@ -48,15 +48,13 @@ spec:
         exit 1
       }
 
-      i=0
-      echo "Checking for up-to-date message in CNI installer logs"
-      while ! kubectl logs -n {{ .Release.Namespace }} daemonsets/{{ include "airlock-microgateway-cni.fullname" .}} -c cni-installer | grep -q "Airlock Microgateway CNI plugin Installation is up-to-date"; do
-        i=$((i+1))
-        if [ $i -eq 5 ]; then
-          fail 'CNI Installer logs did not contain up-to-date message'
-        fi
-        sleep 3s
-      done
+      containsMGWCNIConf() {
+        cat "${1}" | grep -qe '"type":.*"{{ include "airlock-microgateway-cni.fullname" . }}"'
+      }
+
+      if ! kubectl rollout status --timeout=60s -n {{ .Release.Namespace }} daemonsets/{{ include "airlock-microgateway-cni.fullname" .}}; then
+        fail 'CNI DaemonSet rollout did not complete within timeout'
+      fi
 
       echo "Checking whether CNI binary was installed"
       if ! [ -f "/host/opt/cni/bin/{{ include "airlock-microgateway-cni.fullname" . }}" ]; then
@@ -69,12 +67,27 @@ spec:
       fi
 
       echo "Checking whether CNI configuration was written"
-      for file in "/host/etc/cni/net.d/"*.conflist; do
-        if cat "${file}" | grep -qe '"type":.*"{{ include "airlock-microgateway-cni.fullname" . }}"'; then
+      case {{ .Values.config.installMode }} in
+        "chained")
+          for file in "/host/etc/cni/net.d/"*.conflist; do
+            if containsMGWCNIConf "${file}"; then
+              echo "Success"
+              exit 0
+            fi
+          done
+          ;;
+        "standalone")
+          if containsMGWCNIConf "/host/etc/cni/net.d/{{ include "airlock-microgateway-cni.fullname" . }}.conflist"; then
+            echo "Success"
+            exit 0
+          fi
+          ;;
+        "manual")
+          echo "- Skipping because we are in 'manual' install mode"
           echo "Success"
           exit 0
-        fi
-      done
+          ;;
+      esac
 
       fail 'Configuration for plugin "{{ include "airlock-microgateway-cni.fullname" . }}" was not found'
   serviceAccountName: "{{ include "airlock-microgateway-cni.fullname" . }}-tests"

@@ -2,30 +2,45 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nginx
+    app: backend
   name: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: backend
   template:
     metadata:
       labels:
-        app: nginx
+        app: backend
     spec:
-      volumes:
-        - name: config-volume
-          configMap:
-            name: nginx-config
       containers:
         - image: nginxinc/nginx-unprivileged:1.23-alpine
           name: nginx
           ports:
             - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            capabilities:
+              drop: [ "ALL" ]
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: config-volume
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
-      imagePullSecrets:
-        - name: registry-credentials
+            - name: run
+              mountPath: /var/run/
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nginx-config
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

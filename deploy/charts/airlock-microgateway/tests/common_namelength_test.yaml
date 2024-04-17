@@ -1,0 +1,29 @@
+suite: helm.TestCommonNameLengthLimits
+templates:
+  - "*.yaml"
+set:
+  operator.serviceMonitor.create: true
+  engine.sidecar.podMonitor.create: true
+  tests.enabled: true
+tests:
+  - it: should truncate metadata.name, name and chart labels if name is too long
+    set:
+      nameOverride: name-override-which-is-way-too-long-to-fit-within-the-63-character-limit
+    asserts: &nameAndLabelsAtMost63Characters
+      - matchRegex:
+          path: metadata.name
+          pattern: ^.{1,63}$
+      - matchRegex:
+          path: metadata.labels['app.kubernetes.io/name']
+          pattern: ^.{1,63}$
+      - matchRegex:
+          path: metadata.labels['helm.sh/chart']
+          pattern: ^.{1,63}$
+  - it: should truncate metadata.name, name and chart labels if fullname is too long
+    set:
+      fullnameOverride: fullname-override-which-is-way-too-long-to-fit-within-the-63-character-limit
+    asserts: *nameAndLabelsAtMost63Characters
+  - it: should truncate metadata.name, name and chart labels if release name is too long
+    release:
+      name: releasename-which-is-way-too-long-to-fit-within-63
+    asserts: *nameAndLabelsAtMost63Characters

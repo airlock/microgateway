@@ -1,0 +1,65 @@
+suite: helm.cni.TestConfigMap
+templates:
+  - configmap.yaml
+tests:
+  - it: should contain data key for plugin configuration
+    asserts:
+      - exists:
+          path: data["plugin-conf.json"]
+
+  - it: should set the type in the plugin configuration
+    release:
+      name: mycniplugin
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"type\"\s*:\s*\"mycniplugin-microgateway-cni\"
+
+  - it: should set debug flag in the plugin config to false for higher log levels
+    set:
+      config:
+        logLevel: warn
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"debug\"\s*:\s*false
+
+  - it: should set debug flag in the plugin config to true for debug log level
+    set:
+      config:
+        logLevel: debug
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"debug\"\s*:\s*true
+
+  - it: should set the log path
+    release:
+      name: mycniplugin
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"logFilePath\"\s*:\s*\"/var/log/mycniplugin-microgateway-cni.log\"
+
+  - it: should set the CNI kubeconfig
+    release:
+      name: mycniplugin
+    set:
+      config:
+        cniNetDir: "/foo/bar"
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"kubeconfig\"\s*:\s*\"/foo/bar/mycniplugin-microgateway-cni-kubeconfig\"
+
+  - it: should exclude namespaces as configured
+    set:
+      config:
+        excludeNamespaces:
+          - oneNamespace
+          - twoNamespace
+          - fooName
+    asserts:
+      - matchRegex:
+          path: data["plugin-conf.json"]
+          pattern: \"excludeNamespaces\"\s*:\s*\[\"oneNamespace\",\"twoNamespace\",\"fooName\"\]

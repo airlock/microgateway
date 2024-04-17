@@ -2,13 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: nginx
-  name: nginx
+    app: backend
+  name: backend
 spec:
   ports:
     - name: http
       port: 8080
       protocol: TCP
   selector:
-    app: nginx
+    app: backend
   type: NodePort

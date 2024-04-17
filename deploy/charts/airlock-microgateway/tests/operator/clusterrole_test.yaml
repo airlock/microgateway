@@ -1,0 +1,48 @@
+suite: helm.operator.TestClusterRole
+templates:
+  - operator/manager-clusterrole.yaml
+tests:
+  - it: should create cluster role by default and set name
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterRole
+      - matchRegex:
+          path: metadata.name
+          pattern: ^myoperator-microgateway-.*-mytestnamespace$
+
+  - it: should not set namespace on cluster-wide resource
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - notExists:
+          path: metadata.namespace
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: ^operatorfullname-operator-.*-mytestnamespace$
+
+  - it: should not create cluster role if creation is disabled
+    set:
+      operator.rbac.create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should set rules
+    asserts:
+      - isNotNullOrEmpty:
+          path: rules

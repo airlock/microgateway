@@ -1,0 +1,58 @@
+suite: helm.TestSecurityContexts
+tests:
+  - it: should set restricted security context in all deployments and statefulsets
+    set:
+      tests:
+        enabled: true
+    templates:
+      - operator/deployment.yaml
+      - tests/statefulset.yaml
+    asserts:
+      - isSubset:
+          path: spec.template.spec.containers.*.securityContext
+          content:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            capabilities:
+              drop: [ "ALL" ]
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+  - it: should set restricted security context in all pods
+    templates:
+      - tests/test-install.yaml
+    set:
+      tests:
+        enabled: true
+    asserts:
+      - isSubset:
+          path: spec.containers.*.securityContext
+          content:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            capabilities:
+              drop: [ "ALL" ]
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+  - it: should set restricted security context for container templates
+    templates:
+      - operator/configmap.yaml
+    asserts:
+      - matchRegex:
+          path: data["engine_container_template.yaml"]
+          pattern: &securityContextPattern |-
+            securityContext:
+            .*allowPrivilegeEscalation: false
+            .*privileged: false
+            .*runAsNonRoot: true
+            .*capabilities:
+            .*  drop: \["ALL"\]
+            .*readOnlyRootFilesystem: true
+            .*seccompProfile:
+            .*  type: RuntimeDefault
+      - matchRegex:
+          path: data["network_validator_container_template.yaml"]
+          pattern: *securityContextPattern

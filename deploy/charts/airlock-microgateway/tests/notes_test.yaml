@@ -1,0 +1,24 @@
+suite: helm.TestNotes
+templates:
+  - NOTES.txt
+tests:
+  - it: devel chart should describe latest doc links
+    chart:
+      appVersion: dev
+    asserts: &latestDoc
+      - matchRegexRaw:
+          pattern: ".*please visit our documentation at https://docs.airlock.com/microgateway/latest\\..*"
+      - matchRegexRaw:
+          pattern: ".*API reference documentation is also available at https://docs.airlock.com/microgateway/latest/api/crds\\..*"
+  - it: prerelease chart should describe latest doc links
+    chart:
+      appVersion: 4.2.0-ci
+    asserts: *latestDoc
+  - it: released chart should describe specific doc links
+    chart:
+      appVersion: 4.2.4
+    asserts:
+      - matchRegexRaw:
+          pattern: ".*please visit our documentation at https://docs.airlock.com/microgateway/4.2\\..*"
+      - matchRegexRaw:
+          pattern: ".*API reference documentation is also available at https://docs.airlock.com/microgateway/4.2/api/crds\\..*"

@@ -1,0 +1,378 @@
+suite: helm.cni.TestDaemonSet
+tests:
+  - it: should set name and namespace
+    release:
+      name: cni-release
+      namespace: test-namespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: cni-release-microgateway-cni
+      - equal:
+          path: metadata.namespace
+          value: test-namespace
+    templates:
+      - daemonset.yaml
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: mycniname
+      fullnameOverride: myfancycnifullname
+    release:
+      name: cni-test-release
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myfancycnifullname
+    templates:
+      - daemonset.yaml
+
+  - it: should set labels and selector labels
+    release:
+      name: mycniplugin
+    chart:
+      version: 3.21.1
+      appVersion: 4.3.12
+    set:
+      nameOverride: somename
+    asserts:
+      - isSubset:
+          path: spec.selector.matchLabels
+          content:
+            app.kubernetes.io/name: somename
+            app.kubernetes.io/instance: mycniplugin
+            app.kubernetes.io/component: cni-plugin-installer
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            helm.sh/chart: microgateway-cni-3.21.1
+            app.kubernetes.io/version: "4.3.12"
+            app.kubernetes.io/name: somename
+            app.kubernetes.io/instance: mycniplugin
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/component: cni-plugin-installer
+    templates:
+      - daemonset.yaml
+
+  - it: should set specific and common labels on pod template spec
+    set:
+      commonLabels:
+        commonLabel: foo
+      podLabels:
+        podLabel: bar
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            commonLabel: foo
+            podLabel: bar
+    templates:
+      - daemonset.yaml
+
+  - it: should set specific and common annotations on pod template spec
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+      podAnnotations:
+        podAnnotation: foo
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            commonAnnotation: bar
+            podAnnotation: foo
+    templates:
+      - daemonset.yaml
+
+  - it: should merge annotations giving precedence on pod template spec to pod annotations over common annotations
+    set:
+      commonAnnotations:
+        myAnnotation: common2
+      podAnnotations:
+        podAnnotation: foo
+        myAnnotation: pod
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            podAnnotation: foo
+            myAnnotation: pod
+    templates:
+      - daemonset.yaml
+
+  - it: should create checksum for configmap in annotations on pod spec
+    asserts:
+      - exists:
+          path: spec.template.metadata.annotations.checksum/config
+      - matchRegex:
+          path: spec.template.metadata.annotations.checksum/config
+          pattern: ^.{64}$
+    templates:
+      - daemonset.yaml
+
+  - it: should not set app version label in selector
+    release:
+      name: mycniplugin
+    chart:
+      appVersion: 4.3.12
+    asserts:
+      - isNotSubset:
+          path: spec.selector.matchLabels
+          content:
+            app.kubernetes.io/version: "4.3.12"
+    templates:
+      - daemonset.yaml
+
+  - it: should make sure image uses tag
+    set:
+      image.tag: 4.5.6
+      image.digest: ""
+      image.repository: quay.io/airlock/microgateway-cni-devel
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: quay.io/airlock/microgateway-cni-devel:4.5.6
+    templates:
+      - daemonset.yaml
+
+  - it: should make sure digest takes precedence over image tag
+    set:
+      image.tag: latest
+      image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+      image.repository: quay.io/airlock/microgateway-cni-devel
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: quay.io/airlock/microgateway-cni-devel@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+    templates:
+      - daemonset.yaml
+
+  - it: should make sure digest is also used if no tag is available
+    set:
+      image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+      image.tag: ""
+      image.repository: quay.io/airlock/microgateway-cni-devel
+    asserts:
+       - equal:
+          path: spec.template.spec.containers[0].image
+          value: quay.io/airlock/microgateway-cni-devel@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+    templates:
+      - daemonset.yaml
+
+  - it: does not create imagePullSecrets if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+    templates:
+      - daemonset.yaml
+
+  - it: should create imagePullSecrets if set
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - daemonset.yaml
+
+  - it: create default node selectors if not set
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
+    templates:
+      - daemonset.yaml
+
+  - it: should create node selectors if set
+    set:
+      nodeSelector:
+        label: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.label
+          value: foo
+    templates:
+      - daemonset.yaml
+
+  - it: should set custom name for service account name if provided
+    set:
+      serviceAccount.name: my-service-account
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: my-service-account
+    templates:
+      - daemonset.yaml
+
+  - it: should set default requests resources for memory and cpu in pod spec
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            requests:
+              memory: 100Mi
+              cpu: 10m
+    templates:
+      - daemonset.yaml
+
+  - it: should set specified requests and limits resources for memory and cpu in pod spec
+    set:
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 512Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+    templates:
+      - daemonset.yaml
+
+  - it: does not create affinity if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity
+    templates:
+      - daemonset.yaml
+
+  - it: should render affinity if specified
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity
+          value:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/os
+                        operator: In
+                        values:
+                          - linux
+    templates:
+      - daemonset.yaml
+
+  - it: should deny running in privileged mode by default
+    templates:
+      - daemonset.yaml
+    asserts:
+      - isSubset:
+          path: spec.template.spec.containers[0].securityContext
+          content:
+            allowPrivilegeEscalation: false
+            privileged: false
+
+  - it: should allow running in privileged mode if specified
+    set:
+      privileged: true
+    templates:
+      - daemonset.yaml
+    asserts:
+      - isSubset:
+          path: spec.template.spec.containers[0].securityContext
+          content:
+            allowPrivilegeEscalation: true
+            privileged: true
+
+  - it: should render default values for env variables
+    templates:
+      - daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  key: plugin-conf.json
+                  name: RELEASE-NAME-microgateway-cni
+            - name: CNI_BIN_DIR
+              value: /host/opt/cni/bin
+            - name: CNI_NET_DIR
+              value: /host/etc/cni/net.d
+            - name: KUBECONFIG_FILE_NAME
+              value: RELEASE-NAME-microgateway-cni-kubeconfig
+            - name: INSTALL_MODE
+              value: chained
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+
+  - it: should render specified values from config for env variables
+    release:
+      name: cni-release
+    set:
+      config.installMode: manual
+    templates:
+      - daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  key: plugin-conf.json
+                  name: cni-release-microgateway-cni
+            - name: CNI_BIN_DIR
+              value: /host/opt/cni/bin
+            - name: CNI_NET_DIR
+              value: /host/etc/cni/net.d
+            - name: KUBECONFIG_FILE_NAME
+              value: cni-release-microgateway-cni-kubeconfig
+            - name: INSTALL_MODE
+              value: manual
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+
+  - it: should set cniBinDir and cniNetDir from config as hostPath in volumes
+    set:
+      config.cniBinDir: /opt/mycni/bin
+      config.cniNetDir: /etc/mycni/net.d
+    templates:
+      - daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            hostPath:
+              path: /opt/mycni/bin
+              type: Directory
+            name: cni-bin-dir
+          count: 1
+          any: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            hostPath:
+              path: /etc/mycni/net.d
+              type: Directory
+            name: cni-net-dir
+          count: 1
+          any: true

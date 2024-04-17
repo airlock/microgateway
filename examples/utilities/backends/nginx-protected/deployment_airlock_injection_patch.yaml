@@ -6,7 +6,5 @@ metadata:
 spec:
   template:
     metadata:
-      annotations:
+      labels:
         sidecar.microgateway.airlock.com/inject: "true"
-        sidecar.microgateway.airlock.com/engineLogLevel: "trace"
-        k8s.v1.cni.cncf.io/networks: default/airlock-microgateway-cni # required on openshift

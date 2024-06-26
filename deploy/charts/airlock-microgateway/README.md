@@ -110,7 +110,7 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | commonAnnotations | object | `{}` | Annotations to add to all resources. |
 | commonLabels | object | `{}` | Labels to add to all resources. |
 | crds.skipVersionCheck | bool | `false` | Whether to skip the sanity check which prevents installing/upgrading the helm chart in a cluster with outdated Airlock Microgateway CRDs. The check aims to prevent unexpected behavior and issues due to Helm v3 not automatically upgrading CRDs which are already present in the cluster when performing a "helm install/upgrade". |
-| engine.image.digest | string | `"sha256:c3970cbbcabd3ca6d99791707b521152d684252a6fbbe6a3e42872c90161bc15"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| engine.image.digest | string | `"sha256:9b0debeef611172aa5ca79c6b8cd045e56a3c883763ec62c0fa211bb86d35304"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | engine.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | engine.image.repository | string | `"quay.io/airlock/microgateway-engine"` | Image repository from which to pull the Airlock Microgateway Engine image. |
 | engine.image.tag | string | `"4.2.3"` | Image tag to pull. |
@@ -127,7 +127,7 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | networkValidator.image.tag | string | `""` | Image tag to pull. |
 | operator.affinity | object | `{}` | Custom affinity to apply to the operator Deployment. Used to influence the scheduling. |
 | operator.config.logLevel | string | `"info"` | Operator application log level. |
-| operator.image.digest | string | `"sha256:94678d8653cf72583569f10e4dcf0ded9b1eac65decf47317fd0e098ae602ee1"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
+| operator.image.digest | string | `"sha256:a429dfdb636e76bfbee7c59cfbe53d5f396c1f5603d5cb187f6283301ba4d7ba"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
 | operator.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | operator.image.repository | string | `"quay.io/airlock/microgateway-operator"` | Image repository from which to pull the Airlock Microgateway Operator image. |
 | operator.image.tag | string | `"4.2.3"` | Image tag to pull. |

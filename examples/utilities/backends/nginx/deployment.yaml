@@ -32,6 +32,13 @@ spec:
             - name: config-volume
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+              readOnly: true
+            - name: config-include-volume
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: server-config-include-volume
+              mountPath: /etc/nginx/server.conf.d
+              readOnly: true
             - name: run
               mountPath: /var/run/
             - name: tmp
@@ -40,6 +47,12 @@ spec:
         - name: config-volume
           configMap:
             name: nginx-config
+        - name: config-include-volume
+          configMap:
+            name: nginx-default-config
+        - name: server-config-include-volume
+          configMap:
+            name: nginx-server-config
         - name: run
           emptyDir: {}
         - name: tmp

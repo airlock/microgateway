@@ -40,6 +40,8 @@ spec:
           value: {{ include "airlock-microgateway.image" .Values.engine.image }}
         - name: NETWORK_VALIDATOR_IMAGE
           value: {{ include "airlock-microgateway.image" .Values.networkValidator.image }}
+        - name: SESSION_AGENT_IMAGE
+          value: {{ include "airlock-microgateway.image" .Values.sessionAgent.image }}
         - name: OPERATOR_NAME
           valueFrom:
             fieldRef:
@@ -100,6 +102,9 @@ spec:
         - mountPath: /sidecar/network_validator_container_template.yaml
           name: operator-config
           subPath: network_validator_container_template.yaml
+        - mountPath: /sidecar/session_agent_container_template.yaml
+          name: operator-config
+          subPath: session_agent_container_template.yaml
         - mountPath: /engine_bootstrap_config_template.yaml
           name: operator-config
           subPath: engine_bootstrap_config_template.yaml

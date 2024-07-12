@@ -32,6 +32,8 @@ tests:
       - exists:
           path: data["engine_container_template.yaml"]
       - exists:
+          path: data["session_agent_container_template.yaml"]
+      - exists:
           path: data["network_validator_container_template.yaml"]
       - exists:
           path: data["operator_config.yaml"]
@@ -73,6 +75,80 @@ tests:
             .*  cpu: 1m
             .*  memory: 4Mi
 
+  - it: should not set resources for session-agent container in session_agent_container_template configmap
+    asserts:
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: "resources"
+        not: true
+
+  - it: should set resources for session-agent container in session_agent_container_template configmap
+    set:
+      sessionAgent.resources:
+        limits:
+          cpu: 5m
+          memory: 1Mi
+        requests:
+          cpu: 1m
+          memory: 4Mi
+    asserts:
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: |-
+            resources:
+            .*limits:
+            .*  cpu: 5m
+            .*  memory: 1Mi
+            .*requests:
+            .*  cpu: 1m
+            .*  memory: 4Mi
+
+  - it: should set imagePullPolicy for session-agent container in configmap
+    set:
+      sessionAgent.image.pullPolicy: Always
+    asserts:
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: "imagePullPolicy: Always"
+
+  - it: should set grpc liveness/readiness probe for session-agent if kubeversion >= 1.27.0
+    capabilities:
+      majorVersion: 1
+      minorVersion: 27
+    asserts:
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: |-
+            livenessProbe:
+            \s*grpc:
+            \s* port: 19004
+
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: |-
+            readinessProbe:
+            \s*grpc:
+            \s* port: 19004
+
+  - it: should set tcp liveness/readiness probe for session-agent if kubeversion < 1.27.0
+    capabilities:
+      majorVersion: 1
+      minorVersion: 26
+    asserts:
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: |-
+            livenessProbe:
+            \s*tcpSocket:
+            \s* port: 19004
+
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: |-
+            readinessProbe:
+            \s*tcpSocket:
+            \s* port: 19004
+
   - it: should set imagePullPolicy for network-validator container in configmap
     set:
       networkValidator.image.pullPolicy: Always
@@ -88,3 +164,29 @@ tests:
       - matchRegex:
           path: data["operator_config.yaml"]
           pattern: "level: debug"
+
+  - it: should set namespace selector for operator in operator_config configmap
+    set:
+      operator.watchNamespaceSelector:
+        matchLabels:
+          microgateway.airlock.com/enable: "true"
+        matchExpressions:
+          - { key: environment, operator: NotIn, values: [ test ] }
+    asserts:
+      - matchRegex:
+          path: data["operator_config.yaml"]
+          pattern: "microgateway.airlock.com/enable: \"true\""
+      - matchRegex:
+          path: data["operator_config.yaml"]
+          pattern: "key: environment"
+
+  - it: should set watch namespace list for operator in operator_config configmap
+    set:
+      operator.watchNamespaces:
+        - foo
+        - bar
+        - jin
+    asserts:
+      - matchRegex:
+          path: data["operator_config.yaml"]
+          pattern: "namespaces:\\n\\s+list:\\n\\s+- foo\\n\\s+- bar\\n\\s+- jin"

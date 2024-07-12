@@ -7,6 +7,7 @@ resources:
 - envoyclusters.microgateway.airlock.com.yaml
 - envoyconfigurations.microgateway.airlock.com.yaml
 - envoyhttpfilters.microgateway.airlock.com.yaml
+- graphqls.microgateway.airlock.com.yaml
 - headerrewrites.microgateway.airlock.com.yaml
 - identitypropagations.microgateway.airlock.com.yaml
 - limits.microgateway.airlock.com.yaml
@@ -14,5 +15,7 @@ resources:
 - oidcrelyingparties.microgateway.airlock.com.yaml
 - openapis.microgateway.airlock.com.yaml
 - parsers.microgateway.airlock.com.yaml
+- redisproviders.microgateway.airlock.com.yaml
+- sessionhandlings.microgateway.airlock.com.yaml
 - sidecargateways.microgateway.airlock.com.yaml
 - telemetries.microgateway.airlock.com.yaml

@@ -1,6 +1,6 @@
-suite: helm.operator.TestClusterRoleBinding
+suite: helm.operator.TestManagerClusterRoleBinding
 templates:
-  - operator/manager-clusterrolebinding.yaml
+  - operator/manager-rolebinding.yaml
 tests:
   - it: should create cluster role binding by default and set name
     release:
@@ -11,9 +11,9 @@ tests:
           count: 1
       - isKind:
           of: ClusterRoleBinding
-      - matchRegex:
+      - equal:
           path: metadata.name
-          pattern: ^myoperator-microgateway-.*-mytestnamespace$
+          value: myoperator-microgateway-operator-manager-mytestnamespace
 
   - it: should not set namespace on cluster-wide resource
     release:
@@ -31,9 +31,9 @@ tests:
       name: myoperator
       namespace: mytestnamespace
     asserts:
-      - matchRegex:
+      - equal:
           path: metadata.name
-          pattern: ^operatorfullname-operator-.*-mytestnamespace$
+          value: operatorfullname-operator-manager-mytestnamespace
 
   - it: should not create cluster role binding if creation is disabled
     set:
@@ -50,9 +50,9 @@ tests:
       - equal:
           path: roleRef.kind
           value: ClusterRole
-      - matchRegex:
+      - equal:
           path: roleRef.name
-          pattern: ^myoperator-microgateway-.*-mytestnamespace$
+          value: myoperator-microgateway-operator-manager-mytestnamespace
 
   - it: should reference the correct service account
     release:

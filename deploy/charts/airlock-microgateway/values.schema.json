@@ -117,6 +117,15 @@
           ],
           "additionalProperties": false
         },
+        "watchNamespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "watchNamespaceSelector": {
+          "$ref": "#/definitions/LabelSelector"
+        },
         "rbac": {
           "type": "object",
           "properties": {
@@ -145,6 +154,28 @@
           "additionalProperties": false
         }
       },
+      "oneOf": [
+        {
+          "properties": {
+            "watchNamespaces": {
+              "minItems": 1
+            },
+            "watchNamespaceSelector": {
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "watchNamespaces": {
+              "maxItems": 0
+            },
+            "watchNamespaceSelector": {
+              "$ref": "#/definitions/LabelSelector"
+            }
+          }
+        }
+      ],
       "required": [
         "affinity",
         "config",
@@ -217,6 +248,22 @@
       ],
       "additionalProperties": false
     },
+    "sessionAgent": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/Image"
+        },
+        "resources":  {
+          "type": "object"
+        }
+      },
+      "required": [
+        "image",
+        "resources"
+      ],
+      "additionalProperties": false
+    },
     "license": {
       "type": "object",
       "properties": {
@@ -227,6 +274,69 @@
       },
       "required": [
         "secretName"
+      ],
+      "additionalProperties": false
+    },
+    "dashboards": {
+      "type": "object",
+      "properties" : {
+        "create": {
+          "type": "boolean"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "grafana": {
+              "type": "object",
+              "properties": {
+                "folderAnnotation": {
+                  "$ref": "#/definitions/NameValuePair"
+                },
+                "dashboardLabel": {
+                  "$ref": "#/definitions/NameValuePair"
+                }
+              },
+              "required": [
+                "folderAnnotation",
+                "dashboardLabel"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "grafana"
+          ],
+          "additionalProperties": false
+        },
+        "instances": {
+          "type": "object",
+          "properties": {
+            "overview": {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "license" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "blockMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "blockLogs" : {
+              "$ref": "#/definitions/DashboardInstance"
+            }
+          },
+          "required": [
+            "overview",
+            "license",
+            "blockMetrics",
+            "blockLogs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "create",
+        "config",
+        "instances"
       ],
       "additionalProperties": false
     },
@@ -257,6 +367,8 @@
     "nameOverride",
     "operator",
     "networkValidator",
+    "sessionAgent",
+    "dashboards",
     "tests"
   ],
   "additionalProperties": false,
@@ -296,6 +408,40 @@
         "repository",
         "tag"
       ],
+      "additionalProperties": false
+    },
+    "LabelSelector": {
+      "type": "object",
+      "properties": {
+        "matchExpressions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "operator"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "string"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "matchLabels": {
+          "$ref": "#/definitions/StringMap"
+        }
+      },
       "additionalProperties": false
     },
     "UpdateStrategy": {
@@ -357,6 +503,36 @@
       "anyOf": [
         {"required": ["maxSurge"]},
         {"required": ["maxUnavailable"]}
+      ],
+      "additionalProperties": false
+    },
+    "DashboardInstance" : {
+      "type" : "object",
+      "properties" : {
+        "create" : {
+          "type" : "boolean"
+        }
+      },
+      "required" : [
+        "create"
+      ],
+      "additionalProperties": false
+    },
+    "NameValuePair" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type": "string",
+          "minLength": 1
+        },
+        "value" : {
+          "type" : "string",
+          "minLength": 1
+        }
+      },
+      "required" : [
+        "name",
+        "value"
       ],
       "additionalProperties": false
     }

@@ -130,3 +130,24 @@ seccompProfile:
     {{- print "latest" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "airlock-microgateway.watchNamespaceSelector.labelQuery" -}}
+{{- $list := list -}}
+{{- with .matchLabels -}}
+    {{- range $key, $value := . -}}
+        {{- $list = append $list (printf "%s=%s" $key $value) -}}
+    {{- end -}}
+{{- end -}}
+{{- with .matchExpressions -}}
+    {{- range . -}}
+        {{- if has .operator (list "In" "NotIn") -}}
+            {{- $list = append $list (printf "%s %s (%s)" .key (lower .operator) (join "," .values)) -}}
+        {{- else if eq .operator "Exists" -}}
+            {{- $list = append $list .key -}}
+        {{- else if eq .operator "DoesNotExist" -}}
+            {{- $list = append $list (printf "!%s" .key) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- join "," $list -}}
+{{- end -}}

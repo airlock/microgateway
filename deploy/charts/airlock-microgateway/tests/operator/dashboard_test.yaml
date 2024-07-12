@@ -1,0 +1,148 @@
+suite: helm.operator.TestDashboardConfigMaps
+templates:
+  - operator/dashboard-configmap.yaml
+tests:
+  - it: should not create dashboard configmaps by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should set name and namespace on configmaps
+    set:
+      dashboards.create: true
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should create all dashboards if default switch is true
+    release:
+      name: myoperator
+    set:
+      dashboards.create: true
+    asserts:
+      - hasDocuments:
+          count: 4
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blocklogs
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blockmetrics
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-license
+        documentIndex: 2
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-overview
+        documentIndex: 3
+
+  - it: should be possible to only enable license dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          overview:
+            create: false
+          blockLogs:
+            create: false
+          blockMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-license
+
+  - it: should be possible to only enable blockMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          overview:
+            create: false
+          blockLogs:
+            create: false
+          license:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blockmetrics
+
+  - it: should be possible to only enable overview dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          blockLogs:
+            create: false
+          blockMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-overview
+
+  - it: should be possible to only enable blockLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blocklogs
+
+  - it: should set grafana label correctly
+    set:
+      dashboards.create: true
+      dashboards.config.grafana.dashboardLabel:
+        name: "my_dashboard"
+        value: "foo"
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            my_dashboard: "foo"
+
+  - it: should set grafana annotation correctly
+    set:
+      dashboards.create: true
+      dashboards.config.grafana.folderAnnotation:
+        name: "someFolder"
+        value: "Some Secret Project"
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            someFolder: "Some Secret Project"

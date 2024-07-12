@@ -7,6 +7,7 @@ metadata:
   labels:
     app.kubernetes.io/component: test-install
     app.kubernetes.io/name: {{ include "airlock-microgateway.name" . }}-tests
+    sidecar.istio.io/inject: "false"
     {{- include "airlock-microgateway.sharedLabels" . | nindent 4 }}
     {{- include "airlock-microgateway.sharedSelectorLabels" . | nindent 4 }}
   annotations:
@@ -31,7 +32,7 @@ spec:
         kubectl delete --ignore-not-found=true -n {{ .Release.Namespace }} sidecargateways.microgateway.airlock.com {{ include "airlock-microgateway.fullname" . }}-test-sidecargateway || true
         echo ""
         echo "### Scale down '{{ include "airlock-microgateway.fullname" . }}-test-backend'"
-        kubectl scale -n {{ .Release.Namespace }} statefulset/{{ include "airlock-microgateway.fullname" . }}-test-backend --replicas=0 --timeout=30s
+        kubectl scale -n {{ .Release.Namespace }} statefulset/{{ include "airlock-microgateway.fullname" . }}-test-backend --replicas=0 --timeout=60s
         sleep 3s
         echo ""
       }
@@ -40,22 +41,30 @@ spec:
         echo ""
         echo "### Error: ${1}"
         echo ""
-        echo 'Microgateway Sidecargateway status:'
-        kubectl get -n {{ .Release.Namespace }} sidecargateway.microgateway.airlock.com/{{ include "airlock-microgateway.fullname" . }}-test-sidecargateway -o jsonpath-as-json='{.status}' || true
-        echo ""
-        echo ""
-        echo "Pod '{{ include "airlock-microgateway.fullname" . }}-test-backend-0':"
-        kubectl describe -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 || true
-        echo ""
-        echo ""
-        echo 'Logs of Nginx container:'
-        kubectl logs -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 -c nginx --tail 5 || true
-        echo ""
-        echo ""
-        # Wait for engine logs
-        sleep 10s
-        echo 'Logs of Microgateway Engine container:'
-        kubectl logs -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 -c airlock-microgateway-engine --tail 5 || true
+
+        if kubectl get -n {{ .Release.Namespace }} sidecargateway.microgateway.airlock.com/{{ include "airlock-microgateway.fullname" . }}-test-sidecargateway >/dev/null 2>&1; then
+          echo ""
+          echo 'Microgateway Sidecargateway status:'
+          kubectl get -n {{ .Release.Namespace }} sidecargateway.microgateway.airlock.com/{{ include "airlock-microgateway.fullname" . }}-test-sidecargateway -o jsonpath-as-json='{.status}' || true
+          echo ""
+          echo ""
+        fi
+
+        if kubectl get -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 >/dev/null 2>&1; then
+          echo "Pod '{{ include "airlock-microgateway.fullname" . }}-test-backend-0':"
+          kubectl describe -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 || true
+          echo ""
+          echo ""
+          echo 'Logs of Nginx container:'
+          kubectl logs -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 -c nginx --tail 5 || true
+          echo ""
+          echo ""
+          # Wait for engine logs
+          sleep 10s
+          echo 'Logs of Microgateway Engine container:'
+          kubectl logs -n {{ .Release.Namespace }} pods/{{ include "airlock-microgateway.fullname" . }}-test-backend-0 -c airlock-microgateway-engine --tail 5 || true
+        fi
+
         exit 1
       }
 
@@ -90,6 +99,11 @@ spec:
         --overrides='
         {
           "apiVersion": "v1",
+          "metadata": {
+            "labels": {
+              "sidecar.istio.io/inject": "false"
+            }
+          },
           "spec": {
             "containers": [
               {
@@ -106,9 +120,22 @@ spec:
         kubectl delete pod --ignore-not-found=true -n {{ .Release.Namespace }} {{ include "airlock-microgateway.fullname" . }}-test-valid-request
       }
 
-      trap clean_up EXIT
+      {{- if .Values.operator.watchNamespaceSelector }}
+      echo "### Verify that Namespace Selector matches Namespace '{{ .Release.Namespace }}'"
+      if ! kubectl get namespace -l '{{ include "airlock-microgateway.watchNamespaceSelector.labelQuery" .Values.operator.watchNamespaceSelector }}' | grep -q {{ .Release.Namespace }}; then
+        labels=$(kubectl get namespace {{ .Release.Namespace }} -o jsonpath={.metadata.labels} | jq | awk '{print "  " $0}')
+        fail {{printf `"Operator namespace '%s' is not part of the operator's watch scope. To execute 'helm test', the selector configured in the helm value 'operator.watchNamespaceSelector' must match the namespace's labels:\n* Current selector:\n%s\n\n* Current labels:\n$labels\n###"`
+        .Release.Namespace
+        (replace "\"" "\\\"" (replace "\n" "\\n" (.Values.operator.watchNamespaceSelector | toPrettyJson | indent 2)))
+        }}
+      fi
+      echo ""
+      {{- end }}
 
-      echo "### Waiting for Microgateway Deployments to be ready"
+      trap clean_up EXIT
+      echo ""
+
+      echo "### Waiting for Microgateway Operator Deployments to be ready"
       if ! kubectl rollout status -n {{ .Release.Namespace }} --timeout=90s \
         deployments/{{ include "airlock-microgateway.operator.fullname" . }}; then
         fail 'Timout occurred'

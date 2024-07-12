@@ -101,6 +101,42 @@ tests:
     templates:
       - operator/deployment.yaml
 
+  - it: should make sure image uses tag for session agent image in env var
+    set:
+      sessionAgent.image.tag: 1.2.3
+      sessionAgent.image.digest: ""
+      sessionAgent.image.repository: cgr.dev/chainguard/busybox
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[2].value
+          value: cgr.dev/chainguard/busybox:1.2.3
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure digest takes precedence over tag for session agent image in env var
+    set:
+      sessionAgent.image.tag: latest
+      sessionAgent.image.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+      sessionAgent.image.repository: cgr.dev/chainguard/busybox
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[2].value
+          value: cgr.dev/chainguard/busybox@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure digest is also used if no tag is available for session agent image in env var
+    set:
+      sessionAgent.image.tag: ""
+      sessionAgent.image.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+      sessionAgent.image.repository: cgr.dev/chainguard/busybox
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[2].value
+          value: cgr.dev/chainguard/busybox@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+    templates:
+      - operator/deployment.yaml
+
   - it: should set recommended labels and selector labels
     release:
       name: myoperator

@@ -56,3 +56,6 @@ tests:
       - matchRegex:
           path: data["network_validator_container_template.yaml"]
           pattern: *securityContextPattern
+      - matchRegex:
+          path: data["session_agent_container_template.yaml"]
+          pattern: *securityContextPattern

@@ -11,4 +11,18 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 webhooks:
-{{ include "airlock-microgateway-operator.mutatingWebhooks" . -}}
+{{- range $webhook := (include "airlock-microgateway-operator.mutatingWebhooks" .) | fromYamlArray }}
+- {{ toYaml $webhook | indent 2 | trim }}
+  {{- with $.Values.operator.watchNamespaceSelector }}
+  namespaceSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $.Values.operator.watchNamespaces }}
+  namespaceSelector:
+    matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: In
+        values:
+          {{- toYaml . | nindent 10 }}
+  {{- end }}
+{{- end }}

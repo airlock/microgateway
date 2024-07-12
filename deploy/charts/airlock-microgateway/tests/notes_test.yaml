@@ -22,3 +22,21 @@ tests:
           pattern: ".*please visit our documentation at https://docs.airlock.com/microgateway/4.2\\..*"
       - matchRegexRaw:
           pattern: ".*API reference documentation is also available at https://docs.airlock.com/microgateway/4.2/api/crds\\..*"
+  - it: should fail if tests are enabled and release namespace is not part of the watch namespaces
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      tests.enabled: true
+      operator.watchNamespaces: [ "foo", "bar" ]
+    asserts:
+      - failedTemplate: {}
+  - it: should succeed if tests are enabled and release namespace is part of the watch namespaces
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      tests.enabled: true
+      operator.watchNamespaces: [ "foo", "mytestnamespace", "bar" ]
+    asserts:
+      - notFailedTemplate: {}

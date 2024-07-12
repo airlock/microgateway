@@ -5,5 +5,5 @@ For an easy start in non-production environments, you may deploy the same kyvern
 
 ```
 helm repo add kyverno https://kyverno.github.io/kyverno/
-helm install kyverno kyverno/kyverno --version '3.1.4' -n kyverno --create-namespace --wait -f https://raw.githubusercontent.com/airlock/microgateway/main/examples/utilities/kyverno/values.yaml
+helm install kyverno kyverno/kyverno --version '3.2.5' -n kyverno --create-namespace --wait -f https://raw.githubusercontent.com/airlock/microgateway/main/examples/utilities/kyverno/values.yaml
 ```

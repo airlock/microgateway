@@ -39,6 +39,29 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-v1-pod
+  failurePolicy: Fail
+  name: validate-pod.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - pods
+  sideEffects: None
+  objectSelector:
+    matchLabels:
+      sidecar.microgateway.airlock.com/inject: "true"
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-accesscontrol
   failurePolicy: Fail
   name: validate-accesscontrol.microgateway.airlock.com
@@ -112,6 +135,26 @@ Operator validating webhooks
         - UPDATE
       resources:
         - envoyhttpfilters
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-graphql
+  failurePolicy: Fail
+  name: validate-graphql.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - graphqls
   sideEffects: None
 - admissionReviewVersions:
     - v1
@@ -259,6 +302,26 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-redisprovider
+  failurePolicy: Fail
+  name: validate-redisprovider.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - redisproviders
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-sidecargateway
   failurePolicy: Fail
   name: validate-sidecargateway.microgateway.airlock.com
@@ -273,27 +336,4 @@ Operator validating webhooks
       resources:
         - sidecargateways
   sideEffects: None
-- admissionReviewVersions:
-    - v1
-  clientConfig:
-    service:
-      name: airlock-microgateway-operator-webhook
-      namespace: '{{ .Release.Namespace }}'
-      path: /validate-v1-pod
-  failurePolicy: Fail
-  name: validate-pod.microgateway.airlock.com
-  rules:
-    - apiGroups:
-        - ""
-      apiVersions:
-        - v1
-      operations:
-        - CREATE
-        - UPDATE
-      resources:
-        - pods
-  sideEffects: None
-  objectSelector:
-    matchLabels:
-      sidecar.microgateway.airlock.com/inject: "true"
 {{- end }}

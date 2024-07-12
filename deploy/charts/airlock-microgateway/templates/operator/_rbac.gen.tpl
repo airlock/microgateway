@@ -22,6 +22,14 @@ Operator rbac permission rules
 - apiGroups:
     - ""
   resources:
+    - namespaces
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - ""
+  resources:
     - pods
   verbs:
     - delete
@@ -117,6 +125,14 @@ Operator rbac permission rules
 - apiGroups:
     - microgateway.airlock.com
   resources:
+    - graphqls
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - microgateway.airlock.com
+  resources:
     - headerrewrites
   verbs:
     - get
@@ -166,6 +182,22 @@ Operator rbac permission rules
     - microgateway.airlock.com
   resources:
     - parsers
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - microgateway.airlock.com
+  resources:
+    - redisproviders
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - microgateway.airlock.com
+  resources:
+    - sessionhandlings
   verbs:
     - get
     - list

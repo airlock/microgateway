@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.2.4
+    app.kubernetes.io/version: 4.3.0
   name: envoyconfigurations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -53,7 +53,6 @@ spec:
               description: EnvoyConfigurationSpec defines the desired state of EnvoyConfiguration
               properties:
                 envoyResources:
-                  description: EnvoyResources defines the desired state for each resource type.
                   properties:
                     clusters:
                       items:
@@ -96,11 +95,15 @@ spec:
                         x-kubernetes-preserve-unknown-fields: true
                       type: array
                   type: object
-                nodeID:
-                  description: NodeID defines the ID of the envoy node
+                envoyResourcesRaw:
+                  description: |-
+                    EnvoyResourcesRaw defines the desired state for each resource type. The resources are stored as zstd compressed JSON bytes.
+                    For debugging purposes, the resources can be inspected with the following command: `kubectl get envoyconfiguration <name> -ojsonpath='{.spec.envoyResourcesRaw}' | base64 -d | zstd -d | jq`
+                  format: byte
                   type: string
-              required:
-                - nodeID
+                nodeID:
+                  description: '**Deprecated:** This field is now ignored as NodeID is always derived from the resource name.'
+                  type: string
               type: object
             status:
               description: EnvoyConfigurationStatus defines the observed state of EnvoyConfiguration

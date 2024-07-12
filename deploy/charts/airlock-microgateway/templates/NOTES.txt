@@ -20,3 +20,15 @@ If you are not using the helm install/upgrade command and instead rely on some o
     -}}
 {{- end -}}
 {{- end -}}
+{{- if .Values.tests.enabled }}
+    {{- if .Values.operator.watchNamespaces -}}
+        {{- if not (has .Release.Namespace .Values.operator.watchNamespaces) }}
+            {{- fail (printf `
+
+To execute 'helm test', it is necessary that the release namespace '%s' is part of the operator's watch scope. Either disable the tests or ensure that the release namespace is added to watch namspace list ('operator.watchNamespaces') in the helm values.
+`
+            .Release.Namespace)
+            -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}

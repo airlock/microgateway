@@ -4,6 +4,7 @@ templates:
 set:
   operator.serviceMonitor.create: true
   engine.sidecar.podMonitor.create: true
+  dashboards.create: true
   tests.enabled: true
 tests:
   - it: should truncate metadata.name, name and chart labels if name is too long

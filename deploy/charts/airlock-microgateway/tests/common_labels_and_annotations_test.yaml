@@ -4,6 +4,7 @@ templates:
 set:
   operator.serviceMonitor.create: true
   engine.sidecar.podMonitor.create: true
+  dashboards.create: true
   tests.enabled: true
 tests:
   - it: should set recommended labels and selector labels

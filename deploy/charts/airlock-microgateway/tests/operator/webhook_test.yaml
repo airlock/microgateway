@@ -41,3 +41,32 @@ tests:
     asserts:
       - isNotNullOrEmpty:
           path: webhooks
+
+  - it: should set namespace selector
+    set:
+      operator.watchNamespaceSelector:
+        matchLabels:
+          microgateway.airlock.com/enable: "true"
+        matchExpressions:
+          - { key: environment, operator: NotIn, values: [ test ] }
+    asserts:
+      - equal:
+          path: webhooks.*.namespaceSelector
+          value:
+            matchLabels:
+              microgateway.airlock.com/enable: "true"
+            matchExpressions:
+              - { key: environment, operator: NotIn, values: [ test ] }
+
+  - it: should set watch namespace list as selector
+    set:
+      operator.watchNamespaces:
+        - foo
+        - bar
+        - jin
+    asserts:
+      - equal:
+          path: webhooks.*.namespaceSelector
+          value:
+            matchExpressions:
+              - { key: kubernetes.io/metadata.name, operator: In, values: [ foo, bar, jin ] }

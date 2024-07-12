@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.2.4
+    app.kubernetes.io/version: 4.3.0
   name: denyrules.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -67,10 +67,157 @@ spec:
                               blockedData:
                                 description: BlockedData defines an exception based on the request data causing the block.
                                 properties:
+                                  graphQL:
+                                    description: |-
+                                      GraphQL defines an exception based on a blocked GraphQL query.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                    properties:
+                                      argument:
+                                        description: |-
+                                          Argument defines an argument of a field of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                      field:
+                                        description: |-
+                                          Field defines a field of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                      value:
+                                        description: |-
+                                          Value defines the value of an argument of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                    type: object
                                   header:
                                     description: |-
                                       Header defines an exception based on a blocked header.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a header.
@@ -162,7 +309,7 @@ spec:
                                   json:
                                     description: |-
                                       JSON defines an exception based on a blocked JSON property.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
                                     properties:
                                       jsonPath:
                                         description: |-
@@ -268,7 +415,7 @@ spec:
                                   parameter:
                                     description: |-
                                       Parameter defines an exception based on a blocked parameter.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a parameter.
@@ -372,7 +519,7 @@ spec:
                                   path:
                                     description: |-
                                       Path defines an exception based on the blocked path.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
                                     properties:
                                       matcher:
                                         description: StringMatcher defines the way to match a string.
@@ -419,7 +566,7 @@ spec:
                                   pathSegment:
                                     description: |-
                                       PathSegment defines an exception based on a blocked path segment.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
                                     properties:
                                       segments:
                                         description: Segments defines the position of a segment within the path.
@@ -800,13 +947,15 @@ spec:
                                         Header |
                                         Parameter |
                                         Path |
-                                        JSON
+                                        JSON |
+                                        GraphQL
                                       enum:
                                         - Header
                                         - Parameter
                                         - Path
                                         - PathSegment
                                         - JSON
+                                        - GraphQL
                                       type: string
                                     minItems: 0
                                     type: array
@@ -862,6 +1011,153 @@ spec:
                               blockData:
                                 description: BlockData specifies the request data which should cause a block.
                                 properties:
+                                  graphQL:
+                                    description: |-
+                                      GraphQL specifies to block requests containing a matching GraphQL property.
+                                      At least one of field, argument and value must be set.
+                                    properties:
+                                      argument:
+                                        description: |-
+                                          Argument defines an argument of a field of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                      field:
+                                        description: |-
+                                          Field defines a field of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                      value:
+                                        description: |-
+                                          Value defines the value of an argument of the GraphQL query.
+                                          At least one of field, argument and value must be set.
+                                        properties:
+                                          matcher:
+                                            description: StringMatcher defines the way to match a string.
+                                            properties:
+                                              contains:
+                                                description: |-
+                                                  Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              exact:
+                                                description: |-
+                                                  Exact defines an explicit match on the string specified here.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              ignoreCase:
+                                                default: false
+                                                description: IgnoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                                type: boolean
+                                              prefix:
+                                                description: |-
+                                                  Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              regex:
+                                                description: |-
+                                                  Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                  The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                              suffix:
+                                                description: |-
+                                                  Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                  Only one of exact, prefix, suffix, regex or contains can be set.
+                                                minLength: 1
+                                                type: string
+                                            type: object
+                                        required:
+                                          - matcher
+                                        type: object
+                                    type: object
                                   header:
                                     description: |-
                                       Header specifies to block requests containing a matching header.

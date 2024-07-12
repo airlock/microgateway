@@ -1,0 +1,119 @@
+suite: helm.operator.TestManagerRoleBinding
+templates:
+  - operator/manager-rolebinding.yaml
+set:
+  operator.watchNamespaces: ["mytestnamespace"]
+tests:
+  - it: should create role binding for operator namespace (OwnNamespace)
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: RoleBinding
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator-manager
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should create role binding for operator and watch namespace (SingleNamespace)
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.watchNamespaces: [ "othertestnamespace" ]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: RoleBinding
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator-manager
+      - equal:
+          path: metadata.namespace
+          value: othertestnamespace
+        documentIndex: 0
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+        documentIndex: 1
+
+  - it: should create role binding for operator namespace and all watch namespaces (MultiNamespace)
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.watchNamespaces: [ "foo", "bar", "jin" ]
+    asserts:
+      - hasDocuments:
+          count: 4
+      - isKind:
+          of: RoleBinding
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator-manager
+      - equal:
+          path: metadata.namespace
+          value: foo
+        documentIndex: 0
+      - equal:
+          path: metadata.namespace
+          value: bar
+        documentIndex: 1
+      - equal:
+          path: metadata.namespace
+          value: jin
+        documentIndex: 2
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+        documentIndex: 3
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: operatorfullname-operator-manager
+
+  - it: should not create cluster role binding if creation is disabled
+    set:
+      operator.rbac.create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should reference the correct role resource and name
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: roleRef.kind
+          value: Role
+      - equal:
+          path: roleRef.name
+          value: myoperator-microgateway-operator-manager
+
+  - it: should reference the correct service account
+    release:
+      name: myoperator
+    set:
+      operator.serviceAccount.name: my-service-account
+    asserts:
+      - equal:
+          path: subjects[0].kind
+          value: ServiceAccount
+      - equal:
+          path: subjects[0].name
+          value: my-service-account

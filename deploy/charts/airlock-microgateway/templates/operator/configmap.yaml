@@ -58,7 +58,7 @@ data:
           - name: http_connection_manager
             typed_config:
               '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-              stat_prefix: http
+              stat_prefix: probe
               codec_type: AUTO
               http2_protocol_options:
                 initial_connection_window_size: 1048576
@@ -94,7 +94,7 @@ data:
               - name: http_connection_manager
                 typed_config:
                   '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-                  stat_prefix: http
+                  stat_prefix: metrics
                   codec_type: AUTO
                   http2_protocol_options:
                     initial_connection_window_size: 1048576
@@ -188,19 +188,21 @@ data:
                   timeout: 5s
     stats_config:
       stats_tags:
-        - tag_name: "category"
-          regex: "\\.(category\\.([^.]+))"
-        - tag_name: "rule_name"
-          regex: "\\.(rule\\.([^.]+))"
-        - tag_name: "limit_name"
-          regex: "\\.(limit\\.([^.]+))"
-        - tag_name: "threat_handling_mode"
-          regex: "\\.(threat_handling_mode\\.([^.]+))"
+        - tag_name: "block_type"
+          regex: "\\.(block_type\\.([^.]+))"
+        - tag_name: "attack_type"
+          regex: "\\.(attack_type\\.([^.]+))"
         - tag_name: "envoy_cluster_name"
           regex: "\\.(cluster\\.([^.]+))"
         - tag_name: "version"
           regex: "\\.(version\\.([^.]+))"
       use_all_default_tags: true
+    overload_manager:
+      resource_monitors:
+      - name: "envoy.resource_monitors.global_downstream_max_connections"
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.resource_monitors.downstream_connections.v3.DownstreamConnectionsConfig
+          max_active_downstream_connections: 50000
     bootstrap_extensions:
       - name: airlock.bootstrap.engine_build_info
         typed_config:
@@ -283,6 +285,65 @@ data:
     resources:
       {{- toYaml . | nindent 6 }}
     {{- end }}
+  session_agent_container_template.yaml: |
+    name: "$(SESSION_AGENT_NAME)"
+    image: "$(SESSION_AGENT_IMAGE)"
+    imagePullPolicy: {{ .Values.sessionAgent.image.pullPolicy }}
+    args:
+      - "--port"
+      - "19004"
+      - "--config-path"
+      - "/etc/microgateway-session-agent/config.json"
+    volumeMounts:
+    - name: airlock-microgateway-session-agent-volume
+      mountPath: /etc/microgateway-session-agent
+      readOnly: true
+    env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+    ports:
+      - containerPort: 19004
+    livenessProbe:
+      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
+      grpc:
+        port: 19004
+      {{- else }}
+      tcpSocket:
+        port: 19004
+      {{- end }}
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+    readinessProbe:
+      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
+      grpc:
+        port: 19004
+      {{- else }}
+      tcpSocket:
+        port: 19004
+      {{- end }}
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 3
+      successThreshold: 1
+      timeoutSeconds: 5
+    securityContext:
+      {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
+      runAsUser: $(SECURITYCONTEXT_UID)
+    {{- with .Values.sessionAgent.resources }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   network_validator_container_template.yaml: |
     name: "$(NETWORK_VALIDATOR_NAME)"
     image: "$(NETWORK_VALIDATOR_IMAGE)"
@@ -316,7 +377,18 @@ data:
       sidecar:
         engineContainerTemplate: "/sidecar/engine_container_template.yaml"
         networkValidatorContainerTemplate: "/sidecar/network_validator_container_template.yaml"
+        sessionAgentContainerTemplate: "/sidecar/session_agent_container_template.yaml"
     engine:
       bootstrapConfigTemplate: "/engine_bootstrap_config_template.yaml"
     log:
       level: {{ .Values.operator.config.logLevel }}
+    {{- with $.Values.operator.watchNamespaceSelector }}
+    namespaces:
+      selector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $.Values.operator.watchNamespaces }}
+    namespaces:
+      list:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

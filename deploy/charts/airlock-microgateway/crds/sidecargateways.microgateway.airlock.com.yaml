@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.2.4
+    app.kubernetes.io/version: 4.3.0
   name: sidecargateways.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -569,7 +569,7 @@ spec:
                               Default: auto: {}
                             properties:
                               auto:
-                                description: Auto specifies to use the protocol negotiated via TLS ALPN (if supported) or HTTP/1.1 as fallback.
+                                description: Auto specifies to negotiate the protocol with TLS ALPN (if TLS is enabled) or, as a fallback, use the same protocol that is used by the downstream connection.
                                 properties:
                                   http2:
                                     description: HTTP2 specifies the settings for when HTTP/2 is inferred.
@@ -676,6 +676,16 @@ spec:
                       description: MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels.
                       type: object
                   type: object
+                sessionHandlingRef:
+                  description: SessionHandlingRef selects the SessionHandling configuration to apply.
+                  properties:
+                    name:
+                      description: Name of the resource
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
+                  type: object
               required:
                 - applications
               type: object
@@ -710,10 +720,12 @@ spec:
                   items:
                     properties:
                       envoyConfig:
-                        description: EnvoyConfig indicates the name of the EnvoyConfig CR which references the SidecarGateway.
+                        description: EnvoyConfig indicates the name of the EnvoyConfig CR for the Pod.
                         type: string
                       name:
-                        description: Name indicates the name of the Pod which references the SidecarGateway.
+                        description: Name indicates the name of a Pod selected by the SidecarGateway.
+                        type: string
+                      sessionAgentSecret:
                         type: string
                     required:
                       - name
@@ -721,6 +733,21 @@ spec:
                   type: array
                 status:
                   type: string
+                unmanagedPods:
+                  items:
+                    properties:
+                      managedBy:
+                        description: ManagedBy indicates the Airlock Microgateway Operator instance which manages this Pod.
+                        type: string
+                      name:
+                        description: Name indicates the name of a Pod selected by the SidecarGateway.
+                        type: string
+                      sessionAgentSecret:
+                        type: string
+                    required:
+                      - name
+                    type: object
+                  type: array
               required:
                 - status
               type: object

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.2.4
+    app.kubernetes.io/version: 4.3.0
   name: oidcrelyingparties.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -34,9 +34,14 @@ spec:
 
             We encourage you to try it out and give feedback, but be aware that we do not recommend using it in a production environment yet, as security has not yet been hardened.
             In particular, the current implementation has the following limitations, which we intend to address in future Microgateway releases:
-            - The state parameter is guessable.
-            - ID token and access token are stored in cookies and are thus sent to the accessing client.
+              - The state parameter is guessable.
+              - Sessions are always shared across all Microgateway Engines using the same Redis instance.
+                I.e. if application A and B (with different SidecarGateways) have the same Redis instance configured in their SessionHandling CR, users which are logged into application A
+                may be able to access authenticated routes on application B, even if their OIDCRelyingParty configuration differs.
+
+
             {{% /notice %}}
+            {{% notice info %}} The OIDC feature requires SessionHandling to be configured in the SidecarGateway. {{% /notice %}}
           properties:
             apiVersion:
               description: |-

@@ -98,7 +98,7 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | config.installMode | string | `"chained"` | Whether to install the CNI plugin as a `chained` plugin (default, required with most interface CNI providers), as a `standalone` plugin (required for use with Multus CNI, e.g. on OpenShift) or in `manual` mode, where no CNI network configuration is written. |
 | config.logLevel | string | `"info"` | Log level for the CNI installer and plugin. |
 | fullnameOverride | string | `""` | Allows overriding the name to use as full name of resources. |
-| image.digest | string | `"sha256:40116e1a52e8a088f6e63c96e4f431c06e9442394afe989550f91fb9a9e7fd8e"` | SHA256 image digest to pull (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a"). Overrides tag when specified. |
+| image.digest | string | `"sha256:4435634ba6ca051c63ade48ee66f1a7dbd57a3b784775a6e86da25b2655dc871"` | SHA256 image digest to pull (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a"). Overrides tag when specified. |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | image.repository | string | `"quay.io/airlock/microgateway-cni"` | Image repository from which to pull the Airlock Microgateway CNI image. |
 | image.tag | string | `"4.2.5"` | Image tag to pull. |

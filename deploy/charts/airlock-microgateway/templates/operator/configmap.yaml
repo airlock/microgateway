@@ -290,10 +290,10 @@ data:
     command: ["/bin/sh", "-c"]
     args:
     - |-
-      echo 'pong' | nc -v -l 127.0.0.1 -p 13378 &
+      echo 'pong' | nc -v -l 127.0.0.1 13378 &
       for i in 1 2 3; do
         sleep 1s
-        if r=$(echo 'ping' | nc 127.0.0.1 19003) && [ $r == pong ]; then
+        if r=$(echo 'ping' | nc -v -q 0 127.0.0.1 19003) && [ $r == pong ]; then
           echo -n 'Traffic redirection to Airlock Microgateway Engine is working.' > /dev/termination-log
           exit 0
         fi

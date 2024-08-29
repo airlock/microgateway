@@ -1,11 +1,22 @@
 Thank you for installing Airlock Microgateway.
-If you have not already done so, make sure that Airlock Microgateway CNI is also installed on the cluster.
 
-For further information, please visit our documentation at https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" .}}.
-Detailed CRD API reference documentation is also available at https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" .}}/api/crds.
-{{ if .Values.crds.skipVersionCheck }}
-- CRD version check skipped
-{{- else }}
+Please ensure the following prerequisites are fulfilled:
+* Cert-Manager is installed.
+  https://cert-manager.io/docs/installation/helm/
+* Airlock Microgateway CNI is also installed on the cluster.
+  https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni
+* A valid Airlock Microgateway license is deployed in the Kubernetes secret 'airlock-microgateway-license'.
+  * Get a free Community license: https://airlock.com/en/microgateway-community
+  * Order a Premium license: https://airlock.com/en/microgateway-premium
+
+Further information:
+* Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}
+* CRD API reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/api/crds
+* Airlock Microgateway Labs: https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=helm
+{{- if .Values.crds.skipVersionCheck }}
+
+Warning: CRD version check skipped
+{{- else -}}
 {{- $outdatedCRDs := (include "airlock-microgateway.outdatedCRDs" .) -}}
 {{- if $outdatedCRDs -}}
     {{- fail (printf `
@@ -20,9 +31,9 @@ If you are not using the helm install/upgrade command and instead rely on some o
     -}}
 {{- end -}}
 {{- end -}}
-{{- if .Values.tests.enabled }}
+{{- if .Values.tests.enabled -}}
     {{- if .Values.operator.watchNamespaces -}}
-        {{- if not (has .Release.Namespace .Values.operator.watchNamespaces) }}
+        {{- if not (has .Release.Namespace .Values.operator.watchNamespaces) -}}
             {{- fail (printf `
 
 To execute 'helm test', it is necessary that the release namespace '%s' is part of the operator's watch scope. Either disable the tests or ensure that the release namespace is added to watch namspace list ('operator.watchNamespaces') in the helm values.
@@ -32,3 +43,5 @@ To execute 'helm test', it is necessary that the release namespace '%s' is part 
         {{- end -}}
     {{- end -}}
 {{- end }}
+
+Your release version is {{ .Chart.Version }}.

@@ -7,7 +7,7 @@ tests:
       appVersion: dev
     asserts: &latestDoc
       - matchRegexRaw:
-          pattern: ".*please visit our documentation at https://docs.airlock.com/microgateway/latest\\..*"
+          pattern: ".*Documentation: https://docs.airlock.com/microgateway/latest.*"
   - it: prerelease chart should describe latest doc links
     chart:
       appVersion: 4.2.0-ci
@@ -17,4 +17,4 @@ tests:
       appVersion: 4.2.4
     asserts:
       - matchRegexRaw:
-          pattern: ".*please visit our documentation at https://docs.airlock.com/microgateway/4.2\\..*"
+          pattern: ".*Documentation: https://docs.airlock.com/microgateway/4.2.*"

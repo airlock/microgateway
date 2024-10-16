@@ -26,10 +26,10 @@ operator:
     # -- Image repository from which to pull the Airlock Microgateway Operator image.
     repository: "quay.io/airlock/microgateway-operator"
     # -- Image tag to pull.
-    tag: "4.2.7"
+    tag: "4.2.8"
     # -- SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63").
     # Overrides tag when specified.
-    digest: "sha256:524f37bee6a77a95fd91be78177af78614c22adae2d11650c7f4ffd79b664b26"
+    digest: "sha256:2fcbaf069255015fa96c0dd37971d45216bdfe17288d4aceed7cab09f3e7b53d"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Annotations to add to all Pods.
@@ -89,10 +89,10 @@ engine:
     # -- Image repository from which to pull the Airlock Microgateway Engine image.
     repository: "quay.io/airlock/microgateway-engine"
     # -- Image tag to pull.
-    tag: "4.2.7"
+    tag: "4.2.8"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:e43ad143279181c872a879932433e19b000b68906ffe6607de6cf20f9f3de65c"
+    digest: "sha256:9f75d654a4e4b751bb11287b1954b3be8d8a120be8b15c962280b00a95aade67"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Resource restrictions to apply to the Airlock Microgateway Engine container.
@@ -121,9 +121,9 @@ networkValidator:
     repository: "cgr.dev/chainguard/netcat"
     # -- Image tag to pull.
     tag: ""
-    # -- SHA256 image digest to pull (in the format "sha256:6051975a14c51b9d3b525a06004d62a4d323c08ca58e3468343095a55a42fff2").
+    # -- SHA256 image digest to pull (in the format "sha256:7a73d4b82a2d4165bbc5efa55de4fee9d43f2b1c1edb3505cdc8afd1361bad9b").
     # Overrides tag when specified.
-    digest: "sha256:6051975a14c51b9d3b525a06004d62a4d323c08ca58e3468343095a55a42fff2"
+    digest: "sha256:7a73d4b82a2d4165bbc5efa55de4fee9d43f2b1c1edb3505cdc8afd1361bad9b"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
 license:

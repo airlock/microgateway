@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.14.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.2.7
+    app.kubernetes.io/version: 4.2.8
   name: envoyconfigurations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com

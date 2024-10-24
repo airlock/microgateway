@@ -82,6 +82,26 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-contentsecuritypolicy
+  failurePolicy: Fail
+  name: validate-contentsecuritypolicy.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - contentsecuritypolicies
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-denyrules
   failurePolicy: Fail
   name: validate-denyrules.microgateway.airlock.com
@@ -202,6 +222,26 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-jwks
+  failurePolicy: Fail
+  name: validate-jwks.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - jwks
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-limits
   failurePolicy: Fail
   name: validate-limits.microgateway.airlock.com
@@ -315,6 +355,26 @@ Operator validating webhooks
         - UPDATE
       resources:
         - redisproviders
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-sessionhandling
+  failurePolicy: Fail
+  name: validate-sessionhandling.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - sessionhandlings
   sideEffects: None
 - admissionReviewVersions:
     - v1

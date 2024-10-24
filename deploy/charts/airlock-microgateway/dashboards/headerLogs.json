@@ -7,14 +7,6 @@
             "type": "datasource",
             "pluginId": "loki",
             "pluginName": "Loki"
-        },
-        {
-            "name": "DS_PROMETHEUS",
-            "label": "Prometheus",
-            "description": "",
-            "type": "datasource",
-            "pluginId": "prometheus",
-            "pluginName": "Prometheus"
         }
     ],
     "__elements": {},
@@ -60,7 +52,7 @@
             }
         ]
     },
-    "description": "Log entries of threats blocked by Airlock Microgateway.\n\nThe dashboard can be filtered by namespace and block type. Column filters on the table allow for an even more granular filtering of the logs.",
+    "description": "Logs for header rewrites by Airlock Microgateway, retrieved from corresponding access logs.\n\nThe dashboard can be filtered by namespace. Column filters on the table allow for an even more granular filtering of the logs.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -84,6 +76,7 @@
     "panels": [
         {
             "datasource": {
+                "default": false,
                 "type": "loki",
                 "uid": "${DS_LOKI}"
             },
@@ -186,22 +179,6 @@
                     {
                         "matcher": {
                             "id": "byName",
-                            "options": "Block Type"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 116
-                            },
-                            {
-                                "id": "custom.filterable",
-                                "value": false
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
                             "options": "Request Size"
                         },
                         "properties": [
@@ -216,18 +193,6 @@
                             {
                                 "id": "custom.align",
                                 "value": "right"
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Block Subtype"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 217
                             }
                         ]
                     }
@@ -262,13 +227,13 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"airlock_request_blocked\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", details=\"airlock.actions.block.details\", block_type=\"airlock.actions.block.block_type\", block_subtype=\"airlock.actions.block.block_subtype\"\n| block_type=~\"${blockType:regex}\"",
+                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
                     "hide": false,
                     "queryType": "range",
-                    "refId": "Blocks"
+                    "refId": "Header Rewrites"
                 }
             ],
-            "title": "Blocked Request logs",
+            "title": "Header Rewrite Logs",
             "transformations": [
                 {
                     "id": "extractFields",
@@ -284,11 +249,10 @@
                         "include": {
                             "names": [
                                 "Time",
-                                "block_subtype",
-                                "block_type",
                                 "client_ip",
-                                "details",
                                 "domain",
+                                "header_request_details",
+                                "header_response_details",
                                 "http_method",
                                 "namespace",
                                 "request_id",
@@ -311,24 +275,23 @@
                         "includeByName": {},
                         "indexByName": {
                             "Time": 0,
-                            "block_subtype": 7,
-                            "block_type": 6,
-                            "client_ip": 9,
-                            "details": 8,
+                            "client_ip": 8,
                             "domain": 2,
+                            "header_request_details": 6,
+                            "header_response_details": 7,
                             "http_method": 3,
                             "namespace": 1,
-                            "request_id": 10,
+                            "request_id": 9,
                             "request_size": 5,
                             "url": 4
                         },
                         "renameByName": {
                             "Time": "Timestamp",
-                            "block_subtype": "Block Subtype",
-                            "block_type": "Block Type",
                             "client_ip": "Client IP",
                             "details": "Details",
                             "domain": "URL Domain",
+                            "header_request_details": "Request Header Actions",
+                            "header_response_details": "Response Header Actions",
                             "http_method": "HTTP Method",
                             "namespace": "Namespace",
                             "request_id": "Request ID",
@@ -387,31 +350,6 @@
                 "type": "query"
             },
             {
-                "allValue": ".*",
-                "current": {},
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "${DS_PROMETHEUS}"
-                },
-                "definition": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
-                "hide": 0,
-                "includeAll": true,
-                "label": "Block Type",
-                "multi": true,
-                "name": "blockType",
-                "options": [],
-                "query": {
-                    "qryType": 1,
-                    "query": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
-                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
-                },
-                "refresh": 2,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 5,
-                "type": "query"
-            },
-            {
                 "current": {},
                 "hide": 2,
                 "includeAll": false,
@@ -431,11 +369,10 @@
         "from": "now-15m",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {},
     "timezone": "browser",
-    "title": "Airlock Microgateway Threats Block - Logs",
-    "uid": "adnyzcvwnyadcc",
-    "version": 3,
+    "title": "Airlock Microgateway Header Rewrites - Logs",
+    "uid": "adnydadenyadcc",
+    "version": 1,
     "weekStart": ""
 }

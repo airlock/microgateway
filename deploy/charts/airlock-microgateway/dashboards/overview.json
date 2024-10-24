@@ -137,7 +137,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -205,7 +205,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -290,7 +290,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -376,7 +376,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -566,7 +566,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Requests blocked by Airlock Microgateway categorized by their corresponding type.",
+            "description": "Threats blocked by Airlock Microgateway categorized by their corresponding block type.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -670,7 +670,7 @@
                     }
                 ]
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -686,7 +686,7 @@
                     "refId": "Block Types"
                 }
             ],
-            "title": "Blocked Requests by Type",
+            "title": "Blocked Threats by Block Type",
             "transformations": [
                 {
                     "id": "timeSeriesTable",
@@ -1055,11 +1055,7 @@
     "templating": {
         "list": [
             {
-                "current": {
-                    "selected": false,
-                    "text": "Prometheus",
-                    "value": "PBFA97CFB590B2093"
-                },
+                "current": {},
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_PROMETHEUS",

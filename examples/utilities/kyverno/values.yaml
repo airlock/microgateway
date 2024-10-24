@@ -1,4 +1,0 @@
-config:
-  resourceFiltersExcludeNamespaces:
-    - "kube-system"
-  webhooks: null

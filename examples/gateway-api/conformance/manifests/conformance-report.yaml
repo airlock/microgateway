@@ -1,0 +1,71 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: gateway-conformance
+spec:
+  controllerName: microgateway.airlock.com/gatewayclass-controller
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gateway-conformance-tests
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: git-checkout
+          image: bitnami/git:latest
+          command:
+            - sh
+            - -c
+            - |
+              cd /workspace
+
+              git clone https://github.com/kubernetes-sigs/gateway-api.git --branch v1.1.0
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+      containers:
+        - name: go-test
+          image: golang:1.23.2-alpine
+          command:
+            - sh
+            - -c
+            - |
+              cd /workspace/gateway-api
+              
+              go test ./conformance -run TestConformance -args \
+                --supported-features=Gateway,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteDestinationPortMatching,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRouteQueryParamMatching,ReferenceGrant \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.4.0  --contact="https://www.airlock.com/en/contact" \
+                --conformance-profiles=GATEWAY-HTTP \
+                --report-output=/workspace/conformance-profile.yaml
+
+              cat /workspace/conformance-profile.yaml
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+      volumes:
+        - name: workspace
+          emptyDir: {}
+      serviceAccountName: gateway-conformance-tests
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gateway-conformance-tests
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gateway-conformance-tests
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: gateway-conformance-tests
+    namespace: default

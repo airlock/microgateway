@@ -40,3 +40,31 @@ tests:
       operator.watchNamespaces: [ "foo", "mytestnamespace", "bar" ]
     asserts:
       - notFailedTemplate: {}
+  - it: should fail if Gateway API is enabled and watch namespaces are set
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.gatewayAPI.enabled: true
+      operator.watchNamespaces: [ "foo", "bar" ]
+    asserts:
+      - failedTemplate: {}
+  - it: should fail if Gateway API is enabled and watch namespace selector is set
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.gatewayAPI.enabled: true
+      operator.watchNamespaceSelector:
+        matchLabels:
+          foo: bar
+    asserts:
+      - failedTemplate: {}
+  - it: should succeed if Gateway API is enabled and neither a watch namespace nor watch namespace selector is set
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.gatewayAPI.enabled: true
+    asserts:
+      - notFailedTemplate: {}

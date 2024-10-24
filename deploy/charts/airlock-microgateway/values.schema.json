@@ -152,6 +152,22 @@
             "create"
           ],
           "additionalProperties": false
+        },
+        "gatewayAPI": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "controllerName" : {
+              "type": "string",
+              "pattern": "^microgateway\\.airlock\\.com\/[A-Za-z0-9\/\\-._~%!$&'()*+,;=:]+$"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false
         }
       },
       "oneOf": [
@@ -241,10 +257,14 @@
       "properties": {
         "image": {
           "$ref": "#/definitions/Image"
+        },
+        "resources": {
+          "type": "object"
         }
       },
       "required": [
-        "image"
+        "image",
+        "resources"
       ],
       "additionalProperties": false
     },
@@ -322,13 +342,25 @@
             },
             "blockLogs" : {
               "$ref": "#/definitions/DashboardInstance"
+            },
+            "headerLogs" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "logOnlyMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "logOnlyLogs" : {
+              "$ref": "#/definitions/DashboardInstance"
             }
           },
           "required": [
             "overview",
             "license",
             "blockMetrics",
-            "blockLogs"
+            "blockLogs",
+            "headerLogs",
+            "logOnlyMetrics",
+            "logOnlyLogs"
           ],
           "additionalProperties": false
         }

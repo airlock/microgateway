@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - accesscontrols.microgateway.airlock.com.yaml
 - contentsecurities.microgateway.airlock.com.yaml
+- contentsecuritypolicies.microgateway.airlock.com.yaml
 - denyrules.microgateway.airlock.com.yaml
 - envoyclusters.microgateway.airlock.com.yaml
 - envoyconfigurations.microgateway.airlock.com.yaml
@@ -10,6 +11,7 @@ resources:
 - graphqls.microgateway.airlock.com.yaml
 - headerrewrites.microgateway.airlock.com.yaml
 - identitypropagations.microgateway.airlock.com.yaml
+- jwks.microgateway.airlock.com.yaml
 - limits.microgateway.airlock.com.yaml
 - oidcproviders.microgateway.airlock.com.yaml
 - oidcrelyingparties.microgateway.airlock.com.yaml

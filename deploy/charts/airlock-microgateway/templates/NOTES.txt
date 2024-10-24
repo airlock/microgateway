@@ -1,13 +1,27 @@
 Thank you for installing Airlock Microgateway.
+{{- if .Values.operator.gatewayAPI.enabled }}
+
+K8s Gateway API support enabled.
+Note that the K8s Gateway API support is an incubating Airlock Microgateway feature. We encourage you to try the installation and configuration for testing and evaluation. Your feedback is welcome.
+
+    {{- if or .Values.operator.watchNamespaces .Values.operator.watchNamespaceSelector -}}
+        {{- fail `
+
+K8s Gateway API is only supported using the 'AllNamespaces' installation mode type, ensure that 'operator.watchNamespaces' and 'operator.watchNamespaceSelector' are not configured.
+`
+    -}}
+    {{- end -}}
+{{- end }}
 
 Please ensure the following prerequisites are fulfilled:
-* Cert-Manager is installed.
+* cert-manager is installed.
   https://cert-manager.io/docs/installation/helm/
-* Airlock Microgateway CNI is also installed on the cluster.
-  https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni
-* A valid Airlock Microgateway license is deployed in the Kubernetes secret 'airlock-microgateway-license'.
+* A valid Airlock Microgateway license is deployed in the Kubernetes secret '{{ .Release.Namespace }}/{{ .Values.license.secretName }}'
   * Get a free Community license: https://airlock.com/en/microgateway-community
   * Order a Premium license: https://airlock.com/en/microgateway-premium
+* Airlock Microgateway CNI is installed on the cluster, when running data plane mode sidecar
+  https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni.
+  For more information about data plane modes, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/#data/1660804709650.html
 
 Further information:
 * Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}

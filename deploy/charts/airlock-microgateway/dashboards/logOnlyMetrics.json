@@ -58,7 +58,7 @@
             }
         ]
     },
-    "description": "Metrics on threats blocked by Airlock Microgateway.\n\nDashboard can be filtered by namespaces as well as block types.",
+    "description": "Metrics on threats logged by Airlock Microgateway in threat handling mode LogOnly.\n\nDashboard can be filtered by namespaces as well as block types.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -88,7 +88,7 @@
                 "y": 0
             },
             "id": 6,
-            "title": "Airlock Microgateway Threats Block - Metrics",
+            "title": "Airlock Microgateway Threats LogOnly - Metrics",
             "type": "row"
         },
         {
@@ -96,81 +96,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Total number of requests processed by Airlock Microgateway.",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "fixedColor": "text",
-                        "mode": "fixed"
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            }
-                        ]
-                    },
-                    "unit": "short"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 4,
-                "w": 4,
-                "x": 0,
-                "y": 1
-            },
-            "id": 1,
-            "options": {
-                "colorMode": "value",
-                "graphMode": "none",
-                "justifyMode": "auto",
-                "orientation": "auto",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
-                },
-                "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
-            },
-            "pluginVersion": "10.2.0",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "${DS_PROMETHEUS}"
-                    },
-                    "disableTextWrap": false,
-                    "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "round(sum(increase(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
-                    "format": "time_series",
-                    "fullMetaSearch": false,
-                    "hide": false,
-                    "includeNullMetadata": true,
-                    "instant": true,
-                    "legendFormat": "Processed Requests",
-                    "range": false,
-                    "refId": "A",
-                    "useBackend": false
-                }
-            ],
-            "title": "Requests",
-            "type": "stat"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-            },
-            "description": "Ratio of blocked requests vs. processed requests by Airlock Microgateway.",
+            "description": "Number of threats logged by Airlock Microgateway in threat handling mode LogOnly.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -198,14 +124,14 @@
                             }
                         ]
                     },
-                    "unit": "percentunit"
+                    "unit": "short"
                 },
                 "overrides": []
             },
             "gridPos": {
                 "h": 4,
                 "w": 4,
-                "x": 4,
+                "x": 0,
                 "y": 1
             },
             "id": 2,
@@ -214,6 +140,7 @@
                 "graphMode": "area",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "last"
@@ -235,17 +162,17 @@
                     "disableTextWrap": false,
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])) / sum(increase(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range]))",
+                    "expr": "round(sum(increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": true,
-                    "legendFormat": "Blocked Requests (%)",
+                    "legendFormat": "Logged threats in LogOnly mode",
                     "range": false,
                     "refId": "A",
                     "useBackend": false
                 }
             ],
-            "title": "% Blocked Requests",
+            "title": "Threats - LogOnly",
             "type": "stat"
         },
         {
@@ -253,11 +180,11 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Requests per second processed by Airlock Microgateway along with the corresponding block rate.",
+            "description": "Number of threats per second handled in LogOnly mode.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
-                        "fixedColor": "blue",
+                        "fixedColor": "orange",
                         "mode": "fixed"
                     },
                     "custom": {
@@ -268,7 +195,7 @@
                         "axisPlacement": "left",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 0,
+                        "fillOpacity": 25,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -301,53 +228,10 @@
                                 "value": null
                             }
                         ]
-                    }
-                },
-                "overrides": [
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "% Blocks"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.axisPlacement",
-                                "value": "right"
-                            },
-                            {
-                                "id": "unit",
-                                "value": "percentunit"
-                            },
-                            {
-                                "id": "color",
-                                "value": {
-                                    "fixedColor": "orange",
-                                    "mode": "fixed"
-                                }
-                            },
-                            {
-                                "id": "max",
-                                "value": 1
-                            }
-                        ]
                     },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Requests per second"
-                        },
-                        "properties": [
-                            {
-                                "id": "unit",
-                                "value": "short"
-                            },
-                            {
-                                "id": "custom.fillOpacity",
-                                "value": 25
-                            }
-                        ]
-                    }
-                ]
+                    "unit": "short"
+                },
+                "overrides": []
             },
             "gridPos": {
                 "h": 10,
@@ -380,27 +264,14 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(rate(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m]))",
+                    "expr": "sum(rate(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m]))",
                     "instant": false,
-                    "legendFormat": "Requests per second",
+                    "legendFormat": "Number of threats per second",
                     "range": true,
-                    "refId": "Requests per Second"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "${DS_PROMETHEUS}"
-                    },
-                    "editorMode": "code",
-                    "expr": "sum(rate(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m])) / sum(rate(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m]))",
-                    "hide": false,
-                    "instant": false,
-                    "legendFormat": "% Blocks",
-                    "range": true,
-                    "refId": "Blocks"
+                    "refId": "LogOnly Events"
                 }
             ],
-            "title": "Requests vs. % Blocks",
+            "title": "Threats - LogOnly",
             "type": "timeseries"
         },
         {
@@ -408,7 +279,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Blocked threats by block type.",
+            "description": "Number of threats in LogOnly mode by block type.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -491,7 +362,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
+                    "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
                     "format": "time_series",
                     "instant": true,
                     "legendFormat": "__auto",
@@ -520,7 +391,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Blocked threats by block subtype, which are subsets of the various block types.",
+            "description": "Number of threats in LogOnly mode by block subtype, which are subsets of the various block types.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -601,7 +472,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
+                    "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
                     "instant": true,
                     "legendFormat": "__auto",
                     "range": false,
@@ -715,7 +586,7 @@
                     "type": "prometheus",
                     "uid": "${DS_PROMETHEUS}"
                 },
-                "definition": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
+                "definition": "label_values(microgateway_http_downstream_rq_threats_logged_total,block_type)",
                 "hide": 0,
                 "includeAll": true,
                 "label": "Block Type",
@@ -724,7 +595,7 @@
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
+                    "query": "label_values(microgateway_http_downstream_rq_threats_logged_total,block_type)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 2,
@@ -739,13 +610,12 @@
         "from": "now-24h",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {
         "hidden": false
     },
     "timezone": "browser",
-    "title": "Airlock Microgateway Threats Block - Metrics",
-    "uid": "ddnqoczu7qvb4cdd3dd",
-    "version": 3,
+    "title": "Airlock Microgateway Threats LogOnly - Metrics",
+    "uid": "ddnqoczu7qv2mfmsd3dd",
+    "version": 1,
     "weekStart": ""
 }

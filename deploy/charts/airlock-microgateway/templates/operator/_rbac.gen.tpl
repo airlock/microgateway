@@ -8,6 +8,8 @@ Operator rbac permission rules
     - ""
   resources:
     - configmaps
+    - namespaces
+    - replicasets
   verbs:
     - get
     - list
@@ -19,14 +21,6 @@ Operator rbac permission rules
   verbs:
     - create
     - patch
-- apiGroups:
-    - ""
-  resources:
-    - namespaces
-  verbs:
-    - get
-    - list
-    - watch
 - apiGroups:
     - ""
   resources:
@@ -60,28 +54,107 @@ Operator rbac permission rules
     - delete
     - get
     - list
+    - patch
     - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - services
+  verbs:
+    - create
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - apiextensions.k8s.io
+  resources:
+    - customresourcedefinitions
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - deployments
+  verbs:
+    - create
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - replicasets
+  verbs:
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - replicasets/finalizers
+  verbs:
+    - patch
+    - update
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gatewayclasses
+  verbs:
+    - get
+    - list
+    - patch
+    - watch
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gatewayclasses/finalizers
+    - gatewayclasses/status
+    - gateways/finalizers
+    - gateways/status
+    - httproutes/status
+  verbs:
+    - patch
+    - update
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gateways
+    - httproutes
+    - referencegrants
+  verbs:
+    - get
+    - list
     - watch
 - apiGroups:
     - microgateway.airlock.com
   resources:
     - accesscontrols
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
     - contentsecurities
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
+    - contentsecuritypolicies
     - denyrules
+    - envoyclusters
+    - envoyhttpfilters
+    - graphqls
+    - headerrewrites
+    - identitypropagations
+    - jwks
+    - limits
+    - oidcproviders
+    - oidcrelyingparties
+    - openapis
+    - parsers
+    - redisproviders
+    - sessionhandlings
+    - telemetries
   verbs:
     - get
     - list
@@ -89,11 +162,10 @@ Operator rbac permission rules
 - apiGroups:
     - microgateway.airlock.com
   resources:
-    - envoyclusters
+    - contentsecuritypolicies/status
   verbs:
-    - get
-    - list
-    - watch
+    - patch
+    - update
 - apiGroups:
     - microgateway.airlock.com
   resources:
@@ -110,98 +182,11 @@ Operator rbac permission rules
     - microgateway.airlock.com
   resources:
     - envoyconfigurations/status
+    - sidecargateways/status
   verbs:
     - get
     - patch
     - update
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - envoyhttpfilters
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - graphqls
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - headerrewrites
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - identitypropagations
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - limits
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - oidcproviders
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - oidcrelyingparties
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - openapis
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - parsers
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - redisproviders
-  verbs:
-    - get
-    - list
-    - watch
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - sessionhandlings
-  verbs:
-    - get
-    - list
-    - watch
 - apiGroups:
     - microgateway.airlock.com
   resources:
@@ -218,20 +203,4 @@ Operator rbac permission rules
     - sidecargateways/finalizers
   verbs:
     - update
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - sidecargateways/status
-  verbs:
-    - get
-    - patch
-    - update
-- apiGroups:
-    - microgateway.airlock.com
-  resources:
-    - telemetries
-  verbs:
-    - get
-    - list
-    - watch
 {{- end }}

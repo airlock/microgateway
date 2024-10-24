@@ -31,6 +31,12 @@
         },
         {
             "type": "panel",
+            "id": "table",
+            "name": "Table",
+            "version": ""
+        },
+        {
+            "type": "panel",
             "id": "timeseries",
             "name": "Time series",
             "version": ""
@@ -52,6 +58,7 @@
             }
         ]
     },
+    "description": "Overview on Airlock Microgateway License attributes and usage.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -78,7 +85,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "License status of Airlock Microgateway.",
+            "description": "Aggregated status of the Airlock Microgateway licenses selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -125,6 +132,7 @@
                 "graphMode": "area",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -136,7 +144,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -145,7 +153,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "min(microgateway_license_valid{namespace=~\"${operator_namespace.regex}\"})",
+                    "expr": "min(microgateway_license_valid * on (service,instance) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
                     "instant": true,
                     "legendFormat": "License Status",
                     "range": false,
@@ -160,7 +168,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Expiry date of the Airlock Microgateway license associated with the selected operator.",
+            "description": "Next upcoming expiry date over all Airlock Microgateway licenses selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -193,6 +201,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -204,7 +213,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -213,7 +222,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "min(microgateway_license_expiry_timestamp_seconds{namespace=~\"${operator_namespace.regex}\"})*1000",
+                    "expr": "min(microgateway_license_expiry_timestamp_seconds * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})*1000",
                     "instant": true,
                     "legendFormat": "Expiry Date (MM/DD/YYYY)",
                     "range": false,
@@ -228,7 +237,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Number of licensed requests for applications protected by Airlock Microgateway.",
+            "description": "Sum of the number licensed requests over all Airlock Microgateway license selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -261,6 +270,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -272,7 +282,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -281,7 +291,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(microgateway_license_max_rq_count_per_month{namespace=~\"${operator_namespace.regex}\"})",
+                    "expr": "sum(topk(1, (microgateway_license_max_rq_count_per_month > 0) * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}) by (id))",
                     "instant": true,
                     "legendFormat": "Licensed Requests",
                     "range": false,
@@ -296,7 +306,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Estimated number of requests protected by Airlock Microgateway over 30 days based on the last 7 days.",
+            "description": "Sum of the estimated number of requests over 30 days based on the last 7 days over all Airlock Microgateway licenses selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -329,6 +339,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -340,7 +351,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "10.2.0",
             "targets": [
                 {
                     "datasource": {
@@ -349,7 +360,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(increase(microgateway_license_http_rq_total{job=~\"${operator_namespace.regex}/.*-engine\"}[7d]))/7*30",
+                    "expr": "(sum((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
                     "instant": true,
                     "legendFormat": "Estimated Requests",
                     "range": false,
@@ -378,6 +389,7 @@
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
+                        "barWidthFactor": 0.6,
                         "drawStyle": "line",
                         "fillOpacity": 0,
                         "gradientMode": "none",
@@ -418,8 +430,8 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 12,
-                "w": 16,
+                "h": 13,
+                "w": 24,
                 "x": 0,
                 "y": 4
             },
@@ -444,17 +456,551 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "sum(avg_over_time(increase(microgateway_license_http_rq_total{job=~\"${operator_namespace.regex}/.*-engine\"}[7d])[2m:30s]))",
+                    "expr": "  sum((label_replace(avg_over_time(increase(microgateway_license_http_rq_total[7d])[2m:30s]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
+                    "hide": false,
                     "instant": false,
                     "legendFormat": "# Requests per week",
                     "range": true,
-                    "refId": "A"
+                    "refId": "C"
                 }
             ],
             "title": "Processed Requests per week",
             "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "default": false,
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "description": "Estimated number of requests over 30 days based on the last 7 days per operator namespace for the Airlock Microgateway licenses selected in the dashboard filter.",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "License ID"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 330
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Requests over 30 days (estimated)"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "match": "null+nan",
+                                            "result": {
+                                                "index": 0,
+                                                "text": "0"
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Operator Namespace"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 307
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 11,
+                "x": 0,
+                "y": 17
+            },
+            "id": 7,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "frameIndex": 1,
+                "showHeader": true,
+                "sortBy": []
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(sum by (namespace, id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Est. Usage over 30 days"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(min by(namespace) (microgateway_build_info{container=\"manager\"})) * on (namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Engine License"
+                }
+            ],
+            "title": "Usage by Operator Namespace",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {}
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "Time": true,
+                            "Value #Engine License": true,
+                            "Value #Licensed Req": false,
+                            "container": true,
+                            "endpoint": true,
+                            "instance": true,
+                            "job": true,
+                            "namespace": false,
+                            "pod": true,
+                            "service": true,
+                            "version": true
+                        },
+                        "includeByName": {},
+                        "indexByName": {
+                            "Time": 0,
+                            "Value": 3,
+                            "id": 2,
+                            "namespace": 1
+                        },
+                        "renameByName": {
+                            "Value #Est. Usage over 30 days": "Requests over 30 days (estimated)",
+                            "Value #License Expiry Date": "Expiry Date",
+                            "Value #License Type": "License Type",
+                            "Value #Licensed Req": "Licensed Requests",
+                            "Value #Validity": "Valid",
+                            "id": "License ID",
+                            "namespace": "Operator Namespace"
+                        }
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "description": "Metadata for the Airlock Microgateway licenses selected in the dashboard filter.",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "License ID"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 321
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Valid"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "0": {
+                                                "color": "red",
+                                                "index": 1,
+                                                "text": "Invalid"
+                                            },
+                                            "1": {
+                                                "color": "green",
+                                                "index": 0,
+                                                "text": "Valid"
+                                            }
+                                        },
+                                        "type": "value"
+                                    },
+                                    {
+                                        "options": {
+                                            "match": "null+nan",
+                                            "result": {
+                                                "color": "red",
+                                                "index": 2,
+                                                "text": "Invalid"
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 65
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "License Type"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "0": {
+                                                "index": 1,
+                                                "text": "Community"
+                                            },
+                                            "1": {
+                                                "index": 0,
+                                                "text": "Premium"
+                                            }
+                                        },
+                                        "type": "value"
+                                    },
+                                    {
+                                        "options": {
+                                            "match": "null+nan",
+                                            "result": {
+                                                "index": 2,
+                                                "text": "n/a"
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 109
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Expiry Date"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "time:L"
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 130
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Requests over 30 days (estimated)"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "match": "null+nan",
+                                            "result": {
+                                                "index": 0,
+                                                "text": "0"
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Licensed Requests"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 160
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 13,
+                "x": 11,
+                "y": 17
+            },
+            "id": 8,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "frameIndex": 1,
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": false,
+                        "displayName": "Expiry Date"
+                    }
+                ]
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "min by (id) (microgateway_license_valid * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Validity"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "topk(1,microgateway_license_max_rq_count_per_month * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})by (id)",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Licensed Req"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "min by (id) (microgateway_license_is_premium * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "License Type"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "min by (id) (microgateway_license_expiry_timestamp_seconds * on (service, namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})*1000",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "License Expiry Date"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(sum by (id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Est. Usage over 30 days"
+                }
+            ],
+            "title": "License Overview",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {}
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "Time": true,
+                            "Value #Licensed Req": false,
+                            "container": true,
+                            "endpoint": true,
+                            "instance": true,
+                            "job": true,
+                            "namespace": true,
+                            "pod": true,
+                            "service": true
+                        },
+                        "includeByName": {},
+                        "indexByName": {},
+                        "renameByName": {
+                            "Value #Est. Usage over 30 days": "Requests over 30 days (estimated)",
+                            "Value #License Expiry Date": "Expiry Date",
+                            "Value #License Type": "License Type",
+                            "Value #Licensed Req": "Licensed Requests",
+                            "Value #Validity": "Valid",
+                            "id": "License ID",
+                            "namespace": "Operator Namespace"
+                        }
+                    }
+                },
+                {
+                    "id": "filterByValue",
+                    "options": {
+                        "filters": [
+                            {
+                                "config": {
+                                    "id": "equal",
+                                    "options": {
+                                        "value": "<MISSING>"
+                                    }
+                                },
+                                "fieldName": "License ID"
+                            }
+                        ],
+                        "match": "any",
+                        "type": "exclude"
+                    }
+                }
+            ],
+            "type": "table"
         }
     ],
+    "refresh": "",
     "schemaVersion": 39,
     "tags": [
         "airlock-microgateway"
@@ -462,11 +1008,7 @@
     "templating": {
         "list": [
             {
-                "current": {
-                    "selected": false,
-                    "text": "Prometheus",
-                    "value": "PBFA97CFB590B2093"
-                },
+                "current": {},
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_PROMETHEUS",
@@ -486,17 +1028,17 @@
                     "type": "prometheus",
                     "uid": "${DS_PROMETHEUS}"
                 },
-                "definition": "label_values(microgateway_license_valid,namespace)",
+                "definition": "label_values(microgateway_license_info,id)",
                 "description": "",
                 "hide": 0,
-                "includeAll": false,
-                "label": "Operator Namespace",
-                "multi": false,
-                "name": "operator_namespace",
+                "includeAll": true,
+                "label": "License ID",
+                "multi": true,
+                "name": "license_id",
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(microgateway_license_valid,namespace)",
+                    "query": "label_values(microgateway_license_info,id)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 2,

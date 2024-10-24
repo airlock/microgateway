@@ -138,7 +138,7 @@ spec:
       echo "### Waiting for Microgateway Operator Deployments to be ready"
       if ! kubectl rollout status -n {{ .Release.Namespace }} --timeout=90s \
         deployments/{{ include "airlock-microgateway.operator.fullname" . }}; then
-        fail 'Timout occurred'
+        fail 'Timeout occurred'
       fi
       echo ""
 
@@ -189,7 +189,7 @@ spec:
 
       echo "### Waiting for '{{ include "airlock-microgateway.fullname" . }}-test-backend' to be ready"
       if ! kubectl rollout status -n {{ .Release.Namespace }} statefulset/{{ include "airlock-microgateway.fullname" . }}-test-backend --timeout=90s; then
-        fail 'Timout occurred'
+        fail 'Timeout occurred'
       fi
       echo ""
 

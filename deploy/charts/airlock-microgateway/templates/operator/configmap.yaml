@@ -190,8 +190,8 @@ data:
       stats_tags:
         - tag_name: "block_type"
           regex: "\\.(block_type\\.([^.]+))"
-        - tag_name: "attack_type"
-          regex: "\\.(attack_type\\.([^.]+))"
+        - tag_name: "block_subtype"
+          regex: "\\.(block_subtype\\.([^.]+))"
         - tag_name: "envoy_cluster_name"
           regex: "\\.(cluster\\.([^.]+))"
         - tag_name: "version"
@@ -364,6 +364,10 @@ data:
     securityContext:
       {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
       runAsUser: $(SECURITYCONTEXT_UID)
+    {{- with .Values.networkValidator.resources }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   operator_config.yaml: |
     apiVersion: config.airlock.com/v1alpha1
     kind: OperatorConfig
@@ -391,4 +395,11 @@ data:
     namespaces:
       list:
         {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $.Values.operator.gatewayAPI }}
+    gatewayAPI:
+      enabled: {{ .enabled }}
+      {{- if .controllerName }}
+      controllerName: {{ .controllerName }}
+      {{- end }}
     {{- end }}

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.15.0
+    controller-gen.kubebuilder.io/version: v0.16.4
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.3.4
+    app.kubernetes.io/version: 4.4.0
   name: sessionhandlings.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -21,15 +21,7 @@ spec:
     - name: v1alpha1
       schema:
         openAPIV3Schema:
-          description: |-
-            SessionHandling contains the configuration for session handling.
-
-
-            {{% notice warning %}} The Session Handling feature (required for OIDC) is currently in an experimental state.
-
-
-            We encourage you to try it out and give feedback, but be aware that we do not recommend using it in a production environment yet, as high-availability Redis configurations (e.g. Sentinel/Cluster) are not yet supported.
-            {{% /notice %}}
+          description: SessionHandling contains the configuration for session handling.
           properties:
             apiVersion:
               description: |-
@@ -51,6 +43,14 @@ spec:
             spec:
               description: Specification of the desired session handling behavior.
               properties:
+                defaultTimeouts:
+                  description: DefaultTimeouts specifies the session timeouts to apply when not provided by the authentication method.
+                  properties:
+                    lifetime:
+                      default: 12h
+                      description: Lifetime specifies the maximum duration a session can exist.
+                      type: string
+                  type: object
                 persistence:
                   description: Persistence configures where to store the session state.
                   properties:
@@ -67,6 +67,18 @@ spec:
                   required:
                     - redisProviderRef
                   type: object
+                prefix:
+                  description: |-
+                    Prefix specifies the prefix under which the sessions should be stored in the persistence layer.
+                    If not specified, an automatic prefix derived from the namespaced SessionHandling CR name is used, which ensures that sessions will always be isolated on Microgateways configured with different SessionHandling CRs, even if they share the same persistence backend.
+
+                    To allow session sharing between different Microgateway deployments, ensure that the prefix and persistence backend is the same across all corresponding SessionHandling CRs.
+
+                    Note: Session cookies are currently never shared across different fully qualified domain names (FQDNs) and authentication via different OIDC Relying Parties generates different session cookies. Clients will therefore only able to transparently reuse session cookies for connecting to different Microgateway deployments if those are a) exposed under the same FQDN and b) handle authentication via the same OIDC Relying Party.
+                  maxLength: 64
+                  minLength: 1
+                  pattern: ^[a-zA-Z][a-zA-Z0-9_]*$
+                  type: string
               required:
                 - persistence
               type: object

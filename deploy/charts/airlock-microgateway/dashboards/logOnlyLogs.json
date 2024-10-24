@@ -60,7 +60,7 @@
             }
         ]
     },
-    "description": "Log entries of threats blocked by Airlock Microgateway.\n\nThe dashboard can be filtered by namespace and block type. Column filters on the table allow for an even more granular filtering of the logs.",
+    "description": "Log entries of threats logged in log-only mode by Airlock Microgateway.\n\nThe dashboard can be filtered by namespace. Column filters on the table allow for an even more granular filtering of the logs.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -84,6 +84,7 @@
     "panels": [
         {
             "datasource": {
+                "default": false,
                 "type": "loki",
                 "uid": "${DS_LOKI}"
             },
@@ -121,7 +122,7 @@
                         "properties": [
                             {
                                 "id": "custom.width",
-                                "value": 221
+                                "value": 328
                             },
                             {
                                 "id": "custom.filterable"
@@ -136,7 +137,7 @@
                         "properties": [
                             {
                                 "id": "custom.width",
-                                "value": 214
+                                "value": 176
                             },
                             {
                                 "id": "unit",
@@ -155,7 +156,7 @@
                         "properties": [
                             {
                                 "id": "custom.width",
-                                "value": 140
+                                "value": 132
                             }
                         ]
                     },
@@ -167,7 +168,7 @@
                         "properties": [
                             {
                                 "id": "custom.width",
-                                "value": 138
+                                "value": 137
                             }
                         ]
                     },
@@ -180,22 +181,6 @@
                             {
                                 "id": "custom.width",
                                 "value": 328
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Block Type"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 116
-                            },
-                            {
-                                "id": "custom.filterable",
-                                "value": false
                             }
                         ]
                     },
@@ -216,18 +201,6 @@
                             {
                                 "id": "custom.align",
                                 "value": "right"
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Block Subtype"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 217
                             }
                         ]
                     }
@@ -262,13 +235,13 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"airlock_request_blocked\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", details=\"airlock.actions.block.details\", block_type=\"airlock.actions.block.block_type\", block_subtype=\"airlock.actions.block.block_subtype\"\n| block_type=~\"${blockType:regex}\"",
+                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= `log_only` |= `envoy.access` | json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", details=\"airlock.actions.log_only\", log_type=\"event.dataset\" | label_format log_count=`{{ len (fromJson .details) }}` | log_type = `envoy.access` | log_count > 0",
                     "hide": false,
                     "queryType": "range",
-                    "refId": "Blocks"
+                    "refId": "Log Only Logs"
                 }
             ],
-            "title": "Blocked Request logs",
+            "title": "Threats Logs Log-Only",
             "transformations": [
                 {
                     "id": "extractFields",
@@ -284,8 +257,6 @@
                         "include": {
                             "names": [
                                 "Time",
-                                "block_subtype",
-                                "block_type",
                                 "client_ip",
                                 "details",
                                 "domain",
@@ -311,21 +282,17 @@
                         "includeByName": {},
                         "indexByName": {
                             "Time": 0,
-                            "block_subtype": 7,
-                            "block_type": 6,
-                            "client_ip": 9,
-                            "details": 8,
+                            "client_ip": 8,
+                            "details": 7,
                             "domain": 2,
-                            "http_method": 3,
+                            "http_method": 4,
                             "namespace": 1,
-                            "request_id": 10,
-                            "request_size": 5,
-                            "url": 4
+                            "request_id": 9,
+                            "request_size": 6,
+                            "url": 5
                         },
                         "renameByName": {
                             "Time": "Timestamp",
-                            "block_subtype": "Block Subtype",
-                            "block_type": "Block Type",
                             "client_ip": "Client IP",
                             "details": "Details",
                             "domain": "URL Domain",
@@ -387,31 +354,6 @@
                 "type": "query"
             },
             {
-                "allValue": ".*",
-                "current": {},
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "${DS_PROMETHEUS}"
-                },
-                "definition": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
-                "hide": 0,
-                "includeAll": true,
-                "label": "Block Type",
-                "multi": true,
-                "name": "blockType",
-                "options": [],
-                "query": {
-                    "qryType": 1,
-                    "query": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
-                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
-                },
-                "refresh": 2,
-                "regex": "",
-                "skipUrlSync": false,
-                "sort": 5,
-                "type": "query"
-            },
-            {
                 "current": {},
                 "hide": 2,
                 "includeAll": false,
@@ -431,11 +373,10 @@
         "from": "now-15m",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {},
     "timezone": "browser",
-    "title": "Airlock Microgateway Threats Block - Logs",
-    "uid": "adnyzcvwnyadcc",
-    "version": 3,
+    "title": "Airlock Microgateway Threats LogOnly - Logs",
+    "uid": "adnasdfdwnyadcc",
+    "version": 7,
     "weekStart": ""
 }

@@ -1,6 +1,6 @@
 # Airlock Microgateway
 
-![Version: 4.2.8](https://img.shields.io/badge/Version-4.2.8-informational?style=flat-square) ![AppVersion: 4.2.8](https://img.shields.io/badge/AppVersion-4.2.8-informational?style=flat-square)
+![Version: 4.2.9](https://img.shields.io/badge/Version-4.2.9-informational?style=flat-square) ![AppVersion: 4.2.9](https://img.shields.io/badge/AppVersion-4.2.9-informational?style=flat-square)
 
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
@@ -13,7 +13,7 @@
 </picture>
 
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
-__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.2.8).__
+__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.2.9).__
 
 ### Features
 * Kubernetes native integration with its Operator, Custom Resource Definitions, hot-reload, automatic sidecar injection.
@@ -57,7 +57,7 @@ For an easy start in non-production environments, you may deploy the same cert-m
 ### Deploy cert-manager
 ```bash
 # Install cert-manager
-kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/?ref=4.2.8
+kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/?ref=4.2.9
 
 # Wait for the cert-manager to be up and running
 kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/instance=cert-manager
@@ -76,14 +76,14 @@ kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kub
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
-   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.2.8' --wait
+   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.2.9' --wait
    ```
 
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
    ```bash
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.8'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.9'
    helm test airlock-microgateway -n airlock-microgateway-system --logs
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.8'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.9'
    ```
 
 ### Upgrading CRDs
@@ -91,7 +91,7 @@ kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kub
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```bash
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.2.8 --server-side --force-conflicts
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.2.9 --server-side --force-conflicts
 ```
 
 **Note**: Certain GitOps solutions such as e.g. Argo CD or Flux CD have their own mechanisms for automatically upgrading CRDs included with Helm charts.
@@ -110,10 +110,10 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | commonAnnotations | object | `{}` | Annotations to add to all resources. |
 | commonLabels | object | `{}` | Labels to add to all resources. |
 | crds.skipVersionCheck | bool | `false` | Whether to skip the sanity check which prevents installing/upgrading the helm chart in a cluster with outdated Airlock Microgateway CRDs. The check aims to prevent unexpected behavior and issues due to Helm v3 not automatically upgrading CRDs which are already present in the cluster when performing a "helm install/upgrade". |
-| engine.image.digest | string | `"sha256:9f75d654a4e4b751bb11287b1954b3be8d8a120be8b15c962280b00a95aade67"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| engine.image.digest | string | `"sha256:b8a0c0e276e28b8980dd5a6fabbcd86697adea5591f9a196fe2bcc35f8bca279"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | engine.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | engine.image.repository | string | `"quay.io/airlock/microgateway-engine"` | Image repository from which to pull the Airlock Microgateway Engine image. |
-| engine.image.tag | string | `"4.2.8"` | Image tag to pull. |
+| engine.image.tag | string | `"4.2.9"` | Image tag to pull. |
 | engine.resources | object | `{}` | Resource restrictions to apply to the Airlock Microgateway Engine container. |
 | engine.sidecar.podMonitor.create | bool | `false` | Whether to create a PodMonitor resource for monitoring. |
 | engine.sidecar.podMonitor.labels | object | `{}` | Labels to add to the PodMonitor. |
@@ -121,16 +121,16 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | imagePullSecrets | list | `[]` | ImagePullSecrets to use when pulling images. |
 | license.secretName | string | `"airlock-microgateway-license"` | Name of the secret containing the "microgateway-license.txt" key. |
 | nameOverride | string | `""` | Allows overriding the name to use instead of "microgateway". |
-| networkValidator.image.digest | string | `"sha256:7a73d4b82a2d4165bbc5efa55de4fee9d43f2b1c1edb3505cdc8afd1361bad9b"` | SHA256 image digest to pull (in the format "sha256:7a73d4b82a2d4165bbc5efa55de4fee9d43f2b1c1edb3505cdc8afd1361bad9b"). Overrides tag when specified. |
+| networkValidator.image.digest | string | `"sha256:7ef657ce316ce9d86f90c1dc99702d1190877c6ac2e923e696dc82c30050a14c"` | SHA256 image digest to pull (in the format "sha256:7ef657ce316ce9d86f90c1dc99702d1190877c6ac2e923e696dc82c30050a14c"). Overrides tag when specified. |
 | networkValidator.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | networkValidator.image.repository | string | `"cgr.dev/chainguard/netcat"` | Image repository from which to pull the netcat image for the Airlock Microgateway Network Validator init-container. |
 | networkValidator.image.tag | string | `""` | Image tag to pull. |
 | operator.affinity | object | `{}` | Custom affinity to apply to the operator Deployment. Used to influence the scheduling. |
 | operator.config.logLevel | string | `"info"` | Operator application log level. |
-| operator.image.digest | string | `"sha256:2fcbaf069255015fa96c0dd37971d45216bdfe17288d4aceed7cab09f3e7b53d"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
+| operator.image.digest | string | `"sha256:0504c109f3af2be5995ad8a54b02ee8cefdcc013260fffcc0f544a526fb3d33c"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
 | operator.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | operator.image.repository | string | `"quay.io/airlock/microgateway-operator"` | Image repository from which to pull the Airlock Microgateway Operator image. |
-| operator.image.tag | string | `"4.2.8"` | Image tag to pull. |
+| operator.image.tag | string | `"4.2.9"` | Image tag to pull. |
 | operator.nodeSelector | object | `{}` | Custom nodeSelector to apply to the operator Deployment in order to constrain its Pods to certain nodes. |
 | operator.podAnnotations | object | `{}` | Annotations to add to all Pods. |
 | operator.podLabels | object | `{}` | Labels to add to all Pods. |

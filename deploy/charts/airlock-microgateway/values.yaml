@@ -26,10 +26,10 @@ operator:
     # -- Image repository from which to pull the Airlock Microgateway Operator image.
     repository: "quay.io/airlock/microgateway-operator"
     # -- Image tag to pull.
-    tag: "4.2.9"
+    tag: "4.2.10"
     # -- SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63").
     # Overrides tag when specified.
-    digest: "sha256:0504c109f3af2be5995ad8a54b02ee8cefdcc013260fffcc0f544a526fb3d33c"
+    digest: "sha256:cff6ecc304a9adbdcf8acf456660836c34a5d8955e084c0422caaaf68bdeba44"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Annotations to add to all Pods.
@@ -89,10 +89,10 @@ engine:
     # -- Image repository from which to pull the Airlock Microgateway Engine image.
     repository: "quay.io/airlock/microgateway-engine"
     # -- Image tag to pull.
-    tag: "4.2.9"
+    tag: "4.2.10"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:b8a0c0e276e28b8980dd5a6fabbcd86697adea5591f9a196fe2bcc35f8bca279"
+    digest: "sha256:11704c15eb8f5932f9adc4d3abbeafac06409a8b0dcadfb109c2db8b685dcc75"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Resource restrictions to apply to the Airlock Microgateway Engine container.

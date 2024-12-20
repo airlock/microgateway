@@ -125,6 +125,7 @@ data:
       - name: xds_cluster
         connect_timeout: 1s
         type: STRICT_DNS
+        respect_dns_ttl: true
         load_assignment:
           cluster_name: xds_cluster
           endpoints:

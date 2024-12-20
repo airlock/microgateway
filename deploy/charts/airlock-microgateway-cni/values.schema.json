@@ -114,6 +114,13 @@
             "manual"
           ]
         },
+        "repairMode": {
+          "type": "string",
+          "enum": [
+            "deletePods",
+            "none"
+          ]
+        },
         "logLevel": {
           "type": "string",
           "enum": [
@@ -143,6 +150,7 @@
         "cniNetDir",
         "excludeNamespaces",
         "installMode",
+        "repairMode",
         "logLevel"
       ],
       "additionalProperties": false

@@ -317,6 +317,8 @@ tests:
               value: RELEASE-NAME-microgateway-cni-kubeconfig
             - name: INSTALL_MODE
               value: chained
+            - name: REPAIR_MODE
+              value: none
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -327,6 +329,7 @@ tests:
       name: cni-release
     set:
       config.installMode: manual
+      config.repairMode: deletePods
     templates:
       - daemonset.yaml
     asserts:
@@ -346,6 +349,8 @@ tests:
               value: cni-release-microgateway-cni-kubeconfig
             - name: INSTALL_MODE
               value: manual
+            - name: REPAIR_MODE
+              value: deletePods
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:

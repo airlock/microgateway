@@ -19,4 +19,7 @@ rules:
       - list
       - watch
       - patch
+    {{- if eq .Values.config.repairMode "deletePods" }}
+      - delete
+    {{- end }}
 {{- end -}}

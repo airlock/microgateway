@@ -49,6 +49,8 @@ spec:
               value: "{{ include "airlock-microgateway-cni.fullname" . }}-kubeconfig"
             - name: INSTALL_MODE
               value: {{ .Values.config.installMode }}
+            - name: REPAIR_MODE
+              value: {{ .Values.config.repairMode }}
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:

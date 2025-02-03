@@ -97,6 +97,23 @@
           ],
           "additionalProperties": false
         },
+        "webhook": {
+          "type": "object",
+          "properties": {
+            "certificateProvider": {
+              "type": "string",
+              "enum": [
+                "cert-manager",
+                "olm",
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "certificateProvider"
+          ],
+          "additionalProperties": false
+        },
         "serviceAccount": {
           "type": "object",
           "properties": {
@@ -162,6 +179,9 @@
             "controllerName" : {
               "type": "string",
               "pattern": "^microgateway\\.airlock\\.com\/[A-Za-z0-9\/\\-._~%!$&'()*+,;=:]+$"
+            },
+            "podMonitor" : {
+              "$ref": "#/definitions/PodMonitor"
             }
           },
           "required": [
@@ -194,6 +214,7 @@
       ],
       "required": [
         "affinity",
+        "webhook",
         "config",
         "image",
         "updateStrategy",
@@ -224,19 +245,7 @@
           "type": "object",
           "properties":{
             "podMonitor": {
-              "type": "object",
-              "properties": {
-                "create": {
-                  "type": "boolean"
-                },
-                "labels": {
-                  "$ref": "#/definitions/StringMap"
-                }
-              },
-              "required": [
-                "create"
-              ],
-              "additionalProperties": false
+              "$ref": "#/definitions/PodMonitor"
             }
           },
           "required": [
@@ -256,14 +265,14 @@
       "type": "object",
       "properties": {
         "image": {
-          "$ref": "#/definitions/Image"
+          "type": ["object", "null"],
+          "deprecated": true
         },
         "resources": {
           "type": "object"
         }
       },
       "required": [
-        "image",
         "resources"
       ],
       "additionalProperties": false
@@ -351,6 +360,12 @@
             },
             "logOnlyLogs" : {
               "$ref": "#/definitions/DashboardInstance"
+            },
+            "requestLogs" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "accessCtrlLogs" : {
+              "$ref": "#/definitions/DashboardInstance"
             }
           },
           "required": [
@@ -360,7 +375,9 @@
             "blockLogs",
             "headerLogs",
             "logOnlyMetrics",
-            "logOnlyLogs"
+            "logOnlyLogs",
+            "requestLogs",
+            "accessCtrlLogs"
           ],
           "additionalProperties": false
         }
@@ -565,6 +582,21 @@
       "required" : [
         "name",
         "value"
+      ],
+      "additionalProperties": false
+    },
+    "PodMonitor" : {
+      "type" : "object",
+      "properties": {
+        "create" : {
+          "type": "boolean"
+        },
+        "labels" : {
+          "$ref": "#/definitions/StringMap"
+        }
+      },
+      "required": [
+        "create"
       ],
       "additionalProperties": false
     }

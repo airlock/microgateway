@@ -156,17 +156,17 @@ data:
                 sds_config:
                   resource_api_version: V3
                   path_config_source:
-                    path: /etc/envoy/validation_context_sds_secret.yaml
+                    path: /app/config/validation_context_sds_secret.yaml
                     watched_directory:
-                      path: /etc/envoy/
+                      path: /app/config/
               tls_certificate_sds_secret_configs:
                 - name: tls_certificate_sds
                   sds_config:
                     resource_api_version: V3
                     path_config_source:
-                      path: /etc/envoy/tls_certificate_sds_secret.yaml
+                      path: /app/config/tls_certificate_sds_secret.yaml
                       watched_directory:
-                        path: /etc/envoy/
+                        path: /app/config/
       - name: airlock_microgateway_engine_admin
         connect_timeout: 1s
         type: STATIC
@@ -195,8 +195,14 @@ data:
           regex: "\\.(block_subtype\\.([^.]+))"
         - tag_name: "envoy_cluster_name"
           regex: "\\.(cluster\\.([^.]+))"
-        - tag_name: "version"
-          regex: "\\.(version\\.([^.]+))"
+        - tag_name: "upstream"
+          regex: "\\.(cluster\\.upstream_(\\d+))"
+        - tag_name: "upstream"
+          regex: "^cluster\\.(upstream_(\\d+))"
+        - tag_name: "upstream"
+          regex: "\\.(cluster\\.httproute/([^.]+)/rule/[^.]+)"
+        - tag_name: "upstream"
+          regex: "^cluster\\.(httproute/([^.]+)/rule/[^.]+)"
       use_all_default_tags: true
     overload_manager:
       resource_monitors:
@@ -205,9 +211,10 @@ data:
           "@type": type.googleapis.com/envoy.extensions.resource_monitors.downstream_connections.v3.DownstreamConnectionsConfig
           max_active_downstream_connections: 50000
     bootstrap_extensions:
-      - name: airlock.bootstrap.engine_build_info
+      - name: airlock.bootstrap.engine_stats
         typed_config:
           '@type': type.googleapis.com/airlock.extensions.bootstrap.stats.v1alpha.Stats
+          health_probe_approx_req_per_hour: $(HEALTH_PROBE_REQUESTS_PER_HOUR)
     application_log_config:
       log_format:
         text_format: '{"@timestamp":"%Y-%m-%dT%T.%e%z","log":{"logger":"%n","level":"%l","origin":{"file":{"name":"%g","line":%#},"function":"%!"}},"event":{"module":"envoy","dataset":"envoy.application"},"process":{"pid":%P,"thread":{"id":%t}},"ecs":{"version":"8.5"},"message":"%j"}'
@@ -217,7 +224,7 @@ data:
     imagePullPolicy: {{ .Values.engine.image.pullPolicy }}
     args:
       - "--config-path"
-      - "/etc/envoy/bootstrap_config.yaml"
+      - "/app/config/bootstrap_config.yaml"
       - "--base-id"
       - "$(BASE_ID)"
       - "--file-flush-interval-msec"
@@ -234,7 +241,7 @@ data:
       - "$(LOG_LEVEL)"
     volumeMounts:
     - name: airlock-microgateway-bootstrap-secret-volume
-      mountPath: /etc/envoy
+      mountPath: /app/config/
       readOnly: true
     env:
       - name: POD_NAME
@@ -264,19 +271,29 @@ data:
         path: /ready
         port: 19001
         scheme: HTTP
-      initialDelaySeconds: 5
-      periodSeconds: 5
-      failureThreshold: 5
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
       successThreshold: 1
-      timeoutSeconds: 1
+      timeoutSeconds: 2
     readinessProbe:
       httpGet:
         path: /ready
         port: 19001
         scheme: HTTP
-      initialDelaySeconds: 5
+      initialDelaySeconds: 0
       periodSeconds: 5
       failureThreshold: 3
+      successThreshold: 1
+      timeoutSeconds: 1
+    startupProbe:
+      httpGet:
+        path: /ready
+        port: 19001
+        scheme: HTTP
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 30
       successThreshold: 1
       timeoutSeconds: 1
     securityContext:
@@ -294,10 +311,10 @@ data:
       - "--port"
       - "19004"
       - "--config-path"
-      - "/etc/microgateway-session-agent/config.json"
+      - "/app/config/config.json"
     volumeMounts:
     - name: airlock-microgateway-session-agent-volume
-      mountPath: /etc/microgateway-session-agent
+      mountPath: /app/config/
       readOnly: true
     env:
       - name: POD_NAME
@@ -320,11 +337,11 @@ data:
       tcpSocket:
         port: 19004
       {{- end }}
-      initialDelaySeconds: 5
-      periodSeconds: 5
-      failureThreshold: 5
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
       successThreshold: 1
-      timeoutSeconds: 5
+      timeoutSeconds: 2
     readinessProbe:
       {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
       grpc:
@@ -333,11 +350,24 @@ data:
       tcpSocket:
         port: 19004
       {{- end }}
-      initialDelaySeconds: 5
+      initialDelaySeconds: 0
       periodSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-      timeoutSeconds: 5
+      timeoutSeconds: 1
+    startupProbe:
+      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
+      grpc:
+        port: 19004
+      {{- else }}
+      tcpSocket:
+        port: 19004
+      {{- end }}
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 30
+      successThreshold: 1
+      timeoutSeconds: 1
     securityContext:
       {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
       runAsUser: $(SECURITYCONTEXT_UID)
@@ -347,21 +377,9 @@ data:
     {{- end }}
   network_validator_container_template.yaml: |
     name: "$(NETWORK_VALIDATOR_NAME)"
-    image: "$(NETWORK_VALIDATOR_IMAGE)"
-    imagePullPolicy: {{ .Values.networkValidator.image.pullPolicy }}
-    command: ["/bin/sh", "-c"]
-    args:
-    - |-
-      echo 'pong' | nc -v -l 127.0.0.1 13378 &
-      for i in 1 2 3; do
-        sleep 1s
-        if r=$(echo 'ping' | nc -v -q 0 127.0.0.1 19003) && [ $r == pong ]; then
-          echo -n 'Traffic redirection to Airlock Microgateway Engine is working.' > /dev/termination-log
-          exit 0
-        fi
-      done
-      echo -en 'Traffic redirection to Airlock Microgateway Engine is not working.\nRestart the pod after ensuring that hostNetwork is disabled and a compatible Airlock Microgateway CNI version is installed on the node.\nCertain environments may also require additional configuration (see docs.airlock.com for more information).' > /dev/termination-log
-      exit 1
+    image: "$(ENGINE_IMAGE)"
+    imagePullPolicy: {{ .Values.engine.image.pullPolicy }}
+    command: ["/app/microgateway-network-validator"]
     securityContext:
       {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
       runAsUser: $(SECURITYCONTEXT_UID)
@@ -380,13 +398,11 @@ data:
       port: 9443
     deployment:
       sidecar:
-        engineContainerTemplate: "/sidecar/engine_container_template.yaml"
-        networkValidatorContainerTemplate: "/sidecar/network_validator_container_template.yaml"
-        sessionAgentContainerTemplate: "/sidecar/session_agent_container_template.yaml"
+        engineContainerTemplate: "/app/config/sidecar/engine_container_template.yaml"
+        networkValidatorContainerTemplate: "/app/config/sidecar/network_validator_container_template.yaml"
+        sessionAgentContainerTemplate: "/app/config/sidecar/session_agent_container_template.yaml"
     engine:
-      bootstrapConfigTemplate: "/engine_bootstrap_config_template.yaml"
-    log:
-      level: {{ .Values.operator.config.logLevel }}
+      bootstrapConfigTemplate: "/app/config/engine_bootstrap_config_template.yaml"
     {{- with $.Values.operator.watchNamespaceSelector }}
     namespaces:
       selector:
@@ -397,10 +413,11 @@ data:
       list:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with $.Values.operator.gatewayAPI }}
-    gatewayAPI:
-      enabled: {{ .enabled }}
-      {{- if .controllerName }}
-      controllerName: {{ .controllerName }}
+    {{- with $.Values.engine.sidecar.podMonitor }}
+    podMonitor:
+      create: {{ .create }}
+      {{- with .labels }}
+      additionalLabels:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
     {{- end }}

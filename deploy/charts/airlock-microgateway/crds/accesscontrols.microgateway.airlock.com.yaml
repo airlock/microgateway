@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
+    controller-gen.kubebuilder.io/version: v0.17.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.4.3
+    app.kubernetes.io/version: 4.5.0
   name: accesscontrols.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -60,6 +60,34 @@ spec:
                               oidc:
                                 description: OIDC configures client authentication using OpenID Connect.
                                 properties:
+                                  introspection:
+                                    description: Introspection configures how token introspection is performed. An empty object value {} defaults to the _always_ strategy.
+                                    properties:
+                                      strategy:
+                                        description: Strategy defines the behavior for token introspection.
+                                        properties:
+                                          always:
+                                            description: Always strategy defines a strategy for checking every request.
+                                            type: object
+                                          random:
+                                            description: Random strategy defines a probabilistic strategy for checking the `x-th` request.
+                                            properties:
+                                              probability:
+                                                description: |-
+                                                  Probability specifies the probability in % with which a request is selected to be introspected.
+                                                  A valid value for probability must be from the range: [`0.01%`,`99.99%`].
+                                                  To introspect the token on every request the _always_ strategy must be used.
+                                                maxLength: 6
+                                                minLength: 2
+                                                type: string
+                                                x-kubernetes-validations:
+                                                  - message: 'Probability must have a value from the valid range: [`0.01%`,`99.99%`]'
+                                                    rule: self.matches(r"""^[1-9]?[0-9](\.[0-9]{1,2})?%$""") && self != '0%' && self != '0.0%' && self != '0.00%'
+                                            required:
+                                              - probability
+                                            type: object
+                                        type: object
+                                    type: object
                                   oidcRelyingPartyRef:
                                     description: OIDCRelyingPartyRef configures how the Airlock Microgateway Engine interacts with the OpenID provider.
                                     properties:
@@ -467,7 +495,9 @@ spec:
                               - matcher
                             type: object
                           remoteIP:
-                            description: RemoteIP defines the matching remote IPs of a request.
+                            description: |-
+                              RemoteIP defines the matching remote IPs of a request.
+                              Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `SidecarGateway` / `GatewayParameters` resource to ensure correct client IP detection.
                             properties:
                               cidrRanges:
                                 description: CIDRRanges defines the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28``.
@@ -488,6 +518,7 @@ spec:
                     required:
                       - authorization
                     type: object
+                  maxItems: 128
                   minItems: 1
                   type: array
               required:

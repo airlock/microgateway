@@ -1,3 +1,4 @@
+{{- if eq $.Values.operator.webhook.certificateProvider "cert-manager" }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -11,3 +12,4 @@ metadata:
   {{- end }}
 spec:
   selfSigned: {}
+{{- end }}

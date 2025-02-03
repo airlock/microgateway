@@ -15,7 +15,7 @@
             "type": "grafana",
             "id": "grafana",
             "name": "Grafana",
-            "version": "10.2.0"
+            "version": "11.4.0"
         },
         {
             "type": "datasource",
@@ -179,6 +179,18 @@
                     {
                         "matcher": {
                             "id": "byName",
+                            "options": "HTTP Status"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 126
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
                             "options": "Request Size"
                         },
                         "properties": [
@@ -219,7 +231,7 @@
                 "showHeader": true,
                 "sortBy": []
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -227,7 +239,7 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
+                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  response_status_code=\"http.response.status_code\", header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
                     "hide": false,
                     "queryType": "range",
                     "refId": "Header Rewrites"
@@ -257,7 +269,8 @@
                                 "namespace",
                                 "request_id",
                                 "request_size",
-                                "url"
+                                "url",
+                                "response_status_code"
                             ]
                         }
                     }
@@ -275,14 +288,15 @@
                         "includeByName": {},
                         "indexByName": {
                             "Time": 0,
-                            "client_ip": 8,
+                            "client_ip": 9,
                             "domain": 2,
-                            "header_request_details": 6,
-                            "header_response_details": 7,
+                            "header_request_details": 7,
+                            "header_response_details": 8,
                             "http_method": 3,
                             "namespace": 1,
-                            "request_id": 9,
+                            "request_id": 10,
                             "request_size": 5,
+                            "response_status_code": 6,
                             "url": 4
                         },
                         "renameByName": {
@@ -296,6 +310,7 @@
                             "namespace": "Namespace",
                             "request_id": "Request ID",
                             "request_size": "Request Size",
+                            "response_status_code": "HTTP Status",
                             "url": "URL Path"
                         }
                     }
@@ -304,7 +319,7 @@
             "type": "table"
         }
     ],
-    "schemaVersion": 39,
+    "schemaVersion": 40,
     "tags": [
         "airlock-microgateway"
     ],
@@ -315,13 +330,11 @@
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_LOKI",
-                "multi": false,
                 "name": "DS_LOKI",
                 "options": [],
                 "query": "loki",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             },
             {
@@ -332,9 +345,8 @@
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "definition": "label_values(microgateway_license_http_rq_total,namespace)",
-                "hide": 0,
                 "includeAll": true,
-                "label": "Application Namespace",
+                "label": "Gateway Namespace",
                 "multi": true,
                 "name": "namespace",
                 "options": [],
@@ -345,7 +357,6 @@
                 },
                 "refresh": 2,
                 "regex": "",
-                "skipUrlSync": false,
                 "sort": 5,
                 "type": "query"
             },
@@ -354,13 +365,11 @@
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_PROMETHEUS",
-                "multi": false,
                 "name": "DS_PROMETHEUS",
                 "options": [],
                 "query": "prometheus",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             }
         ]

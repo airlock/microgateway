@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
+    controller-gen.kubebuilder.io/version: v0.17.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.4.3
+    app.kubernetes.io/version: 4.5.0
     gateway.networking.k8s.io/policy: direct
   name: contentsecuritypolicies.microgateway.airlock.com
 spec:
@@ -51,35 +51,29 @@ spec:
                 secured:
                   description: Secured enables WAF processing for the routes attached to this policy.
                   properties:
-                    apiProtection:
+                    apiProtectionRef:
                       description: |-
-                        APIProtection defines the relevant configurations to protect APIs.
+                        APIProtectionRef defines the relevant configurations to protect multiple APIs on different paths.
                         If undefined, default settings are applied, designed to work with most upstream web application services.
                       properties:
-                        graphQLRef:
-                          description: |-
-                            GraphQLRef selects the relevant GraphQL configuration resource.
-                            If undefined, default settings are applied, designed to work with most upstream web application services.
-                          properties:
-                            name:
-                              description: Name of the resource
-                              minLength: 1
-                              type: string
-                          required:
-                            - name
-                          type: object
-                        openAPIRef:
-                          description: |-
-                            OpenAPIRef selects the relevant OpenAPI configuration resource.
-                            If undefined, default settings are applied, designed to work with most upstream web application services.
-                          properties:
-                            name:
-                              description: Name of the resource
-                              minLength: 1
-                              type: string
-                          required:
-                            - name
-                          type: object
+                        name:
+                          description: Name of the resource
+                          minLength: 1
+                          type: string
+                      required:
+                        - name
+                      type: object
+                    csrfProtectionRef:
+                      description: |-
+                        CSRFProtectionRef selects the relevant CSRF configuration resource.
+                        If undefined, default settings are applied, designed to work with most upstream web application services.
+                      properties:
+                        name:
+                          description: Name of the resource
+                          minLength: 1
+                          type: string
+                      required:
+                        - name
                       type: object
                     filter:
                       description: |-
@@ -99,6 +93,18 @@ spec:
                           required:
                             - name
                           type: object
+                      type: object
+                    headerRewritesRef:
+                      description: |-
+                        HeaderRewritesRef selects the relevant HeaderRewrites.
+                        If undefined, default settings are applied, designed to work with most upstream web application services.
+                      properties:
+                        name:
+                          description: Name of the resource
+                          minLength: 1
+                          type: string
+                      required:
+                        - name
                       type: object
                     limitsRef:
                       description: |-
@@ -163,9 +169,11 @@ spec:
                   type: array
                   x-kubernetes-validations:
                     - message: 'TargetRef Kind must be: HTTPRoute'
-                      rule: self.all(t, t.kind=='HTTPRoute')
+                      rule: self.all(t, t.kind == 'HTTPRoute')
                     - message: TargetRef Group must be gateway.networking.k8s.io.
-                      rule: self.all(t, t.group=='gateway.networking.k8s.io')
+                      rule: self.all(t, t.group == 'gateway.networking.k8s.io')
+                    - message: Combination of name, group and kind must be unique for each TargetRef
+                      rule: self.all(t1, self.exists_one(t2, t1.group == t2.group && t1.kind == t2.kind && t1.name == t2.name))
                 unsecured:
                   description: |-
                     Unsecured disables all WAF functionality and therefore protection for the routes attached to this policy.

@@ -1,16 +1,18 @@
 Thank you for installing Airlock Microgateway.
-{{- if .Values.operator.gatewayAPI.enabled }}
+{{- with $.Values.operator.gatewayAPI }}
+{{- if .enabled }}
 
 K8s Gateway API support enabled.
 Note that the K8s Gateway API support is an incubating Airlock Microgateway feature. We encourage you to try the installation and configuration for testing and evaluation. Your feedback is welcome.
 
-    {{- if or .Values.operator.watchNamespaces .Values.operator.watchNamespaceSelector -}}
+    {{- if or $.Values.operator.watchNamespaces $.Values.operator.watchNamespaceSelector -}}
         {{- fail `
 
 K8s Gateway API is only supported using the 'AllNamespaces' installation mode type, ensure that 'operator.watchNamespaces' and 'operator.watchNamespaceSelector' are not configured.
 `
     -}}
     {{- end -}}
+{{- end }}
 {{- end }}
 
 Please ensure the following prerequisites are fulfilled:

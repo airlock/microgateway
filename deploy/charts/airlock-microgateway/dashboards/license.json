@@ -15,7 +15,7 @@
             "type": "grafana",
             "id": "grafana",
             "name": "Grafana",
-            "version": "10.2.0"
+            "version": "11.4.0"
         },
         {
             "type": "datasource",
@@ -144,7 +144,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -213,7 +213,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -237,7 +237,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Sum of the number licensed requests over all Airlock Microgateway license selected in the dashboard filter.",
+            "description": "Sum of the number licensed requests over all Airlock Microgateway licenses selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -282,7 +282,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -306,7 +306,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
             },
-            "description": "Sum of the estimated number of requests over 30 days based on the last 7 days over all Airlock Microgateway licenses selected in the dashboard filter.",
+            "description": "Estimated number of requests over 30 days, based on the request count over the last 7 days across all Microgateway instances using any of the licenses selected in the dashboard filter.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -351,7 +351,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -360,7 +360,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "(sum((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "expr": "(sum((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
                     "instant": true,
                     "legendFormat": "Estimated Requests",
                     "range": false,
@@ -368,6 +368,90 @@
                 }
             ],
             "title": "Requests over 30 days (estimated)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "description": "Estimated number of application health probe requests over 30 days, based on the expected probe count over the last 7 days across all pods with an Airlock Microgateway sidecar using any of the licenses selected in the dashboard filter.\n\nNote: This value is an approximation, not a precise measurement of the actual probe requests. If possible, we recommend serving health endpoints of applications protected by a Microgateway sidecar on a separate port, as the probe traffic can then be excluded via the 'sidecar.microgateway.airlock.com/excludeInboundPorts' annotation (see docs.airlock.com for more information), which prevents it from polluting Microgateway logs and metrics.",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "text",
+                        "mode": "thresholds"
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "match": "null",
+                                "result": {
+                                    "index": 0,
+                                    "text": "0"
+                                }
+                            },
+                            "type": "special"
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 1
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 5,
+                "x": 16,
+                "y": 0
+            },
+            "id": 9,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "11.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(sum((label_replace(sum_over_time(microgateway_license_health_probe_approx_rq_per_hour[7d:1m])/60, \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "instant": true,
+                    "legendFormat": "Estimated Probes",
+                    "range": false,
+                    "refId": "A"
+                }
+            ],
+            "title": "Probes over 30 days (estimated)",
             "type": "stat"
         },
         {
@@ -449,6 +533,7 @@
                     "sort": "none"
                 }
             },
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -456,7 +541,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "  sum((label_replace(avg_over_time(increase(microgateway_license_http_rq_total[7d])[2m:30s]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
+                    "expr": "sum((label_replace(avg_over_time(increase(microgateway_license_http_rq_total[7d])[2m:15s]), \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"})",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "# Requests per week",
@@ -517,7 +602,7 @@
                     {
                         "matcher": {
                             "id": "byName",
-                            "options": "Requests over 30 days (estimated)"
+                            "options": "Requests"
                         },
                         "properties": [
                             {
@@ -552,6 +637,32 @@
                                 "value": 307
                             }
                         ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Probes"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "result": {
+                                                "index": 0,
+                                                "text": "0"
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
@@ -576,7 +687,7 @@
                 "showHeader": true,
                 "sortBy": []
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -585,7 +696,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "(sum by (namespace, id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "expr": "(sum by (namespace, id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -607,9 +718,24 @@
                     "legendFormat": "__auto",
                     "range": false,
                     "refId": "Engine License"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(sum by (namespace, id) ((label_replace((sum_over_time(microgateway_license_health_probe_approx_rq_per_hour[7d:1m])/60), \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Est. Probes over 30 days"
                 }
             ],
-            "title": "Usage by Operator Namespace",
+            "title": "Estimated usage over 30 days by Operator Namespace",
             "transformations": [
                 {
                     "id": "merge",
@@ -639,7 +765,8 @@
                             "namespace": 1
                         },
                         "renameByName": {
-                            "Value #Est. Usage over 30 days": "Requests over 30 days (estimated)",
+                            "Value #Est. Probes over 30 days": "Probes",
+                            "Value #Est. Usage over 30 days": "Requests",
                             "Value #License Expiry Date": "Expiry Date",
                             "Value #License Type": "License Type",
                             "Value #Licensed Req": "Licensed Requests",
@@ -836,7 +963,19 @@
                             },
                             {
                                 "id": "custom.width",
-                                "value": 160
+                                "value": 120
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Probes over 30 days (estimated)"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
                             }
                         ]
                     }
@@ -868,7 +1007,7 @@
                     }
                 ]
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -936,13 +1075,28 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "(sum by (id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"job\", \"(.+)/.*\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "expr": "(sum by (id) ((label_replace(increase(microgateway_license_http_rq_total[7d]), \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
                     "format": "table",
                     "hide": false,
                     "instant": true,
                     "legendFormat": "__auto",
                     "range": false,
                     "refId": "Est. Usage over 30 days"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "(sum by (id) ((label_replace(sum_over_time(microgateway_license_health_probe_approx_rq_per_hour[7d:1m])/60, \"namespace\", \"$1\", \"managed_by\", \"(.+)\")) * on(namespace) group_left(id) microgateway_license_info{id=~\"${license_id.regex}\"}))/7*30",
+                    "format": "table",
+                    "hide": false,
+                    "instant": true,
+                    "legendFormat": "__auto",
+                    "range": false,
+                    "refId": "Est. Probes over 30 days"
                 }
             ],
             "title": "License Overview",
@@ -968,6 +1122,7 @@
                         "includeByName": {},
                         "indexByName": {},
                         "renameByName": {
+                            "Value #Est. Probes over 30 days": "Probes over 30 days (estimated)",
                             "Value #Est. Usage over 30 days": "Requests over 30 days (estimated)",
                             "Value #License Expiry Date": "Expiry Date",
                             "Value #License Type": "License Type",
@@ -1001,7 +1156,7 @@
         }
     ],
     "refresh": "",
-    "schemaVersion": 39,
+    "schemaVersion": 40,
     "tags": [
         "airlock-microgateway"
     ],
@@ -1012,13 +1167,11 @@
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_PROMETHEUS",
-                "multi": false,
                 "name": "DS_PROMETHEUS",
                 "options": [],
                 "query": "prometheus",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             },
             {
@@ -1030,7 +1183,6 @@
                 },
                 "definition": "label_values(microgateway_license_info,id)",
                 "description": "",
-                "hide": 0,
                 "includeAll": true,
                 "label": "License ID",
                 "multi": true,
@@ -1043,8 +1195,6 @@
                 },
                 "refresh": 2,
                 "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
                 "type": "query"
             }
         ]
@@ -1053,7 +1203,6 @@
         "from": "now-7d",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {},
     "timezone": "browser",
     "title": "Airlock Microgateway License",

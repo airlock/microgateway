@@ -1,7 +1,19 @@
 suite: helm.operator.TestCertificate
 templates:
   - operator/serving-certificate.yaml
+set:
+  operator.webhook.certificateProvider: cert-manager
 tests:
+  - it: should not create Certificate if webhook certificates are not managed by cert-manager
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.webhook.certificateProvider: none
+    asserts:
+      - hasDocuments:
+          count: 0
+
   - it: should set name and namespace
     release:
       name: myoperator

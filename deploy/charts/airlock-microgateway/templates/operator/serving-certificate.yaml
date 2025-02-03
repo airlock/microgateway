@@ -1,3 +1,4 @@
+{{- if eq $.Values.operator.webhook.certificateProvider "cert-manager" }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -17,3 +18,4 @@ spec:
     kind: Issuer
     name: {{ include "airlock-microgateway.operator.fullname" . }}-selfsigned-issuer
   secretName: {{ include "airlock-microgateway.operator.fullname" . }}-webhook-server-cert
+{{- end }}

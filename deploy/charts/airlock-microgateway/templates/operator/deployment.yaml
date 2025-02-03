@@ -34,12 +34,10 @@ spec:
     spec:
       containers:
       - args:
-        - --config=operator_config.yaml
+        - --config=/app/config/operator_config.yaml
         env:
         - name: ENGINE_IMAGE
           value: {{ include "airlock-microgateway.image" .Values.engine.image }}
-        - name: NETWORK_VALIDATOR_IMAGE
-          value: {{ include "airlock-microgateway.image" .Values.networkValidator.image }}
         - name: SESSION_AGENT_IMAGE
           value: {{ include "airlock-microgateway.image" .Values.sessionAgent.image }}
         - name: OPERATOR_NAME
@@ -50,6 +48,24 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: LOG_LEVEL
+          value: {{ .Values.operator.config.logLevel }}
+        {{- with $.Values.operator.gatewayAPI }}
+        - name: GATEWAY_API_ENABLED
+          value: "{{ .enabled }}"
+        {{- if .controllerName }}
+        - name: GATEWAY_API_CONTROLLER_NAME
+          value: {{ .controllerName }}
+        {{- end }}
+        {{- with .podMonitor }}
+        - name: GATEWAY_API_POD_MONITOR_CREATE
+          value: "{{ .create }}"
+        {{- with .labels }}
+        - name: GATEWAY_API_POD_MONITOR_ADDITIONAL_LABELS
+          value: {{ include "airlock-microgateway.toCommaSeparatedList" . | quote }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
         image: {{ include "airlock-microgateway.image" .Values.operator.image }}
         imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
         livenessProbe:
@@ -87,25 +103,27 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
+        {{- if eq $.Values.operator.webhook.certificateProvider "cert-manager" }}
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
-        - mountPath: /opt/airlock/license/
+        {{- end }}
+        - mountPath: /app/config/license/
           name: airlock-microgateway-license
           readOnly: true
-        - mountPath: /operator_config.yaml
+        - mountPath: /app/config/operator_config.yaml
           name: operator-config
           subPath: operator_config.yaml
-        - mountPath: /sidecar/engine_container_template.yaml
+        - mountPath: /app/config/sidecar/engine_container_template.yaml
           name: operator-config
           subPath: engine_container_template.yaml
-        - mountPath: /sidecar/network_validator_container_template.yaml
+        - mountPath: /app/config/sidecar/network_validator_container_template.yaml
           name: operator-config
           subPath: network_validator_container_template.yaml
-        - mountPath: /sidecar/session_agent_container_template.yaml
+        - mountPath: /app/config/sidecar/session_agent_container_template.yaml
           name: operator-config
           subPath: session_agent_container_template.yaml
-        - mountPath: /engine_bootstrap_config_template.yaml
+        - mountPath: /app/config/engine_bootstrap_config_template.yaml
           name: operator-config
           subPath: engine_bootstrap_config_template.yaml
       securityContext:
@@ -129,10 +147,12 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- if eq $.Values.operator.webhook.certificateProvider "cert-manager" }}
       - name: cert
         secret:
           defaultMode: 420
           secretName: {{ include "airlock-microgateway.operator.fullname" . }}-webhook-server-cert
+      {{- end }}
       - name: airlock-microgateway-license
         secret:
           defaultMode: 292

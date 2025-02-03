@@ -15,9 +15,9 @@ For an easy start in non-production environments, you may deploy the same cert-m
 
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
 ### Deploy cert-manager
-```bash
+```console
 helm repo add jetstack https://charts.jetstack.io
-helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-manager --create-namespace --set crds.enabled=true --wait
+helm install cert-manager jetstack/cert-manager --version 'v1.16.3' -n cert-manager --create-namespace --set crds.enabled=true --wait
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -25,7 +25,7 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
 > This guide assumes a microgateway-license.txt file is present in the working directory.
 
 1. Install CRDs and Operator.
-   ```bash
+   ```console
    # Create namespace
    kubectl create namespace airlock-microgateway-system
 
@@ -33,21 +33,21 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install the operator and activate the Gateway API support.
-   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.4.3' --set=operator.gatewayAPI.enabled=true
+   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.5.0' --set=operator.gatewayAPI.enabled=true
    ```
 
 2. Verify that the operator started successfully:
-   ```bash
+   ```console
    kubectl -n airlock-microgateway-system wait --for=condition=Available deployments --all --timeout=3m
    ```
 
 3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report
-   ```bash
+   ```console
    kubectl apply -f manifests/conformance-report.yaml
    ```
 
 4. After running, see the conformance report:
-   ```bash
+   ```console
    kubectl logs jobs/gateway-conformance-tests -f
    ```
 

@@ -65,7 +65,7 @@ spec:
           startupProbe:
             exec:
               command:
-                - /cni-installer
+                - /app/microgateway-cni-installer
                 - probe
             failureThreshold: 5
             initialDelaySeconds: 3
@@ -74,7 +74,7 @@ spec:
           readinessProbe:
             exec:
               command:
-                - /cni-installer
+                - /app/microgateway-cni-installer
                 - probe
             failureThreshold: 1
             periodSeconds: 60

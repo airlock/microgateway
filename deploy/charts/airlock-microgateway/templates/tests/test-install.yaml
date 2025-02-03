@@ -17,11 +17,11 @@ spec:
   restartPolicy: Never
   containers:
   - name: test
-    image: "bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ .Capabilities.KubeVersion.Minor }}"
+    image: "bitnami/kubectl:{{ (semver .Capabilities.KubeVersion.Version).Major }}.{{ (semver .Capabilities.KubeVersion.Version).Minor }}"
     securityContext:
       {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
     command:
-    - sh
+    - bash
     - -c
     - |
       set -eu
@@ -92,32 +92,8 @@ spec:
       EOF
       }
 
-      curl() {
-        kubectl delete pod --ignore-not-found=true -n {{ .Release.Namespace }} {{ include "airlock-microgateway.fullname" . }}-test-valid-request
-        kubectl -n {{ .Release.Namespace }} run {{ include "airlock-microgateway.fullname" . }}-test-valid-request --restart=Never --image=cgr.dev/chainguard/curl \
-        --override-type=strategic \
-        --overrides='
-        {
-          "apiVersion": "v1",
-          "metadata": {
-            "labels": {
-              "sidecar.istio.io/inject": "false"
-            }
-          },
-          "spec": {
-            "containers": [
-              {
-                "name": "{{ include "airlock-microgateway.fullname" . }}-test-valid-request",
-                "securityContext": {{ include "airlock-microgateway.restrictedSecurityContext" . | fromYaml | toJson }}
-              }
-            ]
-          }
-        }' \
-        -- "$@"
-        local i=0
-        while [ $i -lt 90 ] && ! kubectl logs -n {{ .Release.Namespace }} {{ include "airlock-microgateway.fullname" . }}-test-valid-request >/dev/null 2>&1; do sleep 1s; i=$((i+1)); done
-        kubectl logs -f -n {{ .Release.Namespace }} {{ include "airlock-microgateway.fullname" . }}-test-valid-request
-        kubectl delete pod --ignore-not-found=true -n {{ .Release.Namespace }} {{ include "airlock-microgateway.fullname" . }}-test-valid-request
+      exec_test_request() {
+        exec 3<>/dev/tcp/"${1}"/"${2}";echo -e "GET "${3}" HTTP/1.1\r\nhost: {{ include "airlock-microgateway.fullname" . }}-test-install\r\nConnection: close\r\n\r\n" >&3;cat <&3; ret=$?; exec 3>&-; return ${ret};
       }
 
       {{- if .Values.operator.watchNamespaceSelector }}
@@ -202,19 +178,38 @@ spec:
       echo ""
 
       echo "### Checking whether a valid request is successful and returns HTTP status code '200'"
-      out=$(curl -vsS --retry 3 --retry-connrefused --connect-timeout 10 "http://{{ include "airlock-microgateway.fullname" . }}-test-service:8080/" || true)
+      i=0
+      while ! out=$(exec_test_request "{{ include "airlock-microgateway.fullname" . }}-test-service" "8080" "/"); do
+        if [ $i -gt 3 ]; then
+          fail 'Failed to send test request'
+        fi
+        sleep 2s
+        i=$((i+1))
+        echo "Retry ${i}"
+      done
       echo "Response:"
       echo "${out}"
+
       if ! echo "${out}" | grep -q "200 OK"; then
         fail 'A valid request was not successful'
       fi
+      sleep 5s
       echo ""
       echo ""
 
       echo "### Checking whether a request with an injection attack is blocked and returns HTTP status code '400'"
-      out=$(curl -vsS --retry 3 --retry-connrefused --connect-timeout 10 "http://{{ include "airlock-microgateway.fullname" . }}-test-service:8080/?token='%20UnION%20all%20select%20A" || true)
+      i=0
+      while ! out=$(exec_test_request "{{ include "airlock-microgateway.fullname" . }}-test-service" "8080" "/?token='%20UnION%20all%20select%20A"); do
+        if [ $i -gt 3 ]; then
+          fail 'Failed to send test request'
+        fi
+        sleep 2s
+        i=$((i+1))
+        echo "Retry ${i}"
+      done
       echo "Response:"
       echo "${out}"
+
       if ! echo "${out}" | grep -q "400 Bad Request"; then
         fail 'A malicious request was not blocked'
       fi

@@ -6,7 +6,9 @@ metadata:
   labels:
     {{- include "airlock-microgateway.operator.labels" . | nindent 4 }}
   annotations:
+  {{- if eq $.Values.operator.webhook.certificateProvider "cert-manager" }}
     cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "airlock-microgateway.operator.fullname" . }}-serving-cert
+  {{- end }}
   {{- with .Values.commonAnnotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}

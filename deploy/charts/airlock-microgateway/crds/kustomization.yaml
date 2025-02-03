@@ -1,13 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- accesscontrolpolicies.microgateway.airlock.com.yaml
 - accesscontrols.microgateway.airlock.com.yaml
+- apiprotections.microgateway.airlock.com.yaml
 - contentsecurities.microgateway.airlock.com.yaml
 - contentsecuritypolicies.microgateway.airlock.com.yaml
+- csrfprotections.microgateway.airlock.com.yaml
 - denyrules.microgateway.airlock.com.yaml
 - envoyclusters.microgateway.airlock.com.yaml
 - envoyconfigurations.microgateway.airlock.com.yaml
 - envoyhttpfilters.microgateway.airlock.com.yaml
+- gatewayparameters.microgateway.airlock.com.yaml
 - graphqls.microgateway.airlock.com.yaml
 - headerrewrites.microgateway.airlock.com.yaml
 - identitypropagations.microgateway.airlock.com.yaml

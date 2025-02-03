@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
+    controller-gen.kubebuilder.io/version: v0.17.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.4.3
+    app.kubernetes.io/version: 4.5.0
   name: openapis.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -80,7 +80,7 @@ spec:
                           description: Source specifies the OpenAPI specification to be enforced.
                           properties:
                             configMapRef:
-                              description: ConfigMapRef references the configmap by its name containing the well-known key 'openapi.json'.
+                              description: ConfigMapRef references the configmap by its name containing the well-known key `openapi.json`. Use the `data` field for plaintext or the `binaryData` for compressed data. Supported compression formats are zstd, gzip or zip.
                               properties:
                                 name:
                                   description: Name of the resource

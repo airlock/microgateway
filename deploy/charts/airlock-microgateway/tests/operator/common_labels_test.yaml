@@ -6,6 +6,9 @@ set:
   engine.sidecar.podMonitor.create: true
   dashboards.create: true
   tests.enabled: true
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
 tests:
   - it: should set recommended labels
     release:

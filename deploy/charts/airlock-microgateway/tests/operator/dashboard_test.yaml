@@ -25,35 +25,43 @@ tests:
       dashboards.create: true
     asserts:
       - hasDocuments:
-          count: 7
+          count: 9
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-blocklogs
+          value: myoperator-microgateway-dashboard-accessctrllogs
         documentIndex: 0
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-blockmetrics
+          value: myoperator-microgateway-dashboard-blocklogs
         documentIndex: 1
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-headerlogs
+          value: myoperator-microgateway-dashboard-blockmetrics
         documentIndex: 2
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-license
+          value: myoperator-microgateway-dashboard-headerlogs
         documentIndex: 3
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-logonlylogs
+          value: myoperator-microgateway-dashboard-license
         documentIndex: 4
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-logonlymetrics
+          value: myoperator-microgateway-dashboard-logonlylogs
         documentIndex: 5
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-overview
+          value: myoperator-microgateway-dashboard-logonlymetrics
         documentIndex: 6
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-overview
+        documentIndex: 7
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-requestlogs
+        documentIndex: 8
 
   - it: should be possible to only enable license dashboard
     release:
@@ -73,6 +81,10 @@ tests:
           logOnlyMetrics:
             create: false
           logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
             create: false
     asserts:
       - hasDocuments:
@@ -100,6 +112,10 @@ tests:
             create: false
           logOnlyLogs:
             create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -125,6 +141,10 @@ tests:
           logOnlyMetrics:
             create: false
           logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
             create: false
     asserts:
       - hasDocuments:
@@ -152,6 +172,10 @@ tests:
             create: false
           logOnlyLogs:
             create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -177,6 +201,10 @@ tests:
           logOnlyMetrics:
             create: false
           logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
             create: false
     asserts:
       - hasDocuments:
@@ -204,6 +232,10 @@ tests:
             create: false
           logOnlyLogs:
             create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -230,12 +262,76 @@ tests:
             create: false
           logOnlyMetrics:
             create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
       - equal:
           path: metadata.name
           value: myoperator-microgateway-dashboard-logonlylogs
+
+  - it: should be possible to only enable requestLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-requestlogs
+
+  - it: should be possible to only enable accessCtrlLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-accessctrllogs
 
   - it: should set grafana label correctly
     set:

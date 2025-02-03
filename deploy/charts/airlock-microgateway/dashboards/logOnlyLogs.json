@@ -338,7 +338,7 @@
                 "definition": "label_values(microgateway_license_http_rq_total,namespace)",
                 "hide": 0,
                 "includeAll": true,
-                "label": "Application Namespace",
+                "label": "Gateway Namespace",
                 "multi": true,
                 "name": "namespace",
                 "options": [],

@@ -27,15 +27,27 @@ tests:
           path: metadata.name
           value: operatorfullname-operator-webhook-mytestnamespace
 
-  - it: should inject server certificate for cert-manager in annotations
+  - it: should inject server certificate for cert-manager in annotations (if certificateProvider is cert-manager)
     release:
       name: myoperator
       namespace: mytestnamespace
+    set:
+      operator.webhook.certificateProvider: cert-manager
     asserts:
       - isSubset:
           path: metadata.annotations
           content:
             cert-manager.io/inject-ca-from: mytestnamespace/myoperator-microgateway-operator-serving-cert
+
+  - it: should not inject server certificates in annotations
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      operator.webhook.certificateProvider: none
+    asserts:
+      - isNullOrEmpty:
+          path: metadata.annotations
 
   - it: should set webhooks
     asserts:

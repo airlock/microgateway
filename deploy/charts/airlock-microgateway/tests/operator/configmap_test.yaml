@@ -151,19 +151,11 @@ tests:
 
   - it: should set imagePullPolicy for network-validator container in configmap
     set:
-      networkValidator.image.pullPolicy: Always
+      engine.image.pullPolicy: Always
     asserts:
     - matchRegex:
         path: data["network_validator_container_template.yaml"]
         pattern: "imagePullPolicy: Always"
-
-  - it: should set logLevel for operator in operator_config configmap
-    set:
-      operator.config.logLevel: debug
-    asserts:
-      - matchRegex:
-          path: data["operator_config.yaml"]
-          pattern: "level: debug"
 
   - it: should set namespace selector for operator in operator_config configmap
     set:

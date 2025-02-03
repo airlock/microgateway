@@ -35,7 +35,7 @@ Learn the basics and expand existing knowledge without any administration effort
 Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
 
 * [Getting Started](https://docs.airlock.com/microgateway/latest/#data/1660804708742.html)
-* [System Architecture](https://docs.airlock.com/microgateway/latest/#data/1660804709650.html)
+* [System Architecture](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000137)
 * [Installation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000138)
 * [Troubleshooting](https://docs.airlock.com/microgateway/latest/#data/1659430054787.html)
 * [GitHub](https://github.com/airlock/microgateway)
@@ -59,9 +59,9 @@ For an easy start in non-production environments, you may deploy the same cert-m
 
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
 ### Deploy cert-manager
-```bash
+```console
 helm repo add jetstack https://charts.jetstack.io
-helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-manager --create-namespace --set crds.enabled=true --wait
+helm install cert-manager jetstack/cert-manager --version 'v1.16.3' -n cert-manager --create-namespace --set crds.enabled=true --wait
 ```
 
 ## (Recommended) Deploy Airlock Microgateway CNI
@@ -70,35 +70,35 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
 > See [documentation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000137) for more information about data plane modes.
 1. Install the CNI Plugin with Helm.
    > **Note**: Certain environments such as OpenShift or GKE require non-default configurations when installing the CNI plugin. For the most common setups, values files are provided in the [chart folder](/deploy/charts/airlock-microgateway-cni).
-   ```bash
+   ```console
    # Standard setup
-   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3'
+   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0'
    kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
-   ```bash
+   ```console
    # GKE setup
-   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3' -f https://raw.githubusercontent.com/airlock/microgateway/4.4.3/deploy/charts/airlock-microgateway-cni/gke-values.yaml
+   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0' -f https://raw.githubusercontent.com/airlock/microgateway/4.5.0/deploy/charts/airlock-microgateway-cni/gke-values.yaml
    kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
-   ```bash
+   ```console
    # OpenShift setup
-   helm install airlock-microgateway-cni -n openshift-operators oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3' -f https://raw.githubusercontent.com/airlock/microgateway/4.4.3/deploy/charts/airlock-microgateway-cni/openshift-values.yaml
+   helm install airlock-microgateway-cni -n openshift-operators oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0' -f https://raw.githubusercontent.com/airlock/microgateway/4.5.0/deploy/charts/airlock-microgateway-cni/openshift-values.yaml
    kubectl -n openshift-operators rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
-   > **Important:** On OpenShift, all pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/latest/#data/1658483168033.html) for details).
+   > **Important:** On OpenShift, all pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000140) for details).
 
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
-   ```bash
+   ```console
    # Standard and GKE setup
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3'
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0'
    helm test airlock-microgateway-cni -n kube-system --logs
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3'
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0'
    ```
-   ```bash
+   ```console
    # OpenShift setup
-   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3'
+   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0'
    helm test airlock-microgateway-cni -n openshift-operators --logs
-   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.3'
+   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.5.0'
    ```
 
    Consult our [documentation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000139) in case of any installation error.
@@ -108,7 +108,7 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
 > This guide assumes a microgateway-license.txt file is present in the working directory.
 
 1. Install CRDs and Operator.
-   ```bash
+   ```console
    # Create namespace
    kubectl create namespace airlock-microgateway-system
 
@@ -116,22 +116,22 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
-   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.4.3' --wait
+   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.5.0' --wait
    ```
 
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
-   ```bash
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.3'
+   ```console
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.5.0'
    helm test airlock-microgateway -n airlock-microgateway-system --logs
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.3'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.5.0'
    ```
 
 ### Upgrading CRDs
 
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
-```bash
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.4.3 --server-side --force-conflicts
+```console
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.5.0 --server-side --force-conflicts
 ```
 
 **Note**: Certain GitOps solutions such as e.g. Argo CD or Flux CD have their own mechanisms for automatically upgrading CRDs included with Helm charts.

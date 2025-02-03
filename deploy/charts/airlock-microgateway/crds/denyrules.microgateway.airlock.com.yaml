@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
+    controller-gen.kubebuilder.io/version: v0.17.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.4.3
+    app.kubernetes.io/version: 4.5.0
   name: denyrules.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -825,7 +825,9 @@ spec:
                                       - matcher
                                     type: object
                                   remoteIP:
-                                    description: RemoteIP defines the matching remote IPs of a request.
+                                    description: |-
+                                      RemoteIP defines the matching remote IPs of a request.
+                                      Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `SidecarGateway` / `GatewayParameters` resource to ensure correct client IP detection.
                                     properties:
                                       cidrRanges:
                                         description: CIDRRanges defines the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28``.
@@ -1765,7 +1767,9 @@ spec:
                                       - matcher
                                     type: object
                                   remoteIP:
-                                    description: RemoteIP defines the matching remote IPs of a request.
+                                    description: |-
+                                      RemoteIP defines the matching remote IPs of a request.
+                                      Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `SidecarGateway` / `GatewayParameters` resource to ensure correct client IP detection.
                                     properties:
                                       cidrRanges:
                                         description: CIDRRanges defines the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28``.

@@ -14,7 +14,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: test
-    image: "bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ .Capabilities.KubeVersion.Minor }}"
+    image: "bitnami/kubectl:{{ (semver .Capabilities.KubeVersion.Version).Major }}.{{ (semver .Capabilities.KubeVersion.Version).Minor }}"
     securityContext:
       allowPrivilegeEscalation: {{ .Values.privileged }}
       capabilities:

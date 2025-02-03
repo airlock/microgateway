@@ -21,13 +21,21 @@ spec:
             - |
               cd /workspace
 
-              git clone https://github.com/kubernetes-sigs/gateway-api.git --branch v1.1.0
+              tries=4
+              for i in $(seq $tries); do
+                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.2.1; then
+                  exit 0
+                elif [ $i -eq $tries ]; then
+                  exit 1
+                fi
+                sleep 5
+              done
           volumeMounts:
             - name: workspace
               mountPath: /workspace
       containers:
         - name: go-test
-          image: golang:1.23.2-alpine
+          image: golang:1.23.5-alpine
           command:
             - sh
             - -c
@@ -35,10 +43,10 @@ spec:
               cd /workspace/gateway-api
               
               go test ./conformance -run TestConformance -args \
-                --supported-features=Gateway,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteDestinationPortMatching,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRouteQueryParamMatching,ReferenceGrant \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.4.3  --contact="https://www.airlock.com/en/contact" \
+                --supported-features=Gateway,GatewayInfrastructurePropagation,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteBackendTimeout,HTTPRouteRequestTimeout,HTTPRouteDestinationPortMatching,HTTPRouteHostRewrite,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRoutePathRewrite,HTTPRoutePortRedirect,HTTPRouteQueryParamMatching,HTTPRouteSchemeRedirect,ReferenceGrant \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.5.0  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
-                --report-output=/workspace/conformance-profile.yaml
+                --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 
               cat /workspace/conformance-profile.yaml
           volumeMounts:
@@ -69,3 +77,62 @@ subjects:
   - kind: ServiceAccount
     name: gateway-conformance-tests
     namespace: default
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway-conformance-infra
+---
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurityPolicy
+metadata:
+  name: gateway-conformance
+  namespace: gateway-conformance-infra
+spec:
+  secured:
+    headerRewritesRef:
+      name: allow-all-request-headers
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: matching
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: matching-part1
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: matching-part2
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: header-matching
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: method-matching
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: query-param-matching
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: request-header-modifier
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: response-header-modifier
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: rewrite-host
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: rewrite-path
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: service-types
+---
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: HeaderRewrites
+metadata:
+  name: allow-all-request-headers
+  namespace: gateway-conformance-infra
+spec:
+  request:
+    allow:
+      allHeaders: {}

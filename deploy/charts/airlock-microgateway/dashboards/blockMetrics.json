@@ -21,7 +21,7 @@
             "type": "grafana",
             "id": "grafana",
             "name": "Grafana",
-            "version": "10.2.0"
+            "version": "11.4.0"
         },
         {
             "type": "datasource",
@@ -81,6 +81,7 @@
     ],
     "panels": [
         {
+            "collapsed": false,
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -88,6 +89,7 @@
                 "y": 0
             },
             "id": 6,
+            "panels": [],
             "title": "Airlock Microgateway Threats Block - Metrics",
             "type": "row"
         },
@@ -129,9 +131,10 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
-                        "lastNotNull"
+                        "last"
                     ],
                     "fields": "",
                     "values": false
@@ -140,7 +143,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -150,7 +153,7 @@
                     "disableTextWrap": false,
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(sum(increase(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
+                    "expr": "round(sum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\",namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range]))+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range]) or on() vector(0)))",
                     "format": "time_series",
                     "fullMetaSearch": false,
                     "hide": false,
@@ -214,6 +217,7 @@
                 "graphMode": "area",
                 "justifyMode": "auto",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "last"
@@ -225,7 +229,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -235,7 +239,7 @@
                     "disableTextWrap": false,
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])) / sum(increase(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range]))",
+                    "expr": "sum(increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range]) or on() vector(0))\n/ \n(\nsum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range]))\n+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range]) or on() vector(0))\n)",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": true,
@@ -267,6 +271,7 @@
                         "axisLabel": "",
                         "axisPlacement": "left",
                         "barAlignment": 0,
+                        "barWidthFactor": 0.6,
                         "drawStyle": "line",
                         "fillOpacity": 0,
                         "gradientMode": "none",
@@ -372,6 +377,7 @@
                     "sort": "none"
                 }
             },
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -380,7 +386,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(rate(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m]))",
+                    "expr": "sum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]) or on() vector(0))",
                     "instant": false,
                     "legendFormat": "Requests per second",
                     "range": true,
@@ -392,7 +398,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m])) / sum(rate(microgateway_license_http_rq_total{namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[1m]))",
+                    "expr": "sum(rate(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]) or on() vector(0))\n/\n(\nsum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]) or on() vector(0))\n)",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "% Blocks",
@@ -482,7 +488,7 @@
                 "xTickLabelRotation": 0,
                 "xTickLabelSpacing": 0
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -491,7 +497,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
+                    "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
                     "format": "time_series",
                     "instant": true,
                     "legendFormat": "__auto",
@@ -592,7 +598,7 @@
                 "xTickLabelRotation": 0,
                 "xTickLabelSpacing": 0
             },
-            "pluginVersion": "10.2.0",
+            "pluginVersion": "11.4.0",
             "targets": [
                 {
                     "datasource": {
@@ -601,7 +607,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", namespace=~\"${namespace:regex}\", job=~\"${operator_namespace.regex}/.*-engine\"}[$__range])))",
+                    "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_blocked_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
                     "instant": true,
                     "legendFormat": "__auto",
                     "range": false,
@@ -624,7 +630,7 @@
         }
     ],
     "refresh": "",
-    "schemaVersion": 39,
+    "schemaVersion": 40,
     "tags": [
         "airlock-microgateway"
     ],
@@ -635,13 +641,11 @@
                 "hide": 2,
                 "includeAll": false,
                 "label": "Datasource Prometheus",
-                "multi": false,
                 "name": "DS_PROMETHEUS",
                 "options": [],
                 "query": "prometheus",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             },
             {
@@ -649,74 +653,139 @@
                 "hide": 2,
                 "includeAll": false,
                 "label": "DS_LOKI",
-                "multi": false,
                 "name": "DS_LOKI",
                 "options": [],
                 "query": "loki",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             },
             {
-                "allValue": ".*",
                 "current": {},
+                "description" : "Allows filtering on the gateway kind.",
+                "definition": "label_values(microgateway_build_info,gateway_kind)",
+                "includeAll": true,
+                "label": "Gateway Kind",
+                "name": "gateway_kind",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info,gateway_kind)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "allValue": ".+",
+                "current": {},
+                "description" : "Allows filtering on the managing operator instance.",
                 "datasource": {
                     "type": "prometheus",
                     "uid": "${DS_PROMETHEUS}"
                 },
-                "definition": "label_values(microgateway_license_valid,namespace)",
-                "hide": 0,
+                "definition": "label_values(microgateway_build_info,managed_by)",
                 "includeAll": true,
-                "label": "Operator Namespace",
+                "label": "Operator",
                 "multi": true,
-                "name": "operator_namespace",
+                "name": "operator",
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(microgateway_license_valid,namespace)",
+                    "query": "label_values(microgateway_build_info,managed_by)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 2,
                 "regex": ".*",
-                "skipUrlSync": false,
-                "sort": 0,
                 "type": "query"
             },
             {
-                "allValue": ".*",
                 "current": {},
+                "description" : "Allows filtering on the namespaces in which gateways are deployed.",
                 "datasource": {
                     "type": "prometheus",
                     "uid": "${DS_PROMETHEUS}"
                 },
-                "definition": "label_values(microgateway_license_http_rq_total,namespace)",
-                "hide": 0,
+                "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
                 "includeAll": true,
-                "label": "Application Namespace",
+                "label": "Gateway Namespace",
                 "multi": true,
                 "name": "namespace",
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(microgateway_license_http_rq_total,namespace)",
+                    "query": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 2,
                 "regex": "",
-                "skipUrlSync": false,
                 "sort": 5,
                 "type": "query"
             },
             {
+                "current": {},
+                "description" : "Allows filtering on specific gateway instance names within the selected namespaces.",
+                "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+                "includeAll": true,
+                "label": "Gateway Name",
+                "multi": true,
+                "name": "gateway_name",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "current": {},
+                "description" : "Allows filtering request metrics of the selected SidecarGateway instances on application container port. This filter is ignored for other gateway kinds.",
+                "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"SidecarGateway\", gateway=~\"$gateway_name\"},upstream)",
+                "includeAll": true,
+                "label": "Sidecar Application Port",
+                "multi": true,
+                "name": "sidecar_application_port",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"SidecarGateway\", gateway=~\"$gateway_name\"},upstream)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "current": {},
+                "description" : "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute. This filter is ignored for other gateway kinds.",
+                "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=\"Gateway\", gateway=~\"$gateway_name\"},upstream)",
+                "includeAll": true,
+                "label": "Gateway HTTPRoute",
+                "multi": true,
+                "name": "gateway_httproute",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=\"Gateway\", gateway=~\"$gateway_name\"},upstream)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
                 "allValue": ".*",
+                "description" : "Allows filtering on the block type of blocked threats.",
                 "current": {},
                 "datasource": {
                     "type": "prometheus",
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "definition": "label_values(microgateway_http_downstream_rq_threats_blocked_total,block_type)",
-                "hide": 0,
                 "includeAll": true,
                 "label": "Block Type",
                 "multi": true,
@@ -729,7 +798,6 @@
                 },
                 "refresh": 2,
                 "regex": "",
-                "skipUrlSync": false,
                 "sort": 5,
                 "type": "query"
             }
@@ -739,10 +807,7 @@
         "from": "now-24h",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
-    "timepicker": {
-        "hidden": false
-    },
+    "timepicker": {},
     "timezone": "browser",
     "title": "Airlock Microgateway Threats Block - Metrics",
     "uid": "ddnqoczu7qvb4cdd3dd",

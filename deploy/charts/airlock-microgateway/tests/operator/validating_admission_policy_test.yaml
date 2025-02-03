@@ -1,0 +1,31 @@
+suite: helm.operator.TestValidatingAdmissionPolicy
+templates:
+  - operator/validating-admission-policy.yaml
+tests:
+  - it: should not render admission policy
+    capabilities:
+      majorVersion: 1
+      minorVersion: 29
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render admission policy, set name and object selector
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    capabilities:
+      majorVersion: 1
+      minorVersion: 30
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ValidatingAdmissionPolicy
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator-immutable-labels-mytestnamespace
+      - equal:
+          path: spec.matchConstraints.objectSelector.matchLabels
+          value:
+            microgateway.airlock.com/managedBy: mytestnamespace

@@ -65,42 +65,6 @@ tests:
     templates:
       - operator/deployment.yaml
 
-  - it: should make sure image uses tag for network validator image in env var
-    set:
-      networkValidator.image.tag: 4.5.6
-      networkValidator.image.digest: ""
-      networkValidator.image.repository: cgr.dev/chainguard/netcat
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat:4.5.6
-    templates:
-      - operator/deployment.yaml
-
-  - it: should make sure digest takes precedence over tag for network validator image in env var
-    set:
-      networkValidator.image.tag: latest
-      networkValidator.image.digest: sha256:d74cbb242cfc9c317552bfa74c166a9816b121181991b69805bc98124108b08b
-      networkValidator.image.repository: cgr.dev/chainguard/netcat
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat@sha256:d74cbb242cfc9c317552bfa74c166a9816b121181991b69805bc98124108b08b
-    templates:
-      - operator/deployment.yaml
-
-  - it: should make sure digest is also used if no tag is available for network validator image in env var
-    set:
-      networkValidator.image.tag: ""
-      networkValidator.image.digest: sha256:d74cbb242cfc9c317552bfa74c166a9816b121181991b69805bc98124108b08b
-      networkValidator.image.repository: cgr.dev/chainguard/netcat
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat@sha256:d74cbb242cfc9c317552bfa74c166a9816b121181991b69805bc98124108b08b
-    templates:
-      - operator/deployment.yaml
-
   - it: should make sure image uses tag for session agent image in env var
     set:
       sessionAgent.image.tag: 1.2.3
@@ -108,7 +72,7 @@ tests:
       sessionAgent.image.repository: cgr.dev/chainguard/netcat
     asserts:
       - equal:
-          path: spec.template.spec.containers[0].env[2].value
+          path: spec.template.spec.containers[0].env[1].value
           value: cgr.dev/chainguard/netcat:1.2.3
     templates:
       - operator/deployment.yaml
@@ -120,7 +84,7 @@ tests:
       sessionAgent.image.repository: cgr.dev/chainguard/netcat
     asserts:
       - equal:
-          path: spec.template.spec.containers[0].env[2].value
+          path: spec.template.spec.containers[0].env[1].value
           value: cgr.dev/chainguard/netcat@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
     templates:
       - operator/deployment.yaml
@@ -132,8 +96,74 @@ tests:
       sessionAgent.image.repository: cgr.dev/chainguard/netcat
     asserts:
       - equal:
-          path: spec.template.spec.containers[0].env[2].value
+          path: spec.template.spec.containers[0].env[1].value
           value: cgr.dev/chainguard/netcat@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure env vars use defaults and are absent if not set
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: info
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_ENABLED
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_CONTROLLER_NAME
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_POD_MONITOR_CREATE
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_POD_MONITOR_ADDITIONAL_LABELS
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure env vars are set accordingly
+    set:
+      operator.config.logLevel: debug
+      operator.gatewayAPI:
+        enabled: true
+        controllerName: microgateway.airlock.com/test-controller
+        podMonitor:
+          create: true
+          labels:
+              foo: bar
+              env: test
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_CONTROLLER_NAME
+            value: microgateway.airlock.com/test-controller
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_POD_MONITOR_CREATE
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_API_POD_MONITOR_ADDITIONAL_LABELS
+            value: "env=test,foo=bar"
     templates:
       - operator/deployment.yaml
 
@@ -397,13 +427,21 @@ tests:
     templates:
       - operator/deployment.yaml
 
-  - it: should set name of referenced volumes
+  - it: should set name of referenced volumes (with certificate)
     release:
       name: myoperator
       namespace: mytestnamespace
     set:
       license.secretName: custom-license
+
     asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: cert
+            secret:
+              defaultMode: 420
+              secretName: myoperator-microgateway-operator-webhook-server-cert
       - contains:
           path: spec.template.spec.volumes
           content:
@@ -414,10 +452,36 @@ tests:
       - contains:
           path: spec.template.spec.volumes
           content:
+            name: airlock-microgateway-license
+            secret:
+              defaultMode: 292
+              optional: true
+              secretName: custom-license
+    templates:
+      - operator/deployment.yaml
+
+  - it: should set name of referenced volumes (without certificate)
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      license.secretName: custom-license
+      operator.webhook.certificateProvider: none
+    asserts:
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
             name: cert
             secret:
               defaultMode: 420
               secretName: myoperator-microgateway-operator-webhook-server-cert
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            configMap:
+              name: myoperator-microgateway-operator-config
+          count: 1
+          any: true
       - contains:
           path: spec.template.spec.volumes
           content:

@@ -1,0 +1,22 @@
+suite: helm.operator.TestTests
+templates:
+  - tests/test-install.yaml
+set:
+  tests.enabled: true
+tests:
+  - it: should set test image tag based on Kubernetes version set as capabilities
+    capabilities:
+      majorVersion: 1
+      minorVersion: 30
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: bitnami/kubectl:1.30
+  - it: should set test image tag based on Kubernetes version set as capabilities (AWS EKS Kubernetes version format)
+    capabilities:
+      majorVersion: 1
+      minorVersion: 29+k3s2
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: bitnami/kubectl:1.29

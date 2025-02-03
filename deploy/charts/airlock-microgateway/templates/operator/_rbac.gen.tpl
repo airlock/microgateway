@@ -9,6 +9,7 @@ Operator rbac permission rules
   resources:
     - configmaps
     - namespaces
+    - nodes
     - replicasets
   verbs:
     - get
@@ -107,15 +108,18 @@ Operator rbac permission rules
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
-    - gatewayclasses
+    - backendtlspolicies
+    - gateways
+    - httproutes
+    - referencegrants
   verbs:
     - get
     - list
-    - patch
     - watch
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
+    - backendtlspolicies/status
     - gatewayclasses/finalizers
     - gatewayclasses/status
     - gateways/finalizers
@@ -127,22 +131,25 @@ Operator rbac permission rules
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
-    - gateways
-    - httproutes
-    - referencegrants
+    - gatewayclasses
   verbs:
     - get
     - list
+    - patch
     - watch
 - apiGroups:
     - microgateway.airlock.com
   resources:
+    - accesscontrolpolicies
     - accesscontrols
+    - apiprotections
     - contentsecurities
     - contentsecuritypolicies
+    - csrfprotections
     - denyrules
     - envoyclusters
     - envoyhttpfilters
+    - gatewayparameters
     - graphqls
     - headerrewrites
     - identitypropagations
@@ -162,6 +169,7 @@ Operator rbac permission rules
 - apiGroups:
     - microgateway.airlock.com
   resources:
+    - accesscontrolpolicies/status
     - contentsecuritypolicies/status
   verbs:
     - patch
@@ -203,4 +211,16 @@ Operator rbac permission rules
     - sidecargateways/finalizers
   verbs:
     - update
+- apiGroups:
+    - monitoring.coreos.com
+  resources:
+    - podmonitors
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
 {{- end }}

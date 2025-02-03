@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.16.4
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.4.3
+    app.kubernetes.io/version: 4.4.4
     gateway.networking.k8s.io/policy: direct
   name: contentsecuritypolicies.microgateway.airlock.com
 spec:

@@ -195,8 +195,6 @@ data:
           regex: "\\.(attack_type\\.([^.]+))"
         - tag_name: "envoy_cluster_name"
           regex: "\\.(cluster\\.([^.]+))"
-        - tag_name: "version"
-          regex: "\\.(version\\.([^.]+))"
       use_all_default_tags: true
     overload_manager:
       resource_monitors:

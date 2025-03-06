@@ -33,7 +33,7 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.3' -n cert-mana
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install the operator and activate the Gateway API support.
-   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.5.0' --set=operator.gatewayAPI.enabled=true
+   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.5.1' --set=operator.gatewayAPI.enabled=true
    ```
 
 2. Verify that the operator started successfully:

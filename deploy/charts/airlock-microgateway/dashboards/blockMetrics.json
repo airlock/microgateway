@@ -662,6 +662,10 @@
             },
             {
                 "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
                 "description" : "Allows filtering on the gateway kind.",
                 "definition": "label_values(microgateway_build_info,gateway_kind)",
                 "includeAll": true,
@@ -725,6 +729,10 @@
             },
             {
                 "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
                 "description" : "Allows filtering on specific gateway instance names within the selected namespaces.",
                 "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
                 "includeAll": true,
@@ -743,6 +751,10 @@
             },
             {
                 "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
                 "description" : "Allows filtering request metrics of the selected SidecarGateway instances on application container port. This filter is ignored for other gateway kinds.",
                 "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"SidecarGateway\", gateway=~\"$gateway_name\"},upstream)",
                 "includeAll": true,
@@ -761,6 +773,10 @@
             },
             {
                 "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
                 "description" : "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute. This filter is ignored for other gateway kinds.",
                 "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=\"Gateway\", gateway=~\"$gateway_name\"},upstream)",
                 "includeAll": true,

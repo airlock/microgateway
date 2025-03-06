@@ -665,6 +665,10 @@ data:
                 },
                 {
                     "current": {},
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
                     "description" : "Allows filtering on the gateway kind.",
                     "definition": "label_values(microgateway_build_info,gateway_kind)",
                     "includeAll": true,
@@ -728,6 +732,10 @@ data:
                 },
                 {
                     "current": {},
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
                     "description" : "Allows filtering on specific gateway instance names within the selected namespaces.",
                     "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
                     "includeAll": true,
@@ -746,6 +754,10 @@ data:
                 },
                 {
                     "current": {},
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
                     "description" : "Allows filtering request metrics of the selected SidecarGateway instances on application container port. This filter is ignored for other gateway kinds.",
                     "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"SidecarGateway\", gateway=~\"$gateway_name\"},upstream)",
                     "includeAll": true,
@@ -764,6 +776,10 @@ data:
                 },
                 {
                     "current": {},
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
                     "description" : "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute. This filter is ignored for other gateway kinds.",
                     "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=\"Gateway\", gateway=~\"$gateway_name\"},upstream)",
                     "includeAll": true,
@@ -826,6 +842,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.5.0
+    app.kubernetes.io/version: 4.5.1
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-blockmetrics

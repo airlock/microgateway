@@ -9,7 +9,7 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/latest.*"
       - matchRegexRaw:
-          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/latest/api/crds.*"
+          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/latest/index/api/crds.*"
   - it: prerelease chart should describe latest doc links
     chart:
       appVersion: 4.2.0-ci
@@ -21,7 +21,7 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/4.2.*"
       - matchRegexRaw:
-          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/4.2/api/crds.*"
+          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/4.2/index/api/crds.*"
   - it: should fail if tests are enabled and release namespace is not part of the watch namespaces
     release:
       name: myoperator

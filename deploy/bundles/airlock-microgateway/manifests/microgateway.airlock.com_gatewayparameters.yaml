@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.5.1
+    app.kubernetes.io/version: 4.5.2
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com

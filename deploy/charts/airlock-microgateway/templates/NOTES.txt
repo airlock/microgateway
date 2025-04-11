@@ -23,11 +23,11 @@ Please ensure the following prerequisites are fulfilled:
   * Order a Premium license: https://airlock.com/en/microgateway-premium
 * Airlock Microgateway CNI is installed on the cluster, when running data plane mode sidecar
   https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni.
-  For more information about data plane modes, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/#data/1660804709650.html
+  For more information about data plane modes, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/?topic=MGW-00000137
 
 Further information:
 * Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}
-* CRD API reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/api/crds
+* CRD API reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/index/api/crds
 * Airlock Microgateway Labs: https://play.instruqt.com/airlock/invite/hyi9fy4b4jzc?icp_referrer=helm
 {{- if .Values.crds.skipVersionCheck }}
 

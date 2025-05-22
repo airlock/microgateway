@@ -12,6 +12,15 @@ metadata:
 data:
   engine_bootstrap_config_template.yaml: |
     # Base configuration, admin interface on port 19000
+    layered_runtime:
+      layers:
+        - name: static_layer
+          static_layer:
+            # disable the new JSON formatter as it is not omitting empty fields
+            # see https://github.com/envoyproxy/envoy/issues/37941
+            envoy.reloadable_features.logging_with_fast_json_formatter: false
+            # disable the new http2 codec
+            envoy.reloadable_features.http2_use_oghttp2: false
     admin:
       address:
         socket_address:

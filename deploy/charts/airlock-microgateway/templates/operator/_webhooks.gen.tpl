@@ -319,6 +319,26 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-jwt
+  failurePolicy: Fail
+  name: validate-jwt.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - jwts
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-limits
   failurePolicy: Fail
   name: validate-limits.microgateway.airlock.com
@@ -472,6 +492,26 @@ Operator validating webhooks
         - UPDATE
       resources:
         - sidecargateways
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-tokenexchange
+  failurePolicy: Fail
+  name: validate-tokenexchange.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - tokenexchanges
   sideEffects: None
 - admissionReviewVersions:
     - v1

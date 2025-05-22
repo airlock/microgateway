@@ -7,6 +7,14 @@
             "type": "datasource",
             "pluginId": "loki",
             "pluginName": "Loki"
+        },
+        {
+            "name": "DS_PROMETHEUS",
+            "label": "Prometheus",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "prometheus",
+            "pluginName": "Prometheus"
         }
     ],
     "__elements": {},
@@ -239,7 +247,7 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", namespace=~\"${namespace:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  response_status_code=\"http.response.status_code\", header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
+                    "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  response_status_code=\"http.response.status_code\", header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
                     "hide": false,
                     "queryType": "range",
                     "refId": "Header Rewrites"
@@ -338,29 +346,6 @@
                 "type": "datasource"
             },
             {
-                "allValue": ".*",
-                "current": {},
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "${DS_PROMETHEUS}"
-                },
-                "definition": "label_values(microgateway_license_http_rq_total,namespace)",
-                "includeAll": true,
-                "label": "Gateway Namespace",
-                "multi": true,
-                "name": "namespace",
-                "options": [],
-                "query": {
-                    "qryType": 1,
-                    "query": "label_values(microgateway_license_http_rq_total,namespace)",
-                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
-                },
-                "refresh": 2,
-                "regex": "",
-                "sort": 5,
-                "type": "query"
-            },
-            {
                 "current": {},
                 "hide": 2,
                 "includeAll": false,
@@ -371,6 +356,119 @@
                 "refresh": 1,
                 "regex": "",
                 "type": "datasource"
+            },
+            {
+                "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(microgateway_build_info,gateway_kind)",
+                "description": "Allows filtering on the gateway kind.",
+                "includeAll": true,
+                "label": "Gateway Kind",
+                "name": "gateway_kind",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info,gateway_kind)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "allValue": ".+",
+                "description" : "Allows filtering on the managing operator instance.",
+                "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(microgateway_build_info,managed_by)",
+                "includeAll": true,
+                "label": "Microgateway Operator",
+                "multi": true,
+                "name": "operator",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info,managed_by)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 2,
+                "regex": ".*",
+                "type": "query"
+            },
+            {
+                "allValue": ".+",
+                "current": {},
+                "description" : "Allows filtering on the namespaces in which gateways are deployed.",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
+                "includeAll": true,
+                "label": "Gateway Namespace",
+                "multi": true,
+                "name": "namespace",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "description" : "Allows filtering on specific gateway instance names within the selected namespaces.",
+                "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+                "includeAll": true,
+                "label": "Gateway Name",
+                "multi": true,
+                "name": "gateway_name",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "allowCustomValue": false,
+                "current": {},
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\", gateway=~\"$gateway_name\"},pod)",
+                "hide": 2,
+                "includeAll": true,
+                "label": "Gateway Pod",
+                "multi": true,
+                "name": "gateway_pod",
+                "options": [],
+                "query": {
+                    "qryType": 1,
+                    "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\", gateway=~\"$gateway_name\"},pod)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 2,
+                "regex": "",
+                "type": "query"
             }
         ]
     },

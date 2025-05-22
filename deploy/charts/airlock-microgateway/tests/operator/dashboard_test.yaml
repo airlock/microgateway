@@ -25,7 +25,7 @@ tests:
       dashboards.create: true
     asserts:
       - hasDocuments:
-          count: 9
+          count: 12
       - equal:
           path: metadata.name
           value: myoperator-microgateway-dashboard-accessctrllogs
@@ -40,28 +40,40 @@ tests:
         documentIndex: 2
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-headerlogs
+          value: myoperator-microgateway-dashboard-downstreammetrics
         documentIndex: 3
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-license
+          value: myoperator-microgateway-dashboard-headerlogs
         documentIndex: 4
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-logonlylogs
+          value: myoperator-microgateway-dashboard-license
         documentIndex: 5
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-logonlymetrics
+          value: myoperator-microgateway-dashboard-logonlylogs
         documentIndex: 6
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-overview
+          value: myoperator-microgateway-dashboard-logonlymetrics
         documentIndex: 7
       - equal:
           path: metadata.name
-          value: myoperator-microgateway-dashboard-requestlogs
+          value: myoperator-microgateway-dashboard-overview
         documentIndex: 8
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-requestlogs
+        documentIndex: 9
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-systemmetrics
+        documentIndex: 10
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-upstreammetrics
+        documentIndex: 11
 
   - it: should be possible to only enable license dashboard
     release:
@@ -85,6 +97,12 @@ tests:
           requestLogs:
             create: false
           accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
             create: false
     asserts:
       - hasDocuments:
@@ -116,6 +134,12 @@ tests:
             create: false
           accessCtrlLogs:
             create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -145,6 +169,12 @@ tests:
           requestLogs:
             create: false
           accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
             create: false
     asserts:
       - hasDocuments:
@@ -176,6 +206,12 @@ tests:
             create: false
           accessCtrlLogs:
             create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -205,6 +241,12 @@ tests:
           requestLogs:
             create: false
           accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
             create: false
     asserts:
       - hasDocuments:
@@ -236,6 +278,12 @@ tests:
             create: false
           accessCtrlLogs:
             create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -265,6 +313,12 @@ tests:
           requestLogs:
             create: false
           accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
             create: false
     asserts:
       - hasDocuments:
@@ -296,6 +350,12 @@ tests:
             create: false
           accessCtrlLogs:
             create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
@@ -326,12 +386,126 @@ tests:
             create: false
           logOnlyLogs:
             create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
     asserts:
       - hasDocuments:
           count: 1
       - equal:
           path: metadata.name
           value: myoperator-microgateway-dashboard-accessctrllogs
+
+  - it: should be possible to only enable systemMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-systemmetrics
+
+  - it: should be possible to only enable upstreamMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-upstreammetrics
+
+  - it: should be possible to only enable downstreamMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-downstreammetrics
 
   - it: should set grafana label correctly
     set:

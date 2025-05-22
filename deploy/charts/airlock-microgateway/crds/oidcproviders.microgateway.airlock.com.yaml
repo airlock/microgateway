@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.5.3
+    app.kubernetes.io/version: 4.6.0
   name: oidcproviders.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -533,7 +533,7 @@ spec:
                                   description: Disabled specifies to skip verification of the JWT signature. Not recommended for production environments.
                                   type: object
                                 jwksRef:
-                                  description: JwksRef specifies the JWKS to use for verifying the JWT signature (usually provided by the OpenID Provider).
+                                  description: JWKSRef specifies the JWKS to use for verifying the JWT signature (usually provided by the OpenID Provider).
                                   properties:
                                     name:
                                       description: Name of the resource

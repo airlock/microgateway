@@ -366,6 +366,15 @@
             },
             "accessCtrlLogs" : {
               "$ref": "#/definitions/DashboardInstance"
+            },
+            "systemMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "upstreamMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
+            },
+            "downstreamMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
             }
           },
           "required": [
@@ -377,7 +386,10 @@
             "logOnlyMetrics",
             "logOnlyLogs",
             "requestLogs",
-            "accessCtrlLogs"
+            "accessCtrlLogs",
+            "systemMetrics",
+            "upstreamMetrics",
+            "downstreamMetrics"
           ],
           "additionalProperties": false
         }

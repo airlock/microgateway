@@ -1,0 +1,34 @@
+name: Attach Grafana Dashboard Release Artifact
+run-name: Attach Grafana Dashboards to Release ${{ github.event.release.tag_name }}
+on:
+  release:
+    types:
+      - created
+
+permissions:
+  contents: write
+
+jobs:
+  attach-dashboard-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Create ZIP file
+        run: |
+          mkdir -p artifacts
+          zip -j artifacts/dashboards.zip deploy/charts/airlock-microgateway/dashboards/*.json
+
+      - name: Upload release artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: artifacts/dashboards.zip
+          asset_name: dashboards-${{ github.event.release.tag_name }}.zip
+          asset_content_type: application/zip

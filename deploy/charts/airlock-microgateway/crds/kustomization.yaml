@@ -16,6 +16,7 @@ resources:
 - headerrewrites.microgateway.airlock.com.yaml
 - identitypropagations.microgateway.airlock.com.yaml
 - jwks.microgateway.airlock.com.yaml
+- jwts.microgateway.airlock.com.yaml
 - limits.microgateway.airlock.com.yaml
 - oidcproviders.microgateway.airlock.com.yaml
 - oidcrelyingparties.microgateway.airlock.com.yaml
@@ -25,3 +26,4 @@ resources:
 - sessionhandlings.microgateway.airlock.com.yaml
 - sidecargateways.microgateway.airlock.com.yaml
 - telemetries.microgateway.airlock.com.yaml
+- tokenexchanges.microgateway.airlock.com.yaml

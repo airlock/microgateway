@@ -23,7 +23,7 @@ spec:
 
               tries=4
               for i in $(seq $tries); do
-                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.2.1; then
+                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.3.0; then
                   exit 0
                 elif [ $i -eq $tries ]; then
                   exit 1
@@ -35,7 +35,7 @@ spec:
               mountPath: /workspace
       containers:
         - name: go-test
-          image: golang:1.23.5-alpine
+          image: golang:1.24.3-alpine
           command:
             - sh
             - -c
@@ -43,8 +43,8 @@ spec:
               cd /workspace/gateway-api
               
               go test ./conformance -run TestConformance -args \
-                --supported-features=Gateway,GatewayInfrastructurePropagation,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteBackendTimeout,HTTPRouteRequestTimeout,HTTPRouteDestinationPortMatching,HTTPRouteHostRewrite,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRoutePathRewrite,HTTPRoutePortRedirect,HTTPRouteQueryParamMatching,HTTPRouteResponseHeaderModification,HTTPRouteSchemeRedirect,ReferenceGrant \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.5.3  --contact="https://www.airlock.com/en/contact" \
+                --supported-features=Gateway,GatewayInfrastructurePropagation,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteBackendTimeout,HTTPRouteRequestTimeout,HTTPRouteDestinationPortMatching,HTTPRouteHostRewrite,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRoutePathRedirect,HTTPRoutePathRewrite,HTTPRoutePortRedirect,HTTPRouteQueryParamMatching,HTTPRouteResponseHeaderModification,HTTPRouteSchemeRedirect,ReferenceGrant \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.6.0  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

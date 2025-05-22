@@ -154,6 +154,7 @@ Operator rbac permission rules
     - headerrewrites
     - identitypropagations
     - jwks
+    - jwts
     - limits
     - oidcproviders
     - oidcrelyingparties
@@ -162,6 +163,7 @@ Operator rbac permission rules
     - redisproviders
     - sessionhandlings
     - telemetries
+    - tokenexchanges
   verbs:
     - get
     - list

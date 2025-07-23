@@ -44,7 +44,7 @@ spec:
               
               go test ./conformance -run TestConformance -args \
                 --supported-features=Gateway,GatewayInfrastructurePropagation,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteBackendTimeout,HTTPRouteRequestTimeout,HTTPRouteDestinationPortMatching,HTTPRouteHostRewrite,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRoutePathRedirect,HTTPRoutePathRewrite,HTTPRoutePortRedirect,HTTPRouteQueryParamMatching,HTTPRouteResponseHeaderModification,HTTPRouteSchemeRedirect,ReferenceGrant \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.6.1  --contact="https://www.airlock.com/en/contact" \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.6.2  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

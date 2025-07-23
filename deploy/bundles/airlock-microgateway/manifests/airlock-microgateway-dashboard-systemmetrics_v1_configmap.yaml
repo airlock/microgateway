@@ -194,7 +194,7 @@ data:
           },
           "id": 31,
           "panels": [],
-          "title": "Container Ressources",
+          "title": "Container Resources",
           "type": "row"
         },
         {
@@ -342,7 +342,7 @@ data:
               "instant": false,
               "legendFormat": "CPU Request",
               "range": true,
-              "refId": "CPU Requsted"
+              "refId": "CPU Requested"
             },
             {
               "datasource": {
@@ -810,6 +810,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.6.1
+    app.kubernetes.io/version: 4.6.2
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-systemmetrics

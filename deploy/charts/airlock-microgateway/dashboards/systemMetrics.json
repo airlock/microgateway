@@ -191,7 +191,7 @@
       },
       "id": 31,
       "panels": [],
-      "title": "Container Ressources",
+      "title": "Container Resources",
       "type": "row"
     },
     {
@@ -339,7 +339,7 @@
           "instant": false,
           "legendFormat": "CPU Request",
           "range": true,
-          "refId": "CPU Requsted"
+          "refId": "CPU Requested"
         },
         {
           "datasource": {

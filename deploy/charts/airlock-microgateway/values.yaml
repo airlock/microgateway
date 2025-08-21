@@ -26,10 +26,10 @@ operator:
     # -- Image repository from which to pull the Airlock Microgateway Operator image.
     repository: "quay.io/airlock/microgateway-operator"
     # -- Image tag to pull.
-    tag: "4.5.5"
+    tag: "4.5.6"
     # -- SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63").
     # Overrides tag when specified.
-    digest: "sha256:ab664de0ca5c4a010d902a40efea268cda4b402cc36166844738667f0baa7f93"
+    digest: "sha256:b3aca9d0e39eac04eaaace209f1594a067219233e88acd9be7afb430498dda4e"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Annotations to add to all Pods.
@@ -102,6 +102,7 @@ operator:
   # Configures the generation of a Prometheus Operator ServiceMonitor.
   serviceMonitor:
     # -- Whether to create a ServiceMonitor resource for monitoring.
+    # Requires that the monitoring.coreos.com/v1 resources are installed on the cluster.
     create: false
     # -- Labels to add to the ServiceMonitor.
     labels: {}
@@ -127,10 +128,10 @@ engine:
     # -- Image repository from which to pull the Airlock Microgateway Engine image.
     repository: "quay.io/airlock/microgateway-engine"
     # -- Image tag to pull.
-    tag: "4.5.5"
+    tag: "4.5.6"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:0509e7a53ef65896d849059df147635402702c330a2f70a48b5a7fa63a95f6bd"
+    digest: "sha256:1f42cc30d33632a57b232d6685eec8ed536977555e8203dbb2ee4e5cc702ea4e"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Resource restrictions to apply to the Airlock Microgateway Engine container.
@@ -147,7 +148,8 @@ engine:
   sidecar:
     # Configures the generation of a Prometheus Operator PodMonitor.
     podMonitor:
-      # -- Whether the controller should create a PodMonitor per SidecarGateway. Requires that the monitoring.coreos.com/v1 resources are installed on the cluster.
+      # -- Whether the controller should create a PodMonitor per SidecarGateway.
+      # Requires that the monitoring.coreos.com/v1 resources are installed on the cluster.
       create: false
       # -- Labels to add to the PodMonitor.
       labels: {}
@@ -169,10 +171,10 @@ sessionAgent:
     # -- Image repository from which to pull the Airlock Microgateway Session Agent image.
     repository: "quay.io/airlock/microgateway-session-agent"
     # -- Image tag to pull.
-    tag: "4.5.5"
+    tag: "4.5.6"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:706479c2d5ea3544e480ab58efea8a3fb3cee3c2036c122923bc3eafa695544b"
+    digest: "sha256:c1ef381c8350e9eb80e605459c5abb48d14ec7334eccb48d884e41ce30c403bf"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Resource restrictions to apply to the Airlock Microgateway Session Agent container.

@@ -33,11 +33,11 @@ tests:
     set:
       engine.image.tag: 4.5.6
       engine.image.digest: ""
-      engine.image.repository: quay.io/airlock/microgateway-engine-devel
+      engine.image.repository: registry-mirror:8080/airlock/microgateway-engine
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[0].value
-          value: quay.io/airlock/microgateway-engine-devel:4.5.6
+          value: registry-mirror:8080/airlock/microgateway-engine:4.5.6
     templates:
       - operator/deployment.yaml
 
@@ -45,11 +45,11 @@ tests:
     set:
       engine.image.tag: latest
       engine.image.digest: sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
-      engine.image.repository: quay.io/airlock/microgateway-engine-devel
+      engine.image.repository: registry-mirror:8080/airlock/microgateway-engine
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[0].value
-          value: quay.io/airlock/microgateway-engine-devel@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+          value: registry-mirror:8080/airlock/microgateway-engine@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
     templates:
       - operator/deployment.yaml
 
@@ -57,11 +57,11 @@ tests:
     set:
       engine.image.tag: ""
       engine.image.digest: sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
-      engine.image.repository: quay.io/airlock/microgateway-engine-devel
+      engine.image.repository: registry-mirror:8080/airlock/microgateway-engine
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[0].value
-          value: quay.io/airlock/microgateway-engine-devel@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+          value: registry-mirror:8080/airlock/microgateway-engine@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
     templates:
       - operator/deployment.yaml
 
@@ -69,11 +69,11 @@ tests:
     set:
       sessionAgent.image.tag: 1.2.3
       sessionAgent.image.digest: ""
-      sessionAgent.image.repository: cgr.dev/chainguard/netcat
+      sessionAgent.image.repository: registry-mirror:8080/airlock/microgateway-session-agent
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat:1.2.3
+          value: registry-mirror:8080/airlock/microgateway-session-agent:1.2.3
     templates:
       - operator/deployment.yaml
 
@@ -81,11 +81,11 @@ tests:
     set:
       sessionAgent.image.tag: latest
       sessionAgent.image.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
-      sessionAgent.image.repository: cgr.dev/chainguard/netcat
+      sessionAgent.image.repository: registry-mirror:8080/airlock/microgateway-session-agent
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+          value: registry-mirror:8080/airlock/microgateway-session-agent@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
     templates:
       - operator/deployment.yaml
 
@@ -93,11 +93,11 @@ tests:
     set:
       sessionAgent.image.tag: ""
       sessionAgent.image.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
-      sessionAgent.image.repository: cgr.dev/chainguard/netcat
+      sessionAgent.image.repository: registry-mirror:8080/airlock/microgateway-session-agent
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[1].value
-          value: cgr.dev/chainguard/netcat@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+          value: registry-mirror:8080/airlock/microgateway-session-agent@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
     templates:
       - operator/deployment.yaml
 
@@ -262,11 +262,11 @@ tests:
     set:
       operator.image.tag: 4.5.6
       operator.image.digest: ""
-      operator.image.repository: quay.io/airlock/microgateway-operator-devel
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-operator-devel:4.5.6
+          value: registry-mirror:8080/airlock/microgateway-operator:4.5.6
     templates:
       - operator/deployment.yaml
 
@@ -274,11 +274,11 @@ tests:
     set:
       operator.image.tag: ""
       operator.image.digest: ""
-      operator.image.repository: quay.io/airlock/microgateway-operator-devel
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-operator-devel
+          value: registry-mirror:8080/airlock/microgateway-operator
     templates:
       - operator/deployment.yaml
 
@@ -286,11 +286,11 @@ tests:
     set:
       operator.image.tag: latest
       operator.image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
-      operator.image.repository: quay.io/airlock/microgateway-operator-devel
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-operator-devel@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
     templates:
       - operator/deployment.yaml
 
@@ -298,11 +298,11 @@ tests:
     set:
       operator.image.tag: ""
       operator.image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
-      operator.image.repository: quay.io/airlock/microgateway-operator-devel
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-operator-devel@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
     templates:
       - operator/deployment.yaml
 

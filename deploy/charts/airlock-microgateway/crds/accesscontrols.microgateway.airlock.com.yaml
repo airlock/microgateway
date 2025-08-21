@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.2
+    app.kubernetes.io/version: 4.6.3
   name: accesscontrols.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -196,7 +196,7 @@ spec:
                                   description: OIDC specifies a condition on the result of an OpenID Connect flow.
                                   properties:
                                     claim:
-                                      description: Claim specifies a condition on a JWT claim.
+                                      description: Claim specifies a condition on an ID token claim.
                                       properties:
                                         name:
                                           description: Name of the claim.
@@ -337,7 +337,7 @@ spec:
                                   description: OIDC specifies a condition on the result of an OpenID Connect flow.
                                   properties:
                                     claim:
-                                      description: Claim specifies a condition on a JWT claim.
+                                      description: Claim specifies a condition on an ID token claim.
                                       properties:
                                         name:
                                           description: Name of the claim.

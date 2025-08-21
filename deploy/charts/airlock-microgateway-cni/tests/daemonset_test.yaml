@@ -127,11 +127,11 @@ tests:
     set:
       image.tag: 4.5.6
       image.digest: ""
-      image.repository: quay.io/airlock/microgateway-cni-devel
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-cni-devel:4.5.6
+          value: registry-mirror:8080/airlock/microgateway-cni:4.5.6
     templates:
       - daemonset.yaml
 
@@ -139,11 +139,11 @@ tests:
     set:
       image.tag: latest
       image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
-      image.repository: quay.io/airlock/microgateway-cni-devel
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-cni-devel@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+          value: registry-mirror:8080/airlock/microgateway-cni@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
     templates:
       - daemonset.yaml
 
@@ -151,11 +151,11 @@ tests:
     set:
       image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
       image.tag: ""
-      image.repository: quay.io/airlock/microgateway-cni-devel
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
     asserts:
        - equal:
           path: spec.template.spec.containers[0].image
-          value: quay.io/airlock/microgateway-cni-devel@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+          value: registry-mirror:8080/airlock/microgateway-cni@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
     templates:
       - daemonset.yaml
 

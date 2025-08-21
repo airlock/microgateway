@@ -1,6 +1,6 @@
 # Airlock Microgateway
 
-![Version: 4.4.9](https://img.shields.io/badge/Version-4.4.9-informational?style=flat-square) ![AppVersion: 4.4.9](https://img.shields.io/badge/AppVersion-4.4.9-informational?style=flat-square)
+![Version: 4.4.10](https://img.shields.io/badge/Version-4.4.10-informational?style=flat-square) ![AppVersion: 4.4.10](https://img.shields.io/badge/AppVersion-4.4.10-informational?style=flat-square)
 
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
@@ -13,7 +13,7 @@
 </picture>
 
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
-__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.4.9).__
+__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.4.10).__
 
 ### Features
 * Kubernetes native integration with sidecar injection and Gateway API support
@@ -73,14 +73,14 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
-   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.4.9' --wait
+   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.4.10' --wait
    ```
 
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
    ```bash
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.9'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.10'
    helm test airlock-microgateway -n airlock-microgateway-system --logs
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.9'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.10'
    ```
 
 ### Upgrading CRDs
@@ -88,7 +88,7 @@ helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-mana
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```bash
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.4.9 --server-side --force-conflicts
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.4.10 --server-side --force-conflicts
 ```
 
 **Note**: Certain GitOps solutions such as e.g. Argo CD or Flux CD have their own mechanisms for automatically upgrading CRDs included with Helm charts.
@@ -119,12 +119,12 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | dashboards.instances.logOnlyLogs.create | bool | `true` | Whether to create the log only logs dashboard. |
 | dashboards.instances.logOnlyMetrics.create | bool | `true` | Whether to create the log only metrics dashboard |
 | dashboards.instances.overview.create | bool | `true` | Whether to create the overview dashboard. |
-| engine.image.digest | string | `"sha256:45e9a14bf5f6a6a968522b2c21d08d6847abb2aab404dd346adb33a8cbfef7f4"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| engine.image.digest | string | `"sha256:af8ca08f0c129f9d4866303974c1c2f715ed1ae5794f240a24b7dfa8c8f86dbf"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | engine.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | engine.image.repository | string | `"quay.io/airlock/microgateway-engine"` | Image repository from which to pull the Airlock Microgateway Engine image. |
-| engine.image.tag | string | `"4.4.9"` | Image tag to pull. |
+| engine.image.tag | string | `"4.4.10"` | Image tag to pull. |
 | engine.resources | object | `{}` | Resource restrictions to apply to the Airlock Microgateway Engine container. |
-| engine.sidecar.podMonitor.create | bool | `false` | Whether to create a PodMonitor resource for monitoring. |
+| engine.sidecar.podMonitor.create | bool | `false` | Whether to create a PodMonitor resource for monitoring. Requires that the monitoring.coreos.com/v1 resources are installed on the cluster. |
 | engine.sidecar.podMonitor.labels | object | `{}` | Labels to add to the PodMonitor. |
 | fullnameOverride | string | `""` | Allows overriding the name to use as full name of resources. |
 | imagePullSecrets | list | `[]` | ImagePullSecrets to use when pulling images. |
@@ -139,10 +139,10 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | operator.config.logLevel | string | `"info"` | Operator application log level. |
 | operator.gatewayAPI.controllerName | string | `"microgateway.airlock.com/gatewayclass-controller"` | Controller name referred in the GatewayClasses managed by this operator. The value must be a path prefixed by the domain `microgateway.airlock.com`. |
 | operator.gatewayAPI.enabled | bool | `false` | Whether to enable the Kubernetes Gateway API related controllers. Requires that the gateway.networking.k8s.io/v1 resources are installed on the cluster. |
-| operator.image.digest | string | `"sha256:d9ac198a9022e4d08156360e1e7cf42bd8f56f8396fb973329b549213fc661b9"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
+| operator.image.digest | string | `"sha256:4bee7ed2dab4d7a3c91b667ae2b9301b6b9e34d222839ce4741c6af432ed4ca3"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
 | operator.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | operator.image.repository | string | `"quay.io/airlock/microgateway-operator"` | Image repository from which to pull the Airlock Microgateway Operator image. |
-| operator.image.tag | string | `"4.4.9"` | Image tag to pull. |
+| operator.image.tag | string | `"4.4.10"` | Image tag to pull. |
 | operator.nodeSelector | object | `{}` | Custom nodeSelector to apply to the operator Deployment in order to constrain its Pods to certain nodes. |
 | operator.podAnnotations | object | `{}` | Annotations to add to all Pods. |
 | operator.podLabels | object | `{}` | Labels to add to all Pods. |
@@ -154,16 +154,16 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | operator.serviceAccount.name | string | `""` | Name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template. |
 | operator.serviceAnnotations | object | `{}` | Annotations to add to the Service. |
 | operator.serviceLabels | object | `{}` | Labels to add to the Service. |
-| operator.serviceMonitor.create | bool | `false` | Whether to create a ServiceMonitor resource for monitoring. |
+| operator.serviceMonitor.create | bool | `false` | Whether to create a ServiceMonitor resource for monitoring. Requires that the monitoring.coreos.com/v1 resources are installed on the cluster. |
 | operator.serviceMonitor.labels | object | `{}` | Labels to add to the ServiceMonitor. |
 | operator.tolerations | list | `[]` | Custom tolerations to apply to the operator Deployment in order to allow its Pods to run on tainted nodes. |
 | operator.updateStrategy | object | `{"type":"RollingUpdate"}` | Specifies the operator update strategy. |
 | operator.watchNamespaceSelector | object | `{}` | Allows to dynamically select watch namespaces of the operator and the scope of the webhooks based on a Namespace label selector. It is able to detect and reconcile resources in all namespaces that match the label selector automatically, even for new namespaces, without restarting the operator. This facilitates a dynamic `MultiNamespace` installation mode, but still requires cluster-scoped permissions (i.e., ClusterRoles and ClusterRoleBindings). An `AllNamespaces` installation or the usage of the `watchNamespaces` requires the `watchNamespaceSelector` to be empty. Please note that this feature requires a Premium license. |
 | operator.watchNamespaces | list | `[]` | Allows to restrict the operator to specific namespaces, depending on your needs. For a `OwnNamespace` or `SingleNamespace` installation the list may only contain one namespace (e.g., `watchNamespaces: ["airlock-microgateway-system"]`). In case of the `OwnNamespace` installation mode the specified namespace should be equal to the installation namespace. For a static `MultiNamespace` installation, the complete list of namespaces must be provided in the `watchNamespaces`. An `AllNamespaces` installation or the usage of the `watchNamespaceSelector` requires the `watchNamespaces` to be empty. Regardless of the installation modes supported by `watchNamespaces`, RBAC is created only namespace-scoped (using Roles and RoleBindings) in the respective namespaces. Please note that this feature requires a Premium license. |
-| sessionAgent.image.digest | string | `"sha256:ac01a337adccebf5e0412ed9a310c11d66e1b01f17cd2f3dce1ba140e108272e"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| sessionAgent.image.digest | string | `"sha256:901a6fc3d3cba31224dbba1c1344cb891a53c04c6c01b39e9d88ac3dd138fa75"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | sessionAgent.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | sessionAgent.image.repository | string | `"quay.io/airlock/microgateway-session-agent"` | Image repository from which to pull the Airlock Microgateway Session Agent image. |
-| sessionAgent.image.tag | string | `"4.4.9"` | Image tag to pull. |
+| sessionAgent.image.tag | string | `"4.4.10"` | Image tag to pull. |
 | sessionAgent.resources | object | `{}` | Resource restrictions to apply to the Airlock Microgateway Session Agent container. |
 | tests.enabled | bool | `false` | Whether additional resources required for running `helm test` should be created (e.g. Roles and ServiceAccounts). If set to false, `helm test` will not run any tests. |
 

@@ -1,0 +1,164 @@
+suite: helm.operator.TestTests
+set:
+  tests.enabled: true
+tests:
+  - it: test should make sure image uses tag
+    set:
+      operator.image.tag: 4.5.6
+      operator.image.digest: ""
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator:4.5.6
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should fallback to just a valid image if neither a tag or digest is set
+    set:
+      operator.image.tag: ""
+      operator.image.digest: ""
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should make sure digest takes precedence over image tag
+    set:
+      operator.image.tag: latest
+      operator.image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should have imagePullSecrets if set
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - tests/test-install.yaml
+
+  - it: backend StatefulSet serviceName should be set
+    set:
+      fullnameOverride: test-fullname
+    asserts:
+      - equal:
+          path: spec.serviceName
+          value: test-fullname-test-service
+    templates:
+      - tests/statefulset.yaml
+
+  - it: test should set env variables
+    release:
+      name: test
+      namespace: test-ns
+    set:
+      fullnameOverride: test-fullname
+      operator.gatewayAPI.enabled: true
+    asserts:
+      - equal:
+          path: spec.containers[0].env
+          value:
+            - name: HELM_RELEASE_NAME
+              value: test
+            - name: HELM_FULL_NAME
+              value: test-fullname
+            - name: RELEASE_NAMESPACE
+              value: test-ns
+
+            - name: BACKEND_STATEFULSET_NAME
+              value: "test-fullname-test-backend"
+            - name: BACKEND_SERVICE_NAME
+              value: "test-fullname-test-service"
+            - name: OPERATOR_DEPLOYMENT_NAME
+              value: "test-fullname-operator"
+            - name: SIDECAR_GATEWAY_NAME
+              value: "test-fullname-test-sidecargateway"
+
+            - name: GATEWAY_API_ENABLED
+              value: "true"
+            - name: WATCH_NAMESPACE_SELECTOR
+              value: ""
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should set watch namespace selector env
+    set:
+      operator.watchNamespaceSelector:
+        matchLabels:
+          a: b
+        matchExpressions:
+          - { key: c, operator: In, values: [ d ] }
+          - { key: e, operator: NotIn, values: [ f ] }
+          - { key: g, operator: Exists }
+          - { key: h, operator: DoesNotExist}
+    asserts:
+      - equal:
+          path: spec.containers[0].env[?(@.name == "WATCH_NAMESPACE_SELECTOR")].value
+          value: "a=b,c in (d),e notin (f),g,!h"
+    templates:
+      - tests/test-install.yaml
+
+  - it: test-backend should make sure image uses tag
+    set:
+      operator.image.tag: 4.5.6
+      operator.image.digest: ""
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator:4.5.6
+    templates:
+      - tests/statefulset.yaml
+
+  - it: test-backend should fallback to just a valid image if neither a tag or digest is set
+    set:
+      operator.image.tag: ""
+      operator.image.digest: ""
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator
+    templates:
+      - tests/statefulset.yaml
+
+  - it: test-backend should make sure digest takes precedence over image tag
+    set:
+      operator.image.tag: latest
+      operator.image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+      operator.image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+    templates:
+      - tests/statefulset.yaml
+
+  - it: test backend should have imagePullSecrets if set
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - tests/statefulset.yaml

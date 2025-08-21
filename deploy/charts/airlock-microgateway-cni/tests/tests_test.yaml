@@ -1,0 +1,126 @@
+suite: helm.operator.TestTests
+templates:
+  - tests/test-install.yaml
+set:
+  tests.enabled: true
+tests:
+  - it: should make sure image uses tag
+    set:
+      image.tag: 4.5.6
+      image.digest: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-cni:4.5.6
+
+  - it: should make sure digest takes precedence over image tag
+    set:
+      image.tag: latest
+      image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-cni@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+
+  - it: should make sure digest is also used if no tag is available
+    set:
+      image.digest: sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+      image.tag: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-cni
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-cni@sha256:4e11342b3270808ea875505f3ed80c4efd68a55b9efcba982eb25392e5d85a9e
+
+  - it: create default node selectors if not set
+    asserts:
+      - equal:
+          path: spec.nodeSelector["kubernetes.io/os"]
+          value: linux
+
+  - it: should create node selectors if set
+    set:
+      nodeSelector:
+        label: foo
+    asserts:
+      - equal:
+          path: spec.nodeSelector.label
+          value: foo
+
+  - it: does not create affinity if not set
+    asserts:
+      - notExists:
+          path: spec.affinity
+
+  - it: should render affinity if specified
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+    asserts:
+      - equal:
+          path: spec.affinity
+          value:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/os
+                        operator: In
+                        values:
+                          - linux
+
+  - it: does not create imagePullSecrets if not set
+    asserts:
+      - notExists:
+          path: spec.imagePullSecrets
+
+  - it: should create imagePullSecrets if set
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+
+  - it: test should set env variables
+    release:
+      name: test
+      namespace: test-ns
+    set:
+      fullnameOverride: test-fullname
+      config.installMode: manual
+    asserts:
+      - equal:
+          path: spec.containers[0].env
+          value:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: RELEASE_NAMESPACE
+              value: test-ns
+            - name: CNI_DAEMONSET_NAME
+              value: test-fullname
+            - name: CNI_BINARY_PATH
+              value: "/host/opt/cni/bin/test-fullname"
+            - name: CNI_CONFIG_DIR
+              value: "/host/etc/cni/net.d"
+            - name: CNI_INSTALL_MODE
+              value: "manual"
+            - name: CNI_KUBECONFIG_PATH
+              value: "/host/etc/cni/net.d/test-fullname-kubeconfig"
+            - name: CNI_TYPE
+              value: "test-fullname"

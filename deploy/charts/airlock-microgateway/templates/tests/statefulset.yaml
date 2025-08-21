@@ -11,7 +11,7 @@ metadata:
     {{- include "airlock-microgateway.sharedLabels" . | nindent 4 }}
     {{- include "airlock-microgateway.sharedSelectorLabels" . | nindent 4 }}
 spec:
-  serviceName: nginx
+  serviceName: "{{ include "airlock-microgateway.fullname" . }}-test-service"
   replicas: 0
   selector:
     matchLabels:
@@ -33,24 +33,26 @@ spec:
         {{- include "airlock-microgateway.sharedSelectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - image: cgr.dev/chainguard/nginx
-          name: nginx
+        - name: backend
+          image: {{ include "airlock-microgateway.image" .Values.operator.image }}
+          args:
+            - "helm-test-backend"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - mountPath: /var/lib/nginx/tmp/
-              name: nginx-tmp
-            - mountPath: /var/run
-              name: nginx-run
+          startupProbe:
+            httpGet:
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 1
           securityContext:
             {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 12 }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      volumes:
-        - emptyDir: {}
-          name: nginx-tmp
-        - emptyDir: {}
-          name: nginx-run
+      automountServiceAccountToken: false
 {{- end -}}

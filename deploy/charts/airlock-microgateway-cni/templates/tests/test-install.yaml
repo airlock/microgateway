@@ -12,9 +12,42 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 spec:
   restartPolicy: Never
+  {{- with .Values.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   containers:
   - name: test
-    image: "bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ .Capabilities.KubeVersion.Minor }}"
+    image: {{ include "airlock-microgateway-cni.image" .Values.image }}
+    args:
+      - "helm-test"
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+    env:
+    - name: NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    - name: RELEASE_NAMESPACE
+      value: "{{ .Release.Namespace }}"
+    - name: CNI_DAEMONSET_NAME
+      value: "{{ include "airlock-microgateway-cni.fullname" . }}"
+    - name: CNI_BINARY_PATH
+      value: "/host/opt/cni/bin/{{ include "airlock-microgateway-cni.fullname" . }}"
+    - name: CNI_CONFIG_DIR
+      value: "/host/etc/cni/net.d"
+    - name: CNI_INSTALL_MODE
+      value: "{{ .Values.config.installMode }}"
+    - name: CNI_KUBECONFIG_PATH
+      value: "/host/etc/cni/net.d/{{ include "airlock-microgateway-cni.fullname" . }}-kubeconfig"
+    - name: CNI_TYPE
+      value: "{{ include "airlock-microgateway-cni.fullname" . }}"
     securityContext:
       allowPrivilegeEscalation: {{ .Values.privileged }}
       capabilities:
@@ -34,62 +67,10 @@ spec:
     - mountPath: /host/etc/cni/net.d
       name: cni-net-dir
       readOnly: true
-    command:
-    - sh
-    - -c
-    - |
-      set -eu
-
-      fail() {
-        echo "Error: ${1}"
-        echo ""
-        echo 'CNI installer logs:'
-        kubectl logs -n {{ .Release.Namespace }} daemonsets/{{ include "airlock-microgateway-cni.fullname" .}} -c cni-installer
-        exit 1
-      }
-
-      containsMGWCNIConf() {
-        cat "${1}" | grep -qe '"type":.*"{{ include "airlock-microgateway-cni.fullname" . }}"'
-      }
-
-      if ! kubectl rollout status --timeout=60s -n {{ .Release.Namespace }} daemonsets/{{ include "airlock-microgateway-cni.fullname" .}}; then
-        fail 'CNI DaemonSet rollout did not complete within timeout'
-      fi
-
-      echo "Checking whether CNI binary was installed"
-      if ! [ -f "/host/opt/cni/bin/{{ include "airlock-microgateway-cni.fullname" . }}" ]; then
-        fail 'CNI binary was not installed'
-      fi
-
-      echo "Checking whether CNI kubeconfig was installed"
-      if ! [ -f "/host/etc/cni/net.d/{{ include "airlock-microgateway-cni.fullname" . }}-kubeconfig" ]; then
-        fail 'CNI kubeconfig was not created'
-      fi
-
-      echo "Checking whether CNI configuration was written"
-      case {{ .Values.config.installMode }} in
-        "chained")
-          for file in "/host/etc/cni/net.d/"*.conflist; do
-            if containsMGWCNIConf "${file}"; then
-              echo "Success"
-              exit 0
-            fi
-          done
-          ;;
-        "standalone")
-          if containsMGWCNIConf "/host/etc/cni/net.d/{{ include "airlock-microgateway-cni.fullname" . }}.conflist"; then
-            echo "Success"
-            exit 0
-          fi
-          ;;
-        "manual")
-          echo "- Skipping because we are in 'manual' install mode"
-          echo "Success"
-          exit 0
-          ;;
-      esac
-
-      fail 'Configuration for plugin "{{ include "airlock-microgateway-cni.fullname" . }}" was not found'
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
   serviceAccountName: "{{ include "airlock-microgateway-cni.fullname" . }}-tests"
   volumes:
   - hostPath:

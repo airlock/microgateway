@@ -173,6 +173,18 @@
                         ]
                     },
                     {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Session ID"
+                      },
+                      "properties": [
+                        {
+                          "id": "custom.width",
+                          "value": 328
+                        }
+                      ]
+                    },
+                    {
                         "matcher": {
                             "id": "byName",
                             "options": "Request ID"
@@ -235,7 +247,7 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= `log_only` |= `envoy.access` | json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", details=\"airlock.actions.log_only\", log_type=\"event.dataset\" | label_format log_count=`{{ len (fromJson .details) }}` | log_type = `envoy.access` | log_count > 0",
+                    "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= `log_only` |= `envoy.access` | line_format `{{ __line__ | replace \"�\" \"?\"}}` | json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", session_id=\"airlock.http.session.id\", details=\"airlock.actions.log_only\", log_type=\"event.dataset\" | label_format log_count=`{{ len (fromJson .details) }}` | log_type = `envoy.access` | log_count > 0",
                     "hide": false,
                     "queryType": "range",
                     "refId": "Log Only Logs"
@@ -262,6 +274,7 @@
                                 "domain",
                                 "http_method",
                                 "namespace",
+                                "session_id",
                                 "request_id",
                                 "request_size",
                                 "url"
@@ -287,7 +300,8 @@
                             "domain": 2,
                             "http_method": 4,
                             "namespace": 1,
-                            "request_id": 9,
+                            "request_id": 10,
+                            "session_id": 9,
                             "request_size": 6,
                             "url": 5
                         },
@@ -298,6 +312,7 @@
                             "domain": "URL Domain",
                             "http_method": "HTTP Method",
                             "namespace": "Namespace",
+                            "session_id": "Session ID",
                             "request_id": "Request ID",
                             "request_size": "Request Size",
                             "url": "URL Path"
@@ -463,6 +478,6 @@
     "timezone": "browser",
     "title": "Airlock Microgateway Threats LogOnly - Logs",
     "uid": "adnasdfdwnyadcc",
-    "version": 7,
+    "version": 8,
     "weekStart": ""
 }

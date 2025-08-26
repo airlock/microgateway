@@ -1,0 +1,93 @@
+suite: helm.operator.TestPodDisruptionBudget
+templates:
+  - operator/poddisruptionbudget.yaml
+tests:
+  - it: should not create PodDisruptionBudget by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create PodDisruptionBudget if enabled and set name and namespace
+    set:
+      operator.podDisruptionBudget.minAvailable: 1
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PodDisruptionBudget
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator
+        documentIndex: 0
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+      - isSubset:
+          path: spec.selector.matchLabels
+          content:
+            app.kubernetes.io/component: controller
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/name: microgateway-operator
+      - equal:
+          path: spec.minAvailable
+          value: 1
+
+  - it: should override selector
+    set:
+      operator.podDisruptionBudget.selector.matchLabels:
+        app.kubernetes.io/component: controller
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - isSubset:
+          path: spec.selector.matchLabels
+          content:
+            app.kubernetes.io/component: controller
+
+  - it: should set minAvailable (integer)
+    set:
+      operator.podDisruptionBudget.minAvailable: 1
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 1
+
+  - it: should set minAvailable (percentage)
+    set:
+      operator.podDisruptionBudget.minAvailable: "10%"
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: "10%"
+
+  - it: should set maxUnavailable (integer)
+    set:
+      operator.podDisruptionBudget.maxUnavailable: 1
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.maxUnavailable
+          value: 1
+
+  - it: should set maxUnavailable (percentage)
+    set:
+      operator.podDisruptionBudget.maxUnavailable: "10%"
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.maxUnavailable
+          value: "10%"

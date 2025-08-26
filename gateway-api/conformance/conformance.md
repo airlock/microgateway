@@ -17,7 +17,7 @@ For an easy start in non-production environments, you may deploy the same cert-m
 ### Deploy cert-manager
 ```console
 helm repo add jetstack https://charts.jetstack.io
-helm install cert-manager jetstack/cert-manager --version 'v1.17.2' -n cert-manager --create-namespace --set crds.enabled=true --wait
+helm install cert-manager jetstack/cert-manager --version 'v1.18.2' -n cert-manager --create-namespace --set crds.enabled=true --wait
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -33,7 +33,7 @@ helm install cert-manager jetstack/cert-manager --version 'v1.17.2' -n cert-mana
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install the operator and activate the Gateway API support.
-   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.6.3' --set=operator.gatewayAPI.enabled=true
+   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.7.0' --set=operator.gatewayAPI.enabled=true
    ```
 
 2. Verify that the operator started successfully:

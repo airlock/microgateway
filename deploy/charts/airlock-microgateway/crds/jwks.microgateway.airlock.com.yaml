@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: jwks.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -54,6 +54,7 @@ spec:
                           properties:
                             name:
                               description: Name of the resource
+                              maxLength: 253
                               minLength: 1
                               type: string
                           required:
@@ -187,6 +188,7 @@ spec:
                                                 properties:
                                                   name:
                                                     description: Name of the resource
+                                                    maxLength: 253
                                                     minLength: 1
                                                     type: string
                                                 required:
@@ -217,6 +219,7 @@ spec:
                                                 properties:
                                                   name:
                                                     description: Name of the resource
+                                                    maxLength: 253
                                                     minLength: 1
                                                     type: string
                                                 required:

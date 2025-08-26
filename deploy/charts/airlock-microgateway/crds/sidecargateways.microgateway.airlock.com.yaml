@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: sidecargateways.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -48,7 +48,7 @@ spec:
             metadata:
               type: object
             spec:
-              description: Specification of the desired sidecar gateway behavior.
+              description: Spec defines the desired state of the SidecarGateway.
               properties:
                 applications:
                   description: Applications defines applications which run on different ports.
@@ -121,11 +121,23 @@ spec:
                                 description: XFF configures to use the standard 'X-Forwarded-For' header for IP extraction.
                                 properties:
                                   numTrustedHops:
-                                    default: 1
-                                    description: NumTrustedHops specifies to extract the client's originating IP from the nth rightmost entry in the X-Forwarded-For header. With the default value of 1, the IP is extracted from the rightmost entry.
+                                    description: |-
+                                      NumTrustedHops specifies to extract the client's originating IP from the nth rightmost entry in the X-Forwarded-For header. With the default value of 1, the IP is extracted from the rightmost entry.
+                                      Only one of numTrustedHops and trustedCIDRRanges can be set.
+                                      Default: 1
                                     format: int32
                                     minimum: 1
                                     type: integer
+                                  trustedCIDRRanges:
+                                    description: |-
+                                      TrustedCIDRRanges specifies the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28`` to trust when evaluating the remote IP address to determine the original client’s IP address. When the remote IP address matches a trusted CIDR and the X-Forwarded-For header was sent, each entry in the X-Forwarded-For header is evaluated from right to left and the first non-trusted address is used as the original client address. If all addresses in X-Forwarded-For are within the trusted list, the first (leftmost) entry is used.
+                                      Only one of numTrustedHops and trustedCIDRRanges can be set.
+                                    items:
+                                      description: CIDRRange defines an IPv4 or IPv6 CIDR range, e.g. “196.148.3.128/26“ or “2001:db8::/28“.
+                                      format: cidr
+                                      type: string
+                                    minItems: 1
+                                    type: array
                                 type: object
                             type: object
                           requestNormalizations:
@@ -220,6 +232,7 @@ spec:
                                                   properties:
                                                     name:
                                                       description: Name of the resource
+                                                      maxLength: 253
                                                       minLength: 1
                                                       type: string
                                                   required:
@@ -250,6 +263,7 @@ spec:
                                                   properties:
                                                     name:
                                                       description: Name of the resource
+                                                      maxLength: 253
                                                       minLength: 1
                                                       type: string
                                                   required:
@@ -377,6 +391,7 @@ spec:
                                                   properties:
                                                     name:
                                                       description: Name of the resource
+                                                      maxLength: 253
                                                       minLength: 1
                                                       type: string
                                                   required:
@@ -407,6 +422,7 @@ spec:
                                                   properties:
                                                     name:
                                                       description: Name of the resource
+                                                      maxLength: 253
                                                       minLength: 1
                                                       type: string
                                                   required:
@@ -458,6 +474,7 @@ spec:
                                 properties:
                                   name:
                                     description: Name of the resource
+                                    maxLength: 253
                                     minLength: 1
                                     type: string
                                 required:
@@ -484,18 +501,40 @@ spec:
                       envoyHTTPFilterRefs:
                         description: EnvoyHTTPFilterRefs selects the relevant EnvoyHTTPFilters.
                         properties:
-                          prepend:
-                            description: Prepend selects the relevant EnvoyHTTPFilters which are added before those configured by the Airlock Microgateway.
+                          append:
+                            description: Append specifies EnvoyHTTPFilters to insert after the Airlock filters (i.e., after auth, deny rule filtering, header rewrites, etc.).
                             items:
                               properties:
                                 name:
                                   description: Name of the resource
+                                  maxLength: 253
                                   minLength: 1
                                   type: string
                               required:
                                 - name
                               type: object
+                            maxItems: 32
                             type: array
+                            x-kubernetes-list-map-keys:
+                              - name
+                            x-kubernetes-list-type: map
+                          prepend:
+                            description: Prepend specifies EnvoyHTTPFilters to insert before the Airlock filters (i.e, before auth, deny rule filtering, header rewrites, etc.).
+                            items:
+                              properties:
+                                name:
+                                  description: Name of the resource
+                                  maxLength: 253
+                                  minLength: 1
+                                  type: string
+                              required:
+                                - name
+                              type: object
+                            maxItems: 32
+                            type: array
+                            x-kubernetes-list-map-keys:
+                              - name
+                            x-kubernetes-list-type: map
                         type: object
                       routes:
                         description: Routes defines the security configurations for different paths. The first matching route (from top to bottom) applies.
@@ -520,6 +559,7 @@ spec:
                                   properties:
                                     name:
                                       description: Name of the resource
+                                      maxLength: 253
                                       minLength: 1
                                       type: string
                                   required:
@@ -532,6 +572,7 @@ spec:
                                   properties:
                                     name:
                                       description: Name of the resource
+                                      maxLength: 253
                                       minLength: 1
                                       type: string
                                   required:
@@ -555,6 +596,7 @@ spec:
                         properties:
                           name:
                             description: Name of the resource
+                            maxLength: 253
                             minLength: 1
                             type: string
                         required:
@@ -658,6 +700,7 @@ spec:
                     properties:
                       name:
                         description: Name of the resource
+                        maxLength: 253
                         minLength: 1
                         type: string
                     required:
@@ -681,6 +724,7 @@ spec:
                   properties:
                     name:
                       description: Name of the resource
+                      maxLength: 253
                       minLength: 1
                       type: string
                   required:
@@ -690,7 +734,7 @@ spec:
                 - applications
               type: object
             status:
-              description: Most recently observed status of the SidecarGateway which is populated by the system. This data is read-only and may not be up to date.
+              description: Status describes the current status of the SidecarGateway.
               properties:
                 conditions:
                   items:
@@ -748,8 +792,6 @@ spec:
                       - name
                     type: object
                   type: array
-              required:
-                - status
               type: object
           type: object
       served: true

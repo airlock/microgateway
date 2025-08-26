@@ -47,12 +47,15 @@ tests:
           pattern: "imagePullPolicy: Always"
 
 
-  - it: should not set resources for engine container in engine_container_template configmap
+  - it: should set default resources for engine container in engine_container_template configmap
     asserts:
       - matchRegex:
           path: data["engine_container_template.yaml"]
-          pattern: "resources"
-        not: true
+          pattern: |-
+            resources:
+            .*requests:
+            .*  cpu: 100m
+            .*  memory: 256Mi
 
   - it: should set resources for engine container in engine_container_template configmap
     set:
@@ -74,6 +77,15 @@ tests:
             .*requests:
             .*  cpu: 1m
             .*  memory: 4Mi
+
+  - it: should not set resources for engine container in engine_container_template configmap if is set null
+    set:
+      engine.resources: null
+    asserts:
+      - matchRegex:
+          path: data["engine_container_template.yaml"]
+          pattern: "resources"
+        not: true
 
   - it: should not set resources for session-agent container in session_agent_container_template configmap
     asserts:
@@ -153,9 +165,9 @@ tests:
     set:
       engine.image.pullPolicy: Always
     asserts:
-    - matchRegex:
-        path: data["network_validator_container_template.yaml"]
-        pattern: "imagePullPolicy: Always"
+      - matchRegex:
+          path: data["network_validator_container_template.yaml"]
+          pattern: "imagePullPolicy: Always"
 
   - it: should set namespace selector for operator in operator_config configmap
     set:

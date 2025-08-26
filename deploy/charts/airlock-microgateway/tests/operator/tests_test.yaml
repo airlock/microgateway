@@ -69,6 +69,7 @@ tests:
     set:
       fullnameOverride: test-fullname
       operator.gatewayAPI.enabled: true
+      operator.sidecarGateway.enabled: false
     asserts:
       - equal:
           path: spec.containers[0].env
@@ -91,6 +92,8 @@ tests:
 
             - name: GATEWAY_API_ENABLED
               value: "true"
+            - name: SIDECAR_GATEWAY_ENABLED
+              value: "false"
             - name: WATCH_NAMESPACE_SELECTOR
               value: ""
     templates:

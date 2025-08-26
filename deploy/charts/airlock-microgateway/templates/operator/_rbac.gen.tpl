@@ -108,18 +108,15 @@ Operator rbac permission rules
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
-    - backendtlspolicies
-    - gateways
-    - httproutes
-    - referencegrants
+    - gatewayclasses
   verbs:
     - get
     - list
+    - patch
     - watch
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
-    - backendtlspolicies/status
     - gatewayclasses/finalizers
     - gatewayclasses/status
     - gateways/finalizers
@@ -131,12 +128,30 @@ Operator rbac permission rules
 - apiGroups:
     - gateway.networking.k8s.io
   resources:
-    - gatewayclasses
+    - gateways
+    - httproutes
+    - referencegrants
   verbs:
     - get
     - list
-    - patch
     - watch
+- apiGroups:
+    - gateway.networking.k8s.io
+    - x-openshift.microgateway.airlock.com
+  resources:
+    - backendtlspolicies
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - gateway.networking.k8s.io
+    - x-openshift.microgateway.airlock.com
+  resources:
+    - backendtlspolicies/status
+  verbs:
+    - patch
+    - update
 - apiGroups:
     - microgateway.airlock.com
   resources:
@@ -148,6 +163,7 @@ Operator rbac permission rules
     - csrfprotections
     - denyrules
     - envoyclusters
+    - envoyextensionpolicies
     - envoyhttpfilters
     - gatewayparameters
     - graphqls
@@ -173,6 +189,7 @@ Operator rbac permission rules
   resources:
     - accesscontrolpolicies/status
     - contentsecuritypolicies/status
+    - envoyextensionpolicies/status
   verbs:
     - patch
     - update

@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: envoyclusters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -25,7 +25,7 @@ spec:
       name: v1alpha1
       schema:
         openAPIV3Schema:
-          description: EnvoyCluster is an additional Envoy Cluster resource which is added to those defined by the Airlock Microgateway.
+          description: EnvoyCluster defines a custom Envoy cluster which can be inserted into an Airlock Microgateway Engine configuration.
           properties:
             apiVersion:
               description: |-
@@ -48,7 +48,17 @@ spec:
               description: Specification of the desired additional Envoy cluster.
               properties:
                 value:
-                  description: Value defines the Envoy Cluster which is added to those configured by the Airlock Microgateway.
+                  description: |-
+                    Value specifies the raw Envoy cluster configuration.
+
+                    Note: The 'name' field within this unstructured value must follow the convention: envoycluster/{namespace}/{name}.
+                  properties:
+                    name:
+                      maxLength: 253
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
               type: object

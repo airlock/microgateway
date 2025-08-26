@@ -178,6 +178,18 @@ data:
               {
                 "matcher": {
                   "id": "byName",
+                  "options": "Session ID"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 328
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
                   "options": "Request ID"
                 },
                 "properties": [
@@ -310,7 +322,7 @@ data:
                 "uid": "${DS_LOKI}"
               },
               "editorMode": "code",
-              "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"}  |= \"access_control\" |= \"envoy.access\"  | json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", user_id=\"airlock.access_control.user_id\",  details=\"airlock.access_control.details\", policy=\"airlock.access_control.policy\", status=\"airlock.access_control.status\", authenticated=\"airlock.access_control.authenticated\", response_code=\"http.response.status_code\", authorized=\"airlock.access_control.authorized\", log_type=\"event.dataset\" | log_type = `envoy.access`",
+              "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"}  |= \"access_control\" |= \"envoy.access\"  | json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", session_id=\"airlock.http.session.id\", user_id=\"airlock.access_control.user_id\",  details=\"airlock.access_control.details\", policy=\"airlock.access_control.policy\", status=\"airlock.access_control.status\", authenticated=\"airlock.access_control.authenticated\", response_code=\"http.response.status_code\", authorized=\"airlock.access_control.authorized\", log_type=\"event.dataset\" | log_type = `envoy.access`",
               "hide": false,
               "queryType": "range",
               "refId": "Access Control Logs"
@@ -340,6 +352,7 @@ data:
                     "http_method",
                     "namespace",
                     "policy",
+                    "session_id",
                     "request_id",
                     "request_size",
                     "status",
@@ -371,7 +384,8 @@ data:
                   "http_method": 3,
                   "namespace": 1,
                   "policy": 7,
-                  "request_id": 14,
+                  "request_id": 15,
+                  "session_id": 14,
                   "request_size": 5,
                   "response_code": 6,
                   "status": 11,
@@ -388,6 +402,7 @@ data:
                   "http_method": "HTTP Method",
                   "namespace": "Namespace",
                   "policy": "Access Control Policy",
+                  "session_id": "Session ID",
                   "request_id": "Request ID",
                   "request_size": "Request Size",
                   "response_code": "HTTP Status",
@@ -554,7 +569,7 @@ data:
       "timezone": "Europe/Zurich",
       "title": "Airlock Microgateway Access Control - Logs",
       "uid": "ce99ks6s11nuob",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -566,6 +581,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-accessctrllogs

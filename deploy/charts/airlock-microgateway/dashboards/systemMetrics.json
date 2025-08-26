@@ -52,10 +52,10 @@
       }
     ]
   },
-  "description": "Metrics on system resources of the Airlock Microgateway Engine and network I/O on pod level.",
+  "description": "Metrics on system resources of the Airlock Microgateway.",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 2,
+  "graphTooltip": 0,
   "id": null,
   "links": [
     {
@@ -75,16 +75,225 @@
   ],
   "panels": [
     {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Aggregated status of the resource conditions of the gateway instance.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warn"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 37,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "min(microgateway_config_resource_condition{kind=\"${gateway_kind}\", name=\"${gateway_name}\"})",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "Errors",
+          "useBackend": false
+        }
+      ],
+      "title": "Gateway Configuration Status",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "System Status"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Indicator if all Envoy server states of the selected gateway are in state LIVE.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Warn"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 38,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "min(envoy_server_live{gateway_kind=\"${gateway_kind}\", gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\"})",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "Errors",
+          "useBackend": false
+        }
+      ],
+      "title": "Envoy Server State Summary",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Envoy Server States"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 4
       },
-      "id": 32,
+      "id": 31,
       "panels": [],
-      "title": "Airlock Microgateway Engine",
+      "repeat": "pod",
+      "title": "Pod $pod",
       "type": "row"
     },
     {
@@ -118,9 +327,9 @@
               "options": {
                 "match": "null+nan",
                 "result": {
-                  "color": "orange",
+                  "color": "#83807d",
                   "index": 1,
-                  "text": "Warn"
+                  "text": "n/a"
                 }
               },
               "type": "special"
@@ -131,7 +340,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           }
@@ -142,7 +351,7 @@
         "h": 3,
         "w": 4,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 20,
       "options": {
@@ -178,140 +387,96 @@
           "refId": "A"
         }
       ],
-      "title": "Container Readiness",
+      "title": "Readiness Microgateway Engine",
       "type": "stat"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      },
-      "id": 31,
-      "panels": [],
-      "title": "Container Resources",
-      "type": "row"
-    },
-    {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "CPU usage over time of the Airlock Microgateway Engine container.",
+      "description": "State of the Envoy Server",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "fieldMinMax": false,
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "LIVE"
+                },
+                "1": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "DRAINING"
+                },
+                "2": {
+                  "color": "yellow",
+                  "index": 2,
+                  "text": "PRE_INITIALIZING"
+                },
+                "3": {
+                  "color": "yellow",
+                  "index": 3,
+                  "text": "INITIALIZING"
+                }
+              },
+              "type": "value"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#808080",
+                  "index": 4,
+                  "text": "n/a"
+                }
+              },
+              "type": "special"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
+                "color": "green",
                 "value": null
               }
             ]
           },
-          "unit": "sishort"
+          "unit": "string"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU Request"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU Limit"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 0
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
+        "h": 3,
+        "w": 4,
+        "x": 4,
         "y": 5
       },
-      "id": 3,
+      "id": 39,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "fields": "",
+          "values": true
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.4.0",
       "targets": [
@@ -320,42 +485,35 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": " sum(kube_pod_container_resource_limits{pod=\"${pod}\",container=\"airlock-microgateway-engine\",resource=\"cpu\"})",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "CPU Limit",
-          "range": true,
-          "refId": "CPU Limit"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": " sum(kube_pod_container_resource_requests{pod=\"${pod}\",container=\"airlock-microgateway-engine\",resource=\"cpu\"})",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "CPU Request",
-          "range": true,
-          "refId": "CPU Requested"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{pod=\"${pod}\",container=\"airlock-microgateway-engine\"}[$__rate_interval])",
-          "hide": false,
-          "legendFormat": "CPU Usage",
-          "range": true,
-          "refId": "CPU Usage"
+          "exemplar": false,
+          "expr": "envoy_server_state{gateway_kind=\"${gateway_kind}\", gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\", pod=\"${pod}\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "Errors",
+          "useBackend": false
         }
       ],
-      "title": "CPU Usage (cores)",
-      "type": "timeseries"
+      "title": "Envoy Server State",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Envoy Server State"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "datasource": {
@@ -419,7 +577,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Memory Limit"
+              "options": "Limit"
             },
             "properties": [
               {
@@ -438,7 +596,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Memory Request"
+              "options": "Request"
             },
             "properties": [
               {
@@ -457,9 +615,9 @@
         ]
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
+        "h": 6,
+        "w": 4,
+        "x": 8,
         "y": 5
       },
       "id": 10,
@@ -467,7 +625,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
@@ -487,7 +645,7 @@
           "expr": "kube_pod_container_resource_limits{pod=\"${pod}\",container=\"airlock-microgateway-engine\",resource=\"memory\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "Memory Limit",
+          "legendFormat": "Limit",
           "range": true,
           "refId": "Memory Limit"
         },
@@ -500,7 +658,7 @@
           "expr": "kube_pod_container_resource_requests{pod=\"${pod}\", container=\"airlock-microgateway-engine\", resource=\"memory\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "Memory Request",
+          "legendFormat": "Request",
           "range": true,
           "refId": "Memory Request"
         },
@@ -512,33 +670,326 @@
           "editorMode": "code",
           "expr": "container_memory_usage_bytes{pod=\"${pod}\",container=\"airlock-microgateway-engine\"}",
           "hide": false,
-          "legendFormat": "Memory Usage",
+          "legendFormat": "Usage",
           "range": true,
           "refId": "Memory Usage"
         }
       ],
-      "title": "Memory Usage",
+      "title": "Memory Microgateway Engine",
       "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 15
-      },
-      "id": 27,
-      "panels": [],
-      "title": "Pod Network I/O",
-      "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Network I/O of the selected pod over time.",
+      "description": "Allocated memory and heap size over time of the Envoy server in the Microgateway Engine container.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Allocated"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Heap"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 5
+      },
+      "id": 33,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "envoy_server_memory_allocated{pod=\"${pod}\", container=\"airlock-microgateway-engine\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Allocated",
+          "range": true,
+          "refId": "Allocated"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "envoy_server_memory_heap_size{pod=\"${pod}\", container=\"airlock-microgateway-engine\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Heap",
+          "range": true,
+          "refId": "Heap"
+        }
+      ],
+      "title": "Memory Envoy Server",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "CPU usage over time of the Airlock Microgateway Engine container.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "super-light-green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "sishort"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Limit"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": " sum(kube_pod_container_resource_limits{pod=\"${pod}\",container=\"airlock-microgateway-engine\",resource=\"cpu\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Limit",
+          "range": true,
+          "refId": "CPU Limit"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": " sum(kube_pod_container_resource_requests{pod=\"${pod}\",container=\"airlock-microgateway-engine\",resource=\"cpu\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Request",
+          "range": true,
+          "refId": "CPU Requested"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "rate(container_cpu_usage_seconds_total{pod=\"${pod}\",container=\"airlock-microgateway-engine\"}[$__rate_interval])",
+          "hide": false,
+          "legendFormat": "Usage",
+          "range": true,
+          "refId": "CPU Usage"
+        }
+      ],
+      "title": "CPU Usage Microgateway Engine",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Pod network I/O over time.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -627,17 +1078,17 @@
         ]
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 16
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 5
       },
       "id": 7,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
@@ -673,8 +1124,89 @@
           "refId": "In"
         }
       ],
-      "title": "Network I/O",
+      "title": "Pod Network I/O",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Version of the Airlock Microgateway Engine container.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#808080",
+                  "index": 0,
+                  "text": "n/a"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 36,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^version$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "microgateway_build_info{container=\"airlock-microgateway-engine\",pod=\"${pod}\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Version",
+          "range": false,
+          "refId": "Version"
+        }
+      ],
+      "title": "Airlock Microgateway Engine Version",
+      "type": "stat"
     }
   ],
   "refresh": "",
@@ -773,7 +1305,10 @@
         },
         "definition": "label_values(microgateway_build_info{gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"},pod)",
         "description": "Allows to select the pod to display the system metrics for.",
+        "hide": 2,
+        "includeAll": true,
         "label": "Pod",
+        "multi": true,
         "name": "pod",
         "options": [],
         "query": {
@@ -795,6 +1330,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway System - Metrics",
   "uid": "ceg3c5leab4ddfzkd",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

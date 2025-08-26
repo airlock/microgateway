@@ -50,6 +50,18 @@ spec:
               fieldPath: metadata.namespace
         - name: LOG_LEVEL
           value: {{ .Values.operator.config.logLevel }}
+        {{- with $.Values.operator.sidecarGateway }}
+        - name: SIDECAR_GATEWAY_ENABLED
+          value: "{{ .enabled }}"
+        {{- end }}
+        {{- with $.Values.engine.sidecar.podMonitor }}
+        - name: SIDECAR_GATEWAY_POD_MONITOR_CREATE
+          value: "{{ .create }}"
+        {{- with .labels }}
+        - name: SIDECAR_GATEWAY_POD_MONITOR_ADDITIONAL_LABELS
+          value: {{ include "airlock-microgateway.toCommaSeparatedList" . | quote }}
+        {{- end }}
+        {{- end }}
         {{- with $.Values.operator.gatewayAPI }}
         - name: GATEWAY_API_ENABLED
           value: "{{ .enabled }}"
@@ -65,6 +77,9 @@ spec:
           value: {{ include "airlock-microgateway.toCommaSeparatedList" . | quote }}
         {{- end }}
         {{- end }}
+        {{- end }}
+        {{- with .Values.operator.extraEnv }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
         image: {{ include "airlock-microgateway.image" .Values.operator.image }}
         imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
@@ -144,6 +159,10 @@ spec:
       {{- end }}
       {{- with .Values.operator.affinity }}
       affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.topologySpreadConstraints }}
+      topologySpreadConstraints:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:

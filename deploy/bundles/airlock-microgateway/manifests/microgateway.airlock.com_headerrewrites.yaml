@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: headerrewrites.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -1143,7 +1143,7 @@ spec:
                           upstream response headers.
                         properties:
                           csp:
-                            default: true
+                            default: false
                             description: |-
                               CSP sets a content security policy which allows only same-origin requests except for images
                               if the 'Content-Security-Policy' header is not set by the upstream.

@@ -3,6 +3,17 @@ templates:
   - operator/mutating-webhook.yaml
   - operator/validating-webhook.yaml
 tests:
+  - it: should not create mutatingwebhookconfiguration if operator.sidecarGateway.enabled is false
+    set:
+      operator.sidecarGateway.enabled: false
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    template: operator/mutating-webhook.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
   - it: should set name and namespace
     release:
       name: myoperator

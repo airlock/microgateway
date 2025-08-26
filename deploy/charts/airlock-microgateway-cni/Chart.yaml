@@ -3,14 +3,14 @@ name: microgateway-cni
 description: A Helm chart for deploying the Airlock Microgateway CNI plugin
 type: application
 home: https://www.airlock.com/en/microgateway
-version: "4.6.3"
-appVersion: "4.6.3"
+version: "4.7.0"
+appVersion: "4.7.0"
 annotations:
   charts.openshift.io/name: Airlock Microgateway CNI
   artifacthub.io/category: security
   artifacthub.io/links: |
     - name: Airlock Microgateway Documentation
-      url: https://docs.airlock.com/microgateway/4.6/
+      url: https://docs.airlock.com/microgateway/4.7/
     - name: Airlock Microgateway Labs
       url: https://airlock.instruqt.com/pages/airlock-microgateway-labs
     - name: Airlock Microgateway Forum

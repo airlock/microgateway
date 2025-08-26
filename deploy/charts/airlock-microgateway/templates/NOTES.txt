@@ -1,17 +1,11 @@
 Thank you for installing Airlock Microgateway.
-{{- with $.Values.operator.gatewayAPI }}
-{{- if .enabled }}
 
-K8s Gateway API support enabled.
-Note that the K8s Gateway API support is an incubating Airlock Microgateway feature. We encourage you to try the installation and configuration for testing and evaluation. Your feedback is welcome.
-
-    {{- if or $.Values.operator.watchNamespaces $.Values.operator.watchNamespaceSelector -}}
-        {{- fail `
-
-K8s Gateway API is only supported using the 'AllNamespaces' installation mode type, ensure that 'operator.watchNamespaces' and 'operator.watchNamespaceSelector' are not configured.
-`
-    -}}
-    {{- end -}}
+{{- if and (not $.Values.operator.sidecarGateway.enabled) (not $.Values.operator.gatewayAPI.enabled) }}
+    {{ fail `Neither 'operator.sidecarGateway.enabled' nor 'operator.gatewayAPI.enabled' is true. Please enable one of them.` }}
+{{- end }}
+{{- if $.Values.operator.gatewayAPI.enabled }}
+{{- if or $.Values.operator.watchNamespaces $.Values.operator.watchNamespaceSelector }}
+    {{ fail `K8s Gateway API is only supported using the 'AllNamespaces' installation mode type, ensure that 'operator.watchNamespaces' and 'operator.watchNamespaceSelector' are not configured.` }}
 {{- end }}
 {{- end }}
 
@@ -21,9 +15,17 @@ Please ensure the following prerequisites are fulfilled:
 * A valid Airlock Microgateway license is deployed in the Kubernetes secret '{{ .Release.Namespace }}/{{ .Values.license.secretName }}'
   * Get a free Community license: https://airlock.com/en/microgateway-community
   * Order a Premium license: https://airlock.com/en/microgateway-premium
-* Airlock Microgateway CNI is installed on the cluster, when running data plane mode sidecar
-  https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni.
+{{- if $.Values.operator.sidecarGateway.enabled }}
+* Airlock Microgateway CNI is installed on the cluster when running data plane mode sidecar.
+  https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni
   For more information about data plane modes, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/?topic=MGW-00000137
+{{- end }}
+{{- if $.Values.operator.gatewayAPI.enabled }}
+* Gateway API is installed. Either install from the Standard or Experimental channel.
+  https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api
+  The Experimental channel is necessary for some incubating Airlock Microgateway features.
+  For more information about incubating features, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/?topic=MGW-00000144
+{{- end }}
 
 Further information:
 * Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}

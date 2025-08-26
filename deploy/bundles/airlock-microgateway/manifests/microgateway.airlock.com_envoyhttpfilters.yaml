@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: envoyhttpfilters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -26,8 +26,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: EnvoyHTTPFilter is an additional Envoy HTTP Filter resource which
-          is added to those defined by the Airlock Microgateway.
+        description: EnvoyHTTPFilter defines a custom Envoy HTTP filter which can
+          be inserted into an Airlock Microgateway Engine configuration.
         properties:
           apiVersion:
             description: |-
@@ -50,8 +50,7 @@ spec:
             description: Specification of the desired additional Envoy HTTP filter.
             properties:
               value:
-                description: Value defines the HTTP filter which is added to those
-                  configured by the Airlock Microgateway.
+                description: Value specifies the raw Envoy HTTP filter configuration.
                 type: object
                 x-kubernetes-preserve-unknown-fields: true
             type: object

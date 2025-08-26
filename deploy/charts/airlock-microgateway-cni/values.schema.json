@@ -186,7 +186,6 @@
     "podLabels",
     "privileged",
     "rbac",
-    "resources",
     "serviceAccount",
     "tests"
   ],

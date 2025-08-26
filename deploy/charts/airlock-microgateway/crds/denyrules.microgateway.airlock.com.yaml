@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: denyrules.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -70,7 +70,7 @@ spec:
                                   graphQL:
                                     description: |-
                                       GraphQL defines an exception based on a blocked GraphQL query.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       argument:
                                         description: |-
@@ -217,7 +217,7 @@ spec:
                                   header:
                                     description: |-
                                       Header defines an exception based on a blocked header.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a header.
@@ -309,7 +309,7 @@ spec:
                                   json:
                                     description: |-
                                       JSON defines an exception based on a blocked JSON property.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       jsonPath:
                                         description: |-
@@ -415,7 +415,7 @@ spec:
                                   parameter:
                                     description: |-
                                       Parameter defines an exception based on a blocked parameter.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a parameter.
@@ -519,7 +519,7 @@ spec:
                                   path:
                                     description: |-
                                       Path defines an exception based on the blocked path.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       matcher:
                                         description: StringMatcher defines the way to match a string.
@@ -566,7 +566,7 @@ spec:
                                   pathSegment:
                                     description: |-
                                       PathSegment defines an exception based on a blocked path segment.
-                                      Only one of parameter, header, path, pathSegment, json or graphQL can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       segments:
                                         description: Segments defines the position of a segment within the path.
@@ -1024,7 +1024,7 @@ spec:
                                   graphQL:
                                     description: |-
                                       GraphQL specifies to block requests containing a matching GraphQL property.
-                                      At least one of field, argument and value must be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       argument:
                                         description: |-
@@ -1171,7 +1171,7 @@ spec:
                                   header:
                                     description: |-
                                       Header specifies to block requests containing a matching header.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a header.
@@ -1265,7 +1265,7 @@ spec:
                                   json:
                                     description: |-
                                       JSON specifies to block requests containing a matching JSON property in the body.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       key:
                                         description: Key defines the key of a JSON object.
@@ -1361,7 +1361,7 @@ spec:
                                   parameter:
                                     description: |-
                                       Parameter specifies to block requests containing a matching parameter.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       name:
                                         description: Name defines the name of a parameter.
@@ -1457,7 +1457,7 @@ spec:
                                   path:
                                     description: |-
                                       Path specifies to block requests with a matching path.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       matcher:
                                         description: Matcher specifies which path to block.
@@ -1504,7 +1504,7 @@ spec:
                                   pathSegment:
                                     description: |-
                                       PathSegment specifies to block requests containing a matching path segment.
-                                      Only one of parameter, header, path, pathSegment or json can be set.
+                                      Only one of graphQL, header, json, parameter, path or pathSegment can be set.
                                     properties:
                                       segments:
                                         description: |-

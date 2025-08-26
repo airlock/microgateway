@@ -177,6 +177,18 @@ data:
                         {
                             "matcher": {
                                 "id": "byName",
+                                "options": "Session ID"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 328
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
                                 "options": "Request ID"
                             },
                             "properties": [
@@ -265,7 +277,7 @@ data:
                             "uid": "${DS_LOKI}"
                         },
                         "editorMode": "code",
-                        "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= \"airlock_request_blocked\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", details=\"airlock.actions.block.details\", block_type=\"airlock.actions.block.block_type\", block_subtype=\"airlock.actions.block.block_subtype\"\n| block_type=~\"${blockType:regex}\"",
+                        "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= \"airlock_request_blocked\" |= \"envoy.access\" | line_format `{{ __line__ | replace \"�\" \"?\"}}` \n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", session_id=\"airlock.http.session.id\", details=\"airlock.actions.block.details\", block_type=\"airlock.actions.block.block_type\", block_subtype=\"airlock.actions.block.block_subtype\"\n| block_type=~\"${blockType:regex}\"",
                         "hide": false,
                         "queryType": "range",
                         "refId": "Blocks"
@@ -294,6 +306,7 @@ data:
                                     "domain",
                                     "http_method",
                                     "namespace",
+                                    "session_id",
                                     "request_id",
                                     "request_size",
                                     "url"
@@ -321,7 +334,8 @@ data:
                                 "domain": 2,
                                 "http_method": 3,
                                 "namespace": 1,
-                                "request_id": 10,
+                                "request_id": 11,
+                                "session_id": 10,
                                 "request_size": 5,
                                 "url": 4
                             },
@@ -334,6 +348,7 @@ data:
                                 "domain": "URL Domain",
                                 "http_method": "HTTP Method",
                                 "namespace": "Namespace",
+                                "session_id": "Session ID",
                                 "request_id": "Request ID",
                                 "request_size": "Request Size",
                                 "url": "URL Path"
@@ -539,7 +554,7 @@ data:
         "timezone": "browser",
         "title": "Airlock Microgateway Threats Block - Logs",
         "uid": "adnyzcvwnyadcc",
-        "version": 3,
+        "version": 4,
         "weekStart": ""
     }
 kind: ConfigMap
@@ -551,6 +566,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-blocklogs

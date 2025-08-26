@@ -17,34 +17,25 @@ data:
           address: 127.0.0.1
           port_value: 19000
     dynamic_resources:
-      cds_config:
-        initial_fetch_timeout: 10s
-        resource_api_version: V3
-        api_config_source:
-          api_type: GRPC
-          transport_api_version: V3
-          grpc_services:
+      ads_config:
+        api_type: GRPC
+        transport_api_version: V3
+        grpc_services:
           - envoy_grpc:
               cluster_name: xds_cluster
-          set_node_on_first_message_only: true
-          # Prevent Envoy Node from overloading the xDS server due to rejected configuration when using xDS SotW gRPC
-          rate_limit_settings:
-            max_tokens: 5
-            fill_rate: 0.2
+        set_node_on_first_message_only: true
+        # Prevent Envoy Node from overloading the xDS server due to rejected configuration when using xDS SotW gRPC
+        rate_limit_settings:
+          max_tokens: $(ADS_RATE_LIMIT_MAX_TOKENS)
+          fill_rate: $(ADS_RATE_LIMIT_FILL_RATE)
+      cds_config:
+        resource_api_version: V3
+        initial_fetch_timeout: 10s
+        ads: {}
       lds_config:
         resource_api_version: V3
         initial_fetch_timeout: 10s
-        api_config_source:
-          api_type: GRPC
-          transport_api_version: V3
-          grpc_services:
-          - envoy_grpc:
-              cluster_name: xds_cluster
-          set_node_on_first_message_only: true
-          # Prevent Envoy Node from overloading the xDS server due to rejected configuration when using xDS SotW gRPC
-          rate_limit_settings:
-            max_tokens: 5
-            fill_rate: 0.2
+        ads: {}
     static_resources:
       listeners:
       - name: probe
@@ -305,6 +296,10 @@ data:
       seccompProfile:
         type: RuntimeDefault
       runAsUser: $(SECURITYCONTEXT_UID)
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
   network_validator_container_template.yaml: |
     name: "$(NETWORK_VALIDATOR_NAME)"
     image: "$(ENGINE_IMAGE)"
@@ -343,8 +338,6 @@ data:
         sessionAgentContainerTemplate: "/app/config/sidecar/session_agent_container_template.yaml"
     engine:
       bootstrapConfigTemplate: "/app/config/engine_bootstrap_config_template.yaml"
-    podMonitor:
-      create: false
   session_agent_container_template.yaml: |
     name: "$(SESSION_AGENT_NAME)"
     image: "$(SESSION_AGENT_IMAGE)"
@@ -412,5 +405,5 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: airlock-microgateway-operator-config

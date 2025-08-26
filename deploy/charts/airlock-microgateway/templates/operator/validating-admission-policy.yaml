@@ -37,4 +37,29 @@ spec:
       message: "label 'microgateway.airlock.com/managedBy' is immutable"
     - expression: "object.metadata.?labels[?'gateway.networking.k8s.io/gateway-name'] == oldObject.metadata.?labels[?'gateway.networking.k8s.io/gateway-name']"
       message: "label 'gateway.networking.k8s.io/gateway-name' is immutable"
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ include "airlock-microgateway.operator.fullname" . }}-envoycluster-name-{{ .Release.Namespace }}
+  labels:
+    {{- include "airlock-microgateway.operator.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.commonAnnotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["microgateway.airlock.com"]
+        apiVersions: ["v1alpha1"]
+        resources: ["envoyclusters"]
+        operations: ["CREATE", "UPDATE"]
+  variables:
+    - expression: "object.metadata.namespace + '/' + object.metadata.name"
+      name: namespacedName
+  validations:
+    - expression: "has(object.spec.value) && object.spec.value.name == 'envoycluster/' + variables.namespacedName"
+      messageExpression: '"spec.value.name must be set to ''envoycluster/" + variables.namespacedName + "'' based on this EnvoyCluster''s namespaced name"'
 {{- end -}}

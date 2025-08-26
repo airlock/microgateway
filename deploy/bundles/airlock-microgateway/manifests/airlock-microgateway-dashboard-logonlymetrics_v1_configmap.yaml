@@ -156,7 +156,7 @@ data:
                         "disableTextWrap": false,
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "round(sum(increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
+                        "expr": "round(sum(increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
                         "fullMetaSearch": false,
                         "includeNullMetadata": true,
                         "instant": true,
@@ -260,7 +260,7 @@ data:
                         },
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "sum(rate(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]))",
+                        "expr": "sum(rate(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[1m]))",
                         "instant": false,
                         "legendFormat": "Number of threats per second",
                         "range": true,
@@ -279,7 +279,7 @@ data:
                 "fieldConfig": {
                     "defaults": {
                         "color": {
-                            "fixedColor": "super-light-orange",
+                            "fixedColor": "light-orange",
                             "mode": "fixed"
                         },
                         "custom": {
@@ -358,7 +358,7 @@ data:
                         },
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
+                        "expr": "round(sum by (block_type) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
                         "format": "time_series",
                         "instant": true,
                         "legendFormat": "__auto",
@@ -468,7 +468,7 @@ data:
                         },
                         "editorMode": "code",
                         "exemplar": false,
-                        "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${blockType:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
+                        "expr": "round(sum by (block_subtype) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\",gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))",
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false,
@@ -484,6 +484,138 @@ data:
                             "reducers": [
                                 "sum"
                             ]
+                        }
+                    }
+                ],
+                "type": "barchart"
+            },
+            {
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${DS_PROMETHEUS}"
+                },
+                "description": "Lists the top 10 routes / applications most affected by threats in LogOnly mode, along with their associated gateway name.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "light-orange",
+                            "mode": "fixed"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "fillOpacity": 80,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "lineWidth": 1,
+                            "scaleDistribution": {
+                                "type": "linear"
+                            },
+                            "thresholdsStyle": {
+                                "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        },
+                        "unit": "short"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 15,
+                    "w": 20,
+                    "x": 0,
+                    "y": 26
+                },
+                "id": 7,
+                "options": {
+                    "barRadius": 0,
+                    "barWidth": 0.8,
+                    "fullHighlight": false,
+                    "groupWidth": 0.7,
+                    "legend": {
+                        "calcs": [],
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": false
+                    },
+                    "orientation": "horizontal",
+                    "showValue": "never",
+                    "stacking": "none",
+                    "tooltip": {
+                        "hideZeros": false,
+                        "maxHeight": 600,
+                        "mode": "single",
+                        "sort": "none"
+                    },
+                    "xField": "gateway_upstream",
+                    "xTickLabelRotation": 0,
+                    "xTickLabelSpacing": 0
+                },
+                "pluginVersion": "11.4.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "prometheus",
+                            "uid": "${DS_PROMETHEUS}"
+                        },
+                        "editorMode": "code",
+                        "exemplar": false,
+                        "expr": "label_join(topk(10, round(sum by (gateway, upstream) (increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`(^upstream_.+|^httproute/.+)`,upstream=~`(${gateway_httproute:regex}|${sidecar_application_port:regex})`}[$__range])))), 'gateway_upstream', '/', 'gateway', 'upstream')",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "__auto",
+                        "range": false,
+                        "refId": "A"
+                    }
+                ],
+                "title": "Top 10 Affected Routes / Applications",
+                "transformations": [
+                    {
+                        "id": "convertFieldType",
+                        "options": {
+                            "conversions": [
+                                {
+                                    "destinationType": "string",
+                                    "targetField": "upstream"
+                                },
+                                {
+                                    "destinationType": "string",
+                                    "targetField": "gateway"
+                                }
+                            ],
+                            "fields": {}
+                        }
+                    },
+                    {
+                        "id": "organize",
+                        "options": {
+                            "excludeByName": {
+                                "Time": true
+                            },
+                            "includeByName": {},
+                            "indexByName": {},
+                            "renameByName": {
+                                "Value": "Threats in LogOnly mode",
+                                "gateway": "Gateway Name",
+                                "gateway_upstream": "Route / Application",
+                                "upstream": "HTTPRoute / Application Port"
+                            }
                         }
                     }
                 ],
@@ -666,7 +798,7 @@ data:
                     "includeAll": true,
                     "label": "Block Type",
                     "multi": true,
-                    "name": "blockType",
+                    "name": "block_type",
                     "options": [],
                     "query": {
                         "qryType": 1,
@@ -676,6 +808,29 @@ data:
                     "refresh": 2,
                     "regex": "",
                     "sort": 5,
+                    "type": "query"
+                },
+                {
+                    "allowCustomValue": false,
+                    "current": {},
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "definition": "label_values(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"$block_type\"},block_subtype)",
+                    "description" : "Allows filtering on the block subtype of logged threats.",
+                    "includeAll": true,
+                    "label": "Block Subtype",
+                    "multi": true,
+                    "name": "block_subtype",
+                    "options": [],
+                    "query": {
+                        "qryType": 1,
+                        "query": "label_values(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"$block_type\"},block_subtype)",
+                        "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                    },
+                    "refresh": 1,
+                    "regex": "",
                     "type": "query"
                 }
             ]
@@ -688,7 +843,7 @@ data:
         "timezone": "browser",
         "title": "Airlock Microgateway Threats LogOnly - Metrics",
         "uid": "ddnqoczu7qv2mfmsd3dd",
-        "version": 1,
+        "version": 2,
         "weekStart": ""
     }
 kind: ConfigMap
@@ -700,6 +855,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-logonlymetrics

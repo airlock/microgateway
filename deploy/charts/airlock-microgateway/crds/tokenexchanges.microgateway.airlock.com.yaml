@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: tokenexchanges.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -74,6 +74,14 @@ spec:
                     pattern: ^\S+$
                     type: string
                   type: array
+                subjectTokenType:
+                  description: |-
+                    SubjectTokenType specifies the type (URN) of the token being exchanged.
+                    If not specified, the type is inferred based on the issued token type of the previous token exchange or based on the configured authentication method, i.e. `urn:ietf:params:oauth:token-type:jwt` for JWT and `urn:ietf:params:oauth:token-type:access_token` for OIDC.
+
+                    See https://datatracker.ietf.org/doc/html/rfc8693#name-token-type-identifiers for more information.
+                  minLength: 1
+                  type: string
                 tokenEndpoint:
                   description: TokenEndpoint specifies how to connect to the token endpoint of the OAuth2 authorization server handling the token exchanges.
                   properties:
@@ -95,6 +103,7 @@ spec:
                                   properties:
                                     name:
                                       description: Name of the resource
+                                      maxLength: 253
                                       minLength: 1
                                       type: string
                                   required:
@@ -245,6 +254,7 @@ spec:
                                                 properties:
                                                   name:
                                                     description: Name of the resource
+                                                    maxLength: 253
                                                     minLength: 1
                                                     type: string
                                                 required:
@@ -275,6 +285,7 @@ spec:
                                                 properties:
                                                   name:
                                                     description: Name of the resource
+                                                    maxLength: 253
                                                     minLength: 1
                                                     type: string
                                                 required:

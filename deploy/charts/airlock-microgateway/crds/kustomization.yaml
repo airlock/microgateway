@@ -10,6 +10,7 @@ resources:
 - denyrules.microgateway.airlock.com.yaml
 - envoyclusters.microgateway.airlock.com.yaml
 - envoyconfigurations.microgateway.airlock.com.yaml
+- envoyextensionpolicies.microgateway.airlock.com.yaml
 - envoyhttpfilters.microgateway.airlock.com.yaml
 - gatewayparameters.microgateway.airlock.com.yaml
 - graphqls.microgateway.airlock.com.yaml

@@ -36,7 +36,7 @@ spec:
             - --log-level
             - "{{ .Values.config.logLevel }}"
           env:
-            - name: CNI_NETWORK_CONFIG
+            - name: CNI_PLUGIN_CONFIG
               valueFrom:
                 configMapKeyRef:
                   key: plugin-conf.json

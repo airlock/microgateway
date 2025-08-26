@@ -3,6 +3,8 @@ templates:
   - "*.yaml"
 set:
   operator.serviceMonitor.create: true
+  operator.gatewayAPI.enabled: true
+  operator.podDisruptionBudget.minAvailable: 1
   engine.sidecar.podMonitor.create: true
   dashboards.create: true
   tests.enabled: true

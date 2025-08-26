@@ -22,19 +22,19 @@ Convert an image configuration object into an image ref string.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 27 chars because some Kubernetes name fields are limited to 63 chars (by the DNS naming spec)
-and the longest implicit suffix is 36 characters.
+We truncate at 26 chars because some Kubernetes name fields are limited to 63 chars (by the DNS naming spec)
+and the longest implicit suffix is 37 characters.
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "airlock-microgateway.fullname" -}}
 {{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 27 | trimSuffix "-" }}
+{{- .Values.fullnameOverride | trunc 26 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
 {{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 27 | trimSuffix "-" }}
+{{- .Release.Name | trunc 26 | trimSuffix "-" }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 27 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 26 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}

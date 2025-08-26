@@ -43,6 +43,8 @@ spec:
 
       - name: GATEWAY_API_ENABLED
         value: "{{ .Values.operator.gatewayAPI.enabled | toString }}"
+      - name: SIDECAR_GATEWAY_ENABLED
+        value: "{{ .Values.operator.sidecarGateway.enabled | toString }}"
       - name: WATCH_NAMESPACE_SELECTOR
         value: "{{ include "airlock-microgateway.watchNamespaceSelector.labelQuery" .Values.operator.watchNamespaceSelector }}"
     securityContext:

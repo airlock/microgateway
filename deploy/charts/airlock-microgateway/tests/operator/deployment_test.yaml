@@ -111,6 +111,18 @@ tests:
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
+            name: SIDECAR_GATEWAY_ENABLED
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIDECAR_GATEWAY_POD_MONITOR_CREATE
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIDECAR_GATEWAY_POD_MONITOR_ADDITIONAL_LABELS
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: GATEWAY_API_ENABLED
       - notContains:
           path: spec.template.spec.containers[0].env
@@ -130,20 +142,43 @@ tests:
   - it: should make sure env vars are set accordingly
     set:
       operator.config.logLevel: debug
+      engine.sidecar:
+        podMonitor:
+          create: true
+          labels:
+            bar: foo
+            env: prod
+      operator.sidecarGateway:
+        enabled: true
       operator.gatewayAPI:
         enabled: true
         controllerName: microgateway.airlock.com/test-controller
         podMonitor:
           create: true
           labels:
-              foo: bar
               env: test
+              foo: bar
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: LOG_LEVEL
             value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIDECAR_GATEWAY_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIDECAR_GATEWAY_POD_MONITOR_CREATE
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIDECAR_GATEWAY_POD_MONITOR_ADDITIONAL_LABELS
+            value: "bar=foo,env=prod"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -164,6 +199,41 @@ tests:
           content:
             name: GATEWAY_API_POD_MONITOR_ADDITIONAL_LABELS
             value: "env=test,foo=bar"
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure extra env vars are set accordingly
+    set:
+      operator.config.logLevel: debug
+      operator.extraEnv:
+        - name: "newEnvVar"
+          value: "newEnvValue"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: newEnvVar
+            value: newEnvValue
+    templates:
+      - operator/deployment.yaml
+
+  - it: should make sure extra env vars do not overwrite our env vars
+    set:
+      operator.config.logLevel: debug
+      operator.extraEnv:
+        - name: "LOG_LEVEL"
+          value: "info"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
     templates:
       - operator/deployment.yaml
 
@@ -326,10 +396,17 @@ tests:
     templates:
       - operator/deployment.yaml
 
-  - it: does not create requests and limits resources if not set
+  - it: should set default requests and limits resources for memory and cpu in pod spec
     asserts:
-      - notExists:
+      - equal:
           path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 2500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
     templates:
       - operator/deployment.yaml
 
@@ -338,20 +415,29 @@ tests:
       operator.resources:
         limits:
           cpu: 1000m
-          memory: 512Mi
+          memory: 1Gi
         requests:
           cpu: 100m
-          memory: 512Mi
+          memory: 128Mi
     asserts:
       - equal:
           path: spec.template.spec.containers[0].resources
           value:
             limits:
-              memory: 512Mi
+              memory: 1Gi
               cpu: 1000m
             requests:
-              memory: 512Mi
+              memory: 128Mi
               cpu: 100m
+    templates:
+      - operator/deployment.yaml
+
+  - it: does not create requests and limits resources if is set null
+    set:
+      operator.resources: null
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
     templates:
       - operator/deployment.yaml
 
@@ -539,5 +625,27 @@ tests:
             rollingUpdate:
               maxSurge: 10%
               maxUnavailable: 1
+    templates:
+      - operator/deployment.yaml
+
+  - it: should set topologySpreadConstraints
+    set:
+      operator.topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: microgateway-operator
+    asserts:
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints
+          content:
+            maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: microgateway-operator
     templates:
       - operator/deployment.yaml

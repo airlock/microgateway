@@ -242,6 +242,15 @@ tests:
     templates:
       - daemonset.yaml
 
+  - it: should not set requests and limits resources if is set null
+    set:
+      resources: null
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
+    templates:
+      - daemonset.yaml
+
   - it: does not create affinity if not set
     asserts:
       - notExists:
@@ -304,7 +313,7 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].env
           value:
-            - name: CNI_NETWORK_CONFIG
+            - name: CNI_PLUGIN_CONFIG
               valueFrom:
                 configMapKeyRef:
                   key: plugin-conf.json
@@ -336,7 +345,7 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].env
           value:
-            - name: CNI_NETWORK_CONFIG
+            - name: CNI_PLUGIN_CONFIG
               valueFrom:
                 configMapKeyRef:
                   key: plugin-conf.json

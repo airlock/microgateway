@@ -46,6 +46,15 @@
           "type": "integer",
           "minimum": 0
         },
+        "extraEnv": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValuePair"
+          }
+        },
+        "podDisruptionBudget": {
+          "type": "object"
+        },
         "updateStrategy": {
           "$ref": "#/definitions/UpdateStrategy"
         },
@@ -78,6 +87,12 @@
         },
         "affinity": {
           "type": "object"
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         },
         "config": {
           "type": "object",
@@ -170,6 +185,18 @@
           ],
           "additionalProperties": false
         },
+        "sidecarGateway": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
         "gatewayAPI": {
           "type": "object",
           "properties": {
@@ -179,6 +206,25 @@
             "controllerName" : {
               "type": "string",
               "pattern": "^microgateway\\.airlock\\.com\/[A-Za-z0-9\/\\-._~%!$&'()*+,;=:]+$"
+            },
+            "gatewayClass": {
+              "type" : "object",
+              "properties": {
+                "create" : {
+                  "type": "boolean"
+                },
+                "name" : {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 253,
+                  "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                }
+              },
+              "required": [
+                "create",
+                "name"
+              ],
+              "additionalProperties": false
             },
             "podMonitor" : {
               "$ref": "#/definitions/PodMonitor"
@@ -216,6 +262,8 @@
         "affinity",
         "webhook",
         "config",
+        "extraEnv",
+        "podDisruptionBudget",
         "image",
         "updateStrategy",
         "nodeSelector",
@@ -223,12 +271,13 @@
         "podLabels",
         "rbac",
         "replicaCount",
-        "resources",
         "serviceAccount",
         "serviceAnnotations",
         "serviceLabels",
         "serviceMonitor",
-        "tolerations"
+        "sidecarGateway",
+        "tolerations",
+        "topologySpreadConstraints"
       ],
       "additionalProperties": false
     },
@@ -256,7 +305,6 @@
       },
       "required": [
         "image",
-        "resources",
         "sidecar"
       ],
       "additionalProperties": false
@@ -272,9 +320,7 @@
           "type": "object"
         }
       },
-      "required": [
-        "resources"
-      ],
+      "required": [],
       "additionalProperties": false
     },
     "sessionAgent": {
@@ -288,8 +334,7 @@
         }
       },
       "required": [
-        "image",
-        "resources"
+        "image"
       ],
       "additionalProperties": false
     },

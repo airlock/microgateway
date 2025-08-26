@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: identitypropagations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -95,6 +95,13 @@ spec:
                           type: object
                         tokenExchange:
                           description: TokenExchange specifies to use the token obtained via token exchange as value.
+                          properties:
+                            claim:
+                              description: |-
+                                Claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
+                              minLength: 1
+                              type: string
                           type: object
                       type: object
                   required:
@@ -155,6 +162,13 @@ spec:
                               type: object
                             tokenExchange:
                               description: TokenExchange specifies to use the token obtained via token exchange as value.
+                              properties:
+                                claim:
+                                  description: |-
+                                    Claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                    Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
+                                  minLength: 1
+                                  type: string
                               type: object
                           type: object
                       required:

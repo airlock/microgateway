@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.6.3
+    app.kubernetes.io/version: 4.7.0
   name: accesscontrols.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -65,6 +65,7 @@ spec:
                                     properties:
                                       name:
                                         description: Name of the resource
+                                        maxLength: 253
                                         minLength: 1
                                         type: string
                                     required:
@@ -84,10 +85,61 @@ spec:
                                         properties:
                                           always:
                                             description: Always strategy defines a strategy for checking every request.
+                                            properties:
+                                              onError:
+                                                default: Block
+                                                description: |-
+                                                  OnError specifies the behavior for a request if the token introspection returns an error, e.g., timeouts or 5xx errors.
+                                                  _Block_: The current in-flight request is blocked.
+                                                  _InvalidateToken_: Behaves as if the token introspection had returned `false`. This results in an invalidation of the current and requesting of a new token.
+                                                  _Pass_: Behaves as if the token introspection had returned `true`.
+                                                enum:
+                                                  - Block
+                                                  - InvalidateToken
+                                                  - Pass
+                                                type: string
+                                            type: object
+                                          periodic:
+                                            description: |-
+                                              Periodic strategy defines a time-based strategy for checking requests.
+                                              Introspection is non-blocking, concurrent requests proceed without delay.
+                                            properties:
+                                              onError:
+                                                default: InvalidateToken
+                                                description: |-
+                                                  OnError specifies the behavior for a request if the token introspection returns an error, e.g., timeouts or 5xx errors.
+                                                  _InvalidateToken_: Behaves as if the token introspection had returned `false`. This results in an invalidation of the current and requesting of a new token.
+                                                  _Pass_: Behaves as if the token introspection had returned `true`.
+                                                enum:
+                                                  - InvalidateToken
+                                                  - Pass
+                                                type: string
+                                              period:
+                                                description: |-
+                                                  Period specifies the minimum time interval between token introspections for requests part of the same session. Once the interval has elapsed, introspection will be performed for the next request in the session.
+                                                  Must be >= '1s'.
+                                                type: string
+                                                x-kubernetes-validations:
+                                                  - message: Period must be >= '1s'.
+                                                    rule: duration(self) >= duration('1s')
+                                            required:
+                                              - period
                                             type: object
                                           random:
-                                            description: Random strategy defines a probabilistic strategy for checking the `x-th` request.
+                                            description: |-
+                                              Random strategy defines a probabilistic strategy for checking the `x-th` request.
+                                              Introspection is non-blocking, concurrent requests proceed without delay.
                                             properties:
+                                              onError:
+                                                default: InvalidateToken
+                                                description: |-
+                                                  OnError specifies the behavior for a request if the token introspection returns an error, e.g., timeouts or 5xx errors.
+                                                  _InvalidateToken_: Behaves as if the token introspection had returned `false`. This results in an invalidation of the current and requesting of a new token.
+                                                  _Pass_: Behaves as if the token introspection had returned `true`.
+                                                enum:
+                                                  - InvalidateToken
+                                                  - Pass
+                                                type: string
                                               probability:
                                                 description: |-
                                                   Probability specifies the probability in % with which a request is selected to be introspected.
@@ -109,6 +161,7 @@ spec:
                                     properties:
                                       name:
                                         description: Name of the resource
+                                        maxLength: 253
                                         minLength: 1
                                         type: string
                                     required:
@@ -416,6 +469,7 @@ spec:
                                   properties:
                                     name:
                                       description: Name of the resource
+                                      maxLength: 253
                                       minLength: 1
                                       type: string
                                   required:
@@ -673,6 +727,7 @@ spec:
                                   properties:
                                     name:
                                       description: Name of the resource
+                                      maxLength: 253
                                       minLength: 1
                                       type: string
                                   required:

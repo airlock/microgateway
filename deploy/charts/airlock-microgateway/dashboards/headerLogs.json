@@ -173,6 +173,18 @@
                         ]
                     },
                     {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Session ID"
+                      },
+                      "properties": [
+                        {
+                          "id": "custom.width",
+                          "value": 328
+                        }
+                      ]
+                    },
+                    {
                         "matcher": {
                             "id": "byName",
                             "options": "Request ID"
@@ -247,7 +259,7 @@
                         "uid": "${DS_LOKI}"
                     },
                     "editorMode": "code",
-                    "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  response_status_code=\"http.response.status_code\", header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
+                    "expr": "{container=\"airlock-microgateway-engine\", pod=~\"${gateway_pod:regex}\"} |= \"header_rewrites\" |= \"envoy.access\"\n| json http_method=\"http.request.method\", url=\"url.path\", domain=\"url.domain\", request_size=\"http.request.bytes\", client_ip=\"network.forwarded_ip\", request_id=\"http.request.id\", session_id=\"airlock.http.session.id\", header_request_details=\"airlock.actions.header_rewrites.request\",  response_status_code=\"http.response.status_code\", header_response_details=\"airlock.actions.header_rewrites.response\", log_type=\"event.dataset\" | log_type = `envoy.access`",
                     "hide": false,
                     "queryType": "range",
                     "refId": "Header Rewrites"
@@ -275,6 +287,7 @@
                                 "header_response_details",
                                 "http_method",
                                 "namespace",
+                                "session_id",
                                 "request_id",
                                 "request_size",
                                 "url",
@@ -302,7 +315,8 @@
                             "header_response_details": 8,
                             "http_method": 3,
                             "namespace": 1,
-                            "request_id": 10,
+                            "request_id": 11,
+                            "session_id": 10,
                             "request_size": 5,
                             "response_status_code": 6,
                             "url": 4
@@ -316,6 +330,7 @@
                             "header_response_details": "Response Header Actions",
                             "http_method": "HTTP Method",
                             "namespace": "Namespace",
+                            "session_id": "Session ID",
                             "request_id": "Request ID",
                             "request_size": "Request Size",
                             "response_status_code": "HTTP Status",
@@ -480,6 +495,6 @@
     "timezone": "browser",
     "title": "Airlock Microgateway Header Rewrites - Logs",
     "uid": "adnydadenyadcc",
-    "version": 1,
+    "version": 2,
     "weekStart": ""
 }

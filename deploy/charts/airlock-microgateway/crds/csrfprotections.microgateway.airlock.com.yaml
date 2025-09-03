@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.0
+    app.kubernetes.io/version: 4.7.1
   name: csrfprotections.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -49,7 +49,7 @@ spec:
                     description: CSRFProtectionException defines an exception for a CSRF protection. Exceptions may be defined for requestConditions (properties of a request without taking into consideration the reason why a request has been blocked).
                     properties:
                       requestConditions:
-                        description: RequestConditions defines an exception based on a property of a request without taking into consideration the reason why a request has been blocked.
+                        description: RequestConditions defines an exception based on request properties (all must match), without taking into consideration the reason why a request has been blocked.
                         properties:
                           header:
                             description: Header defines the matching headers of a request.

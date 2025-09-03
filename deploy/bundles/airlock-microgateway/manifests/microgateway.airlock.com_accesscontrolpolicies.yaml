@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.0
+    app.kubernetes.io/version: 4.7.1
     gateway.networking.k8s.io/policy: direct
   name: accesscontrolpolicies.microgateway.airlock.com
 spec:
@@ -537,7 +537,7 @@ spec:
                       type: object
                     requestConditions:
                       description: |-
-                        RequestConditions defines additional request properties which must be matched in order for this policy to apply. A policy without request conditions will always match.
+                        RequestConditions defines additional request properties which must all be matched in order for this policy to apply. A policy without request conditions will always match.
 
                         WARNING: There is currently a limitation that if `authentication.oidc` is configured for this policy, you must ensure that the request condition also matches logout requests and callback redirects from the OIDC Provider as configured in the OIDCRelyingParty (`pathMapping.logoutPath` / `pathMapping.redirectPath`).
                       properties:

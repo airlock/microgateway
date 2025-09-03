@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.0
+    app.kubernetes.io/version: 4.7.1
   name: limits.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -275,7 +275,7 @@ spec:
                                     type: object
                                 type: object
                               requestConditions:
-                                description: RequestConditions defines additional request properties which must be matched in order for this exception to apply.
+                                description: RequestConditions defines additional request properties which must all be matched in order for this exception to apply.
                                 properties:
                                   header:
                                     description: Header defines the matching headers of a request.

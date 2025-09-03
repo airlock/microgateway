@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.0
+    app.kubernetes.io/version: 4.7.1
   name: apiprotections.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -86,7 +86,7 @@ spec:
                       type: object
                     requestConditions:
                       description: RequestConditions defines additional request properties
-                        which must be matched in order for this policy to apply.
+                        which must all be matched in order for this policy to apply.
                       properties:
                         header:
                           description: Header defines the matching headers of a request.

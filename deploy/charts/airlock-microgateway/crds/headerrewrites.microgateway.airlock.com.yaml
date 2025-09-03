@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.0
+    app.kubernetes.io/version: 4.7.1
   name: headerrewrites.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -85,7 +85,7 @@ spec:
                                 minLength: 1
                                 type: string
                               requestConditions:
-                                description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                description: RequestConditions defines additional request properties which must all be matched in order for this operation to be applied.
                                 properties:
                                   header:
                                     description: Header defines the matching headers of a request.
@@ -445,7 +445,7 @@ spec:
                                     minLength: 1
                                     type: string
                                   requestConditions:
-                                    description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                    description: RequestConditions defines additional request properties which must be all matched in order for this operation to be applied.
                                     properties:
                                       header:
                                         description: Header defines the matching headers of a request.
@@ -795,7 +795,7 @@ spec:
                                 minLength: 1
                                 type: string
                               requestConditions:
-                                description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                description: RequestConditions defines additional request properties which must all be matched in order for this operation to be applied.
                                 properties:
                                   header:
                                     description: Header defines the matching headers of a request.
@@ -1112,7 +1112,7 @@ spec:
                                 minLength: 1
                                 type: string
                               requestConditions:
-                                description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                description: RequestConditions defines additional request properties which must all be matched in order for this operation to be applied.
                                 properties:
                                   header:
                                     description: Header defines the matching headers of a request.
@@ -1468,7 +1468,7 @@ spec:
                                     minLength: 1
                                     type: string
                                   requestConditions:
-                                    description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                    description: RequestConditions defines additional request properties which must all be matched in order for this operation to be applied.
                                     properties:
                                       header:
                                         description: Header defines the matching headers of a request.
@@ -1846,7 +1846,7 @@ spec:
                                 minLength: 1
                                 type: string
                               requestConditions:
-                                description: RequestConditions defines additional request properties which must be matched in order for this operation to be applied.
+                                description: RequestConditions defines additional request properties which must all be matched in order for this operation to be applied.
                                 properties:
                                   header:
                                     description: Header defines the matching headers of a request.

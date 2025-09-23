@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.5.6
+    app.kubernetes.io/version: 4.5.7
   name: airlock-microgateway-operator-xds
 spec:
   ports:

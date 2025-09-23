@@ -14,7 +14,7 @@ spec:
     spec:
       initContainers:
         - name: git-checkout
-          image: bitnami/git:latest
+          image: bitnamisecure/git:latest
           command:
             - sh
             - -c
@@ -44,7 +44,7 @@ spec:
               
               go test ./conformance -run TestConformance -args \
                 --supported-features=Gateway,GatewayInfrastructurePropagation,GatewayPort8080,HTTPRoute,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,HTTPRouteBackendTimeout,HTTPRouteRequestTimeout,HTTPRouteDestinationPortMatching,HTTPRouteHostRewrite,HTTPRouteMethodMatching,HTTPRouteParentRefPort,HTTPRoutePathRewrite,HTTPRoutePortRedirect,HTTPRouteQueryParamMatching,HTTPRouteResponseHeaderModification,HTTPRouteSchemeRedirect,ReferenceGrant \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.5.6  --contact="https://www.airlock.com/en/contact" \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.5.7  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

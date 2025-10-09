@@ -3,10 +3,12 @@
 ## Prerequisites
 * [Airlock Microgateway License](#obtain-airlock-microgateway-license)
 * [cert-manager](https://cert-manager.io/)
+* [Kubernetes Gateway API CRDs](https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api)
 * [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
 
 In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
 For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
+
 ### Obtain Airlock Microgateway License
 1. Either request a community or premium license
    * Community license: [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
@@ -14,10 +16,16 @@ For an easy start in non-production environments, you may deploy the same cert-m
 2. Check your inbox and save the license file microgateway-license.txt locally.
 
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
+
 ### Deploy cert-manager
 ```console
-helm repo add jetstack https://charts.jetstack.io
-helm install cert-manager jetstack/cert-manager --version 'v1.18.2' -n cert-manager --create-namespace --set crds.enabled=true --wait
+helm install cert-manager \
+  oci://quay.io/jetstack/charts/cert-manager \
+  --version 'v1.18.2' \
+  --namespace cert-manager \
+  --create-namespace \
+  --wait \
+  --set crds.enabled=true
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -30,15 +38,24 @@ helm install cert-manager jetstack/cert-manager --version 'v1.18.2' -n cert-mana
    kubectl create namespace airlock-microgateway-system
 
    # Install License
-   kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
+   kubectl create secret generic airlock-microgateway-license \
+     -n airlock-microgateway-system \
+     --from-file=microgateway-license.txt
 
    # Install the operator and activate the Gateway API support.
-   helm install -n airlock-microgateway-system airlock-microgateway oci://quay.io/airlockcharts/microgateway --wait --version '4.7.1' --set=operator.gatewayAPI.enabled=true
+   helm install airlock-microgateway \
+    oci://quay.io/airlockcharts/microgateway \
+    --version '4.7.2' \
+    -n airlock-microgateway-system \
+    --wait \
+    --set operator.sidecarGateway.enabled=false \
+    --set operator.gatewayAPI.enabled=true
    ```
 
 2. Verify that the operator started successfully:
    ```console
-   kubectl -n airlock-microgateway-system wait --for=condition=Available deployments --all --timeout=3m
+   kubectl -n airlock-microgateway-system wait \
+     --for=condition=Available deployments --all --timeout=3m
    ```
 
 3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report

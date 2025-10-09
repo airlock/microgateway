@@ -448,17 +448,41 @@ tests:
     templates:
       - operator/deployment.yaml
 
-  - it: should create imagePullSecrets if set
+  - it: should create imagePullSecrets if set as list of objects
     set:
       imagePullSecrets:
-        - name: myRegistryPullSecret
+        - name: myRegistryPullSecret1
+        - name: myRegistryPullSecret2
     asserts:
       - contains:
           path: spec.template.spec.imagePullSecrets
           content:
-            name: myRegistryPullSecret
-          count: 1
-          any: true
+            name: myRegistryPullSecret1
+          documentIndex: 0
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret2
+          documentIndex: 1
+    templates:
+      - operator/deployment.yaml
+
+  - it: should create imagePullSecrets if set as list of strings
+    set:
+      imagePullSecrets:
+        - myRegistryPullSecret1
+        - myRegistryPullSecret2
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret1
+          documentIndex: 0
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret2
+          documentIndex: 1
     templates:
       - operator/deployment.yaml
 

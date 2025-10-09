@@ -112,7 +112,7 @@ spec:
       terminationGracePeriodSeconds: 5
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        {{- include "airlock-microgateway.imagePullSecrets" . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

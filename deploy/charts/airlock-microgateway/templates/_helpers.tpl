@@ -162,3 +162,18 @@ Convert a label map to comma-separated string.
     {{- end -}}
 {{- join "," $list -}}
 {{- end }}
+
+{{/*
+Normalize imagePullSecrets into the required structure.
+*/}}
+{{- define "airlock-microgateway.imagePullSecrets" -}}
+{{- $list := list }}
+{{- range . }}
+    {{- if typeIs "string" . }}
+        {{- $list = append $list (dict "name" .) }}
+  {{- else }}
+        {{- $list = append $list . }}
+  {{- end }}
+{{- end -}}
+{{- toYaml $list }}
+{{- end }}

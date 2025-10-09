@@ -1,6 +1,6 @@
 # Airlock Microgateway CNI
 
-![Version: 4.7.1](https://img.shields.io/badge/Version-4.7.1-informational?style=flat-square) ![AppVersion: 4.7.1](https://img.shields.io/badge/AppVersion-4.7.1-informational?style=flat-square)
+![Version: 4.7.2](https://img.shields.io/badge/Version-4.7.2-informational?style=flat-square) ![AppVersion: 4.7.2](https://img.shields.io/badge/AppVersion-4.7.2-informational?style=flat-square)
 
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
@@ -13,7 +13,7 @@
 </picture>
 
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
-__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.7.1).__
+__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/4.7.2).__
 
 ### Features
 * Kubernetes native integration with sidecar injection and Gateway API support
@@ -36,43 +36,58 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 
 # Quick start guide
 
-The instructions below provide a quick start guide. Detailed information are provided in the **[manual](https://docs.airlock.com/microgateway/latest/)**.
+The instructions below provide a quick start guide to deploy the CNI plugin. Please note that running Microgateway in [data plane mode sidecar](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000137) the [Airlock Microgateway Operator](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway/) must be deployed with `operator.sidecarGateway.enabled=true` and `operator.gatewayAPI.enabled=false`. For more information consult the [manual](https://docs.airlock.com/microgateway/latest/).
+
+Note that this chart is not required to run Microgateway with Kubernetes Gateway API.
 
 ## Prerequisites
 * [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
 
 ## Deploy Airlock Microgateway CNI
+
 1. Install the CNI Plugin with Helm.
-   > **Note**: Certain environments such as OpenShift or GKE require non-default configurations when installing the CNI plugin. For the most common setups, values files are provided in the [chart folder](/deploy/charts/airlock-microgateway-cni).
+   > **Note**: Certain environments such as GKE require non-default configurations when installing the CNI plugin. For the most common setups, values files are provided in the [chart folder](/deploy/charts/airlock-microgateway-cni).
    ```console
    # Standard setup
-   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1'
-   kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
+   helm install airlock-microgateway-cni \
+     oci://quay.io/airlockcharts/microgateway-cni \
+     --version '4.7.2' \
+     -n kube-system
+
+   kubectl rollout status daemonset \
+    -n kube-system  \
+    -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
    ```console
    # GKE setup
-   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1' -f https://raw.githubusercontent.com/airlock/microgateway/4.7.1/deploy/charts/airlock-microgateway-cni/gke-values.yaml
-   kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
-   ```
-   ```console
-   # OpenShift setup
-   helm install airlock-microgateway-cni -n openshift-operators oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1' -f https://raw.githubusercontent.com/airlock/microgateway/4.7.1/deploy/charts/airlock-microgateway-cni/openshift-values.yaml
-   kubectl -n openshift-operators rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
-   ```
-   > **Important:** On OpenShift, all pods which should be protected by Airlock Microgateway must explicitly reference the Airlock Microgateway CNI NetworkAttachmentDefinition via the annotation `k8s.v1.cni.cncf.io/networks` (see [documentation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000140) for details).
+   helm install airlock-microgateway-cni \
+     oci://quay.io/airlockcharts/microgateway-cni \
+     --version '4.7.2' \
+     -n kube-system \
+     -f https://raw.githubusercontent.com/airlock/microgateway/4.7.2/deploy/charts/airlock-microgateway-cni/gke-values.yaml
 
-2. (Recommended) You can verify the correctness of the installation with `helm test`.
-   ```console
-   # Standard and GKE setup
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1'
-   helm test airlock-microgateway-cni -n kube-system --logs
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1'
+   kubectl rollout status daemonset \
+     -n kube-system \
+     -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
+
+2. Verify the correctness of the installation (Recommended).
    ```console
-   # OpenShift setup
-   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1'
-   helm test airlock-microgateway-cni -n openshift-operators --logs
-   helm upgrade airlock-microgateway-cni -n openshift-operators --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.7.1'
+   helm upgrade airlock-microgateway-cni \
+     oci://quay.io/airlockcharts/microgateway-cni \
+     --version '4.7.2' \
+     -n kube-system \
+     --set tests.enabled=true \
+     --reuse-values
+
+   helm test airlock-microgateway-cni -n kube-system --logs
+
+   helm upgrade airlock-microgateway-cni \
+     oci://quay.io/airlockcharts/microgateway-cni \
+     --version '4.7.2' \
+     -n kube-system \
+     --set tests.enabled=false \
+     --reuse-values
    ```
 
    Consult our [documentation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000139) in case of any installation error.
@@ -98,11 +113,11 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | config.logLevel | string | `"info"` | Log level for the CNI installer and plugin. |
 | config.repairMode | string | `"none"` | Specifies the repair mode There is a race condition regarding the installation of the CNI Plugin and creation of Pods when starting a Node. This would cause Pods to be unprotected, because the CNI did not reconfigure the Pod's network. The Airlock Microgateway Network Validator prevents this and causes the Pod to fail on purpose. Pods can be repaired by choosing the appropriate repair mode. Available options are: `deletePods` will delete failing Pods, such that the CNI Plugin can correctly configure them `none` will not perform any action for failing Pods |
 | fullnameOverride | string | `""` | Allows overriding the name to use as full name of resources. |
-| image.digest | string | `"sha256:f1826f7ad20c72b57eda20da5782c73eb5675e726296dd9cda44b7a9af8e63eb"` | SHA256 image digest to pull (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a"). Overrides tag when specified. |
+| image.digest | string | `"sha256:3fb526642f01ade4cf830da978fc9be500345babdfb09260e46201b8e0471203"` | SHA256 image digest to pull (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a"). Overrides tag when specified. |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | image.repository | string | `"quay.io/airlock/microgateway-cni"` | Image repository from which to pull the Airlock Microgateway CNI image. |
-| image.tag | string | `"4.7.1"` | Image tag to pull. |
-| imagePullSecrets | list | `[]` | ImagePullSecrets to use when pulling images. |
+| image.tag | string | `"4.7.2"` | Image tag to pull. |
+| imagePullSecrets | list | `[]` | ImagePullSecrets to use when pulling images. Can be defined either as a list of objects or as a list of strings. |
 | multusNetworkAttachmentDefinition.create | bool | `false` | Whether a NetworkAttachmentDefinition CR should be created, which can be used for applying the CNI plugin to Pods. |
 | multusNetworkAttachmentDefinition.namespace | string | `"default"` | Namespace in which the NetworkAttachmentDefinition is deployed. Note: If namespace is set to a custom value, referencing the created NetworkAttachmentDefinition from other namespaces may not work if Multus namespace isolation is enabled. https://github.com/k8snetworkplumbingwg/multus-cni/blob/v4.0.2/docs/configuration.md#namespace-isolation |
 | nameOverride | string | `""` | Allows overriding the name to use instead of "microgateway-cni". |

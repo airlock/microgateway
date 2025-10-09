@@ -166,10 +166,24 @@ tests:
     templates:
       - daemonset.yaml
 
-  - it: should create imagePullSecrets if set
+  - it: should create imagePullSecrets if set as list of objects
     set:
       imagePullSecrets:
         - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - daemonset.yaml
+
+  - it: should create imagePullSecrets if set as list of strings
+    set:
+      imagePullSecrets:
+        - myRegistryPullSecret
     asserts:
       - contains:
           path: spec.template.spec.imagePullSecrets

@@ -69,7 +69,7 @@ spec:
       readOnly: true
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets:
-    {{- toYaml . | nindent 8 }}
+    {{- include "airlock-microgateway.imagePullSecrets" . | nindent 4 }}
   {{- end }}
   serviceAccountName: "{{ include "airlock-microgateway-cni.fullname" . }}-tests"
   volumes:

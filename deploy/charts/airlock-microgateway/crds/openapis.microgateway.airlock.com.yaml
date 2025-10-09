@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.1
+    app.kubernetes.io/version: 4.7.2
   name: openapis.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -44,7 +44,7 @@ spec:
               description: Specification of the desired OpenAPI specification.
               properties:
                 response:
-                  description: Response defines the validation behaviour for responses.
+                  description: Response defines the validation behavior for responses.
                   properties:
                     secured:
                       description: Secured enables response checking.
@@ -77,10 +77,12 @@ spec:
                       description: Schema configures the OpenAPI specification.
                       properties:
                         source:
-                          description: Source specifies the OpenAPI specification to be enforced.
+                          description: Source specifies the OpenAPI v3.0 specification to be enforced.
                           properties:
                             configMapRef:
-                              description: ConfigMapRef references the configmap by its name containing the well-known key `openapi.json`. Use the `data` field for plaintext or the `binaryData` for compressed data. Supported compression formats are zstd, gzip or zip.
+                              description: |-
+                                ConfigMapRef references the configmap by its name containing the well-known key `openapi.json`. Use the `data` field for plaintext or the `binaryData` for compressed data. Supported compression formats are zstd, gzip or zip.
+                                Note: If the provided OpenAPI schema is invalid (e.g., due to syntax errors), the Airlock Microgateway Engine will log an error, OpenAPI validation will always fail, and requests will be blocked.
                               properties:
                                 name:
                                   description: Name of the resource

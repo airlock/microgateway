@@ -566,6 +566,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.7.1
+    app.kubernetes.io/version: 4.7.2
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-blocklogs

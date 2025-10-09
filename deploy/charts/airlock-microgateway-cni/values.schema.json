@@ -15,20 +15,31 @@
       "$ref": "#/definitions/StringMap"
     },
     "imagePullSecrets": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": true
+          }
+        },
+        {
+          "type": "array",
+          "items": {
             "type": "string",
             "minLength": 1
           }
-        },
-        "required": [
-          "name"
-        ],
-        "additionalProperties": true
-      }
+        }
+      ]
     },
     "image": {
       "$ref": "#/definitions/Image"

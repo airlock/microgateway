@@ -99,3 +99,18 @@ Create the name of the service account to use for the CNI Plugin
     {{- print "latest" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Normalize imagePullSecrets into the required structure.
+*/}}
+{{- define "airlock-microgateway.imagePullSecrets" -}}
+{{- $list := list }}
+{{- range . }}
+    {{- if typeIs "string" . }}
+        {{- $list = append $list (dict "name" .) }}
+  {{- else }}
+        {{- $list = append $list . }}
+  {{- end }}
+{{- end -}}
+{{- toYaml $list }}
+{{- end }}

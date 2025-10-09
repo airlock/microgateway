@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.1
+    app.kubernetes.io/version: 4.7.2
   name: jwks.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -53,8 +53,9 @@ spec:
                       secret.
                     properties:
                       secretRef:
-                        description: SecretRef selects the secret containing the JWKS
-                          under the key 'jwks.json'.
+                        description: |-
+                          SecretRef selects the secret containing the JWKS under the key 'jwks.json'.
+                          Note: If the provided JWKS is invalid (e.g., due to syntax errors), the Airlock Microgateway Engine will log an error, token validation will always fail, and requests will be blocked.
                         properties:
                           name:
                             description: Name of the resource

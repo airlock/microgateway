@@ -6,7 +6,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.2
+    app.kubernetes.io/version: 4.7.3
     gateway.networking.k8s.io/policy: direct
   name: contentsecuritypolicies.microgateway.airlock.com
 spec:

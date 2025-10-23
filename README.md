@@ -96,7 +96,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
    helm install airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.2' \
+     --version '4.7.3' \
      -n airlock-microgateway-system \
      --wait \
      --set operator.sidecarGateway.enabled=false \
@@ -107,7 +107,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
    ```console
    helm upgrade airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.2' \
+     --version '4.7.3' \
      -n airlock-microgateway-system \
      --set tests.enabled=true \
      --reuse-values
@@ -116,7 +116,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 
    helm upgrade airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.2' \
+     --version '4.7.3' \
      -n airlock-microgateway-system \
      --set tests.enabled=false \
      --reuse-values
@@ -127,7 +127,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.7.2 \
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.7.3 \
   --server-side \
   --force-conflicts
 ```

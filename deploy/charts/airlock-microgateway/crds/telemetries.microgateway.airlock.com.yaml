@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: telemetries.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -21,7 +21,7 @@ spec:
     - name: v1alpha1
       schema:
         openAPIV3Schema:
-          description: Telemetry contains the configuration for telemetry (logging, metrics & tracing).
+          description: Telemetry defines the telemetry configuration (logging, metrics & tracing).
           properties:
             apiVersion:
               description: |-
@@ -41,20 +41,21 @@ spec:
             metadata:
               type: object
             spec:
-              description: Specification of the desired telemetry behavior.
+              description: spec defines the desired telemetry configuration.
               properties:
                 correlation:
-                  description: Correlation defines the correlation aspects of Telemetry.
+                  description: correlation defines the correlation aspects of Telemetry.
                   properties:
                     idSource:
-                      description: IDSource specifies how an external correlation ID should be obtained for a request. If not specified, no correlation ID will be logged.
+                      description: idSource specifies how an external correlation ID should be obtained for a request. If not specified, no correlation ID will be logged.
                       properties:
                         header:
-                          description: Header specifies to extract the correlation ID from a request header. If the header is absent from a request, no correlation ID will be logged.
+                          description: header specifies to extract the correlation ID from a request header. If the header is absent from a request, no correlation ID will be logged.
                           properties:
                             name:
                               default: X-Correlation-Id
-                              description: Name of the header (case-insensitive) from which to extract the correlation ID.
+                              description: name of the header (case-insensitive) from which to extract the correlation ID.
+                              maxLength: 256
                               minLength: 1
                               type: string
                           type: object
@@ -62,29 +63,29 @@ spec:
                         - header
                       type: object
                     request:
-                      description: Request defines the request related correlation settings of Telemetry.
+                      description: request defines the request related correlation settings of Telemetry.
                       properties:
                         allowDownstreamRequestID:
                           default: true
-                          description: AllowDownstreamRequestID defines whether trace sampling will consider a provided x-request-id.
+                          description: allowDownstreamRequestID defines whether trace sampling will consider a provided x-request-id.
                           type: boolean
                         alterRequestID:
                           default: true
-                          description: AlterRequestID defines whether to alter the UUID to reflect the trace sampling decision. If disabled no modification to the UUID will be performed, this may break tracing in the upstream.
+                          description: alterRequestID defines whether to alter the UUID to reflect the trace sampling decision. If disabled no modification to the UUID will be performed, this may break tracing in the upstream.
                           type: boolean
                       type: object
                   type: object
                 logging:
-                  description: Logging defines the logging aspects of Telemetry.
+                  description: logging defines the logging aspects of Telemetry.
                   properties:
                     accessLog:
-                      description: AccessLog defines the access log settings of Telemetry.
+                      description: accessLog defines the access log settings of Telemetry.
                       properties:
                         format:
-                          description: Format defines the Access Log format of the sidecar.
+                          description: format defines the Access Log format of the sidecar.
                           properties:
                             json:
-                              description: JSON defines the Access Log format as JSON.
+                              description: json defines the Access Log format as JSON.
                               type: object
                               x-kubernetes-preserve-unknown-fields: true
                           type: object

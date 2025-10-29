@@ -2,11 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
     gateway.networking.k8s.io/policy: direct
   name: contentsecuritypolicies.microgateway.airlock.com
 spec:
@@ -27,9 +26,17 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ContentSecurityPolicy is a Direct Attached Policy for the Kubernetes
-          Gateway API. It specifies the options to secure an upstream web application
-          with a Microgateway.
+        description: |-
+          ContentSecurityPolicy is a Direct Attached Policy for the Kubernetes Gateway API.
+          It defines a policy for filtering and mutating requests and responses to protect an upstream web application. Individual features can be customized using their dedicated CRDs which are referenced from this policy.
+
+          The default policy is designed to be secure and work with most web applications. Security can be further improved by e.g.,
+          - Enforcing an OpenAPI or GraphQL schema to protect API endpoints
+          - Enabling CSRF protection
+          - Increasing the deny rule strictness level
+          - Tightening request limits
+
+          If false positives are encountered (wrongly blocked requests), exceptions may also be configured in the relevant CRDs.
         properties:
           apiVersion:
             description: |-
@@ -49,19 +56,19 @@ spec:
           metadata:
             type: object
           spec:
-            description: Spec defines the desired state of ContentSecurityPolicy.
+            description: spec defines the desired content security configuration.
             properties:
               secured:
-                description: Secured enables WAF processing for the routes attached
+                description: secured enables WAF processing for the routes attached
                   to this policy.
                 properties:
                   apiProtectionRef:
                     description: |-
-                      APIProtectionRef defines the relevant configurations to protect multiple APIs on different paths.
+                      apiProtectionRef defines the relevant configurations to protect multiple APIs on different paths.
                       If undefined, default settings are applied, designed to work with most upstream web application services.
                     properties:
                       name:
-                        description: Name of the resource
+                        description: name of the resource
                         maxLength: 253
                         minLength: 1
                         type: string
@@ -70,11 +77,11 @@ spec:
                     type: object
                   csrfProtectionRef:
                     description: |-
-                      CSRFProtectionRef selects the relevant CSRF configuration resource.
-                      If undefined, default settings are applied, designed to work with most upstream web application services.
+                      csrfProtectionRef selects the relevant CSRF configuration resource.
+                      If undefined, CSRF protection is disabled.
                     properties:
                       name:
-                        description: Name of the resource
+                        description: name of the resource
                         maxLength: 253
                         minLength: 1
                         type: string
@@ -83,17 +90,17 @@ spec:
                     type: object
                   filter:
                     description: |-
-                      Filter defines the set of filters, e.g. Airlock Deny Rules, to be applied to incoming requests
+                      filter defines the set of filters, e.g. Airlock Deny Rules, to be applied to incoming requests
                       to protect against various attack patterns.
                       If undefined, default settings are applied, designed to work with most upstream web application services.
                     properties:
                       denyRulesRef:
                         description: |-
-                          DenyRulesRef selects the relevant DenyRules configuration resource.
+                          denyRulesRef selects the relevant DenyRules configuration resource.
                           If undefined, default settings are applied, designed to work with most upstream web application services.
                         properties:
                           name:
-                            description: Name of the resource
+                            description: name of the resource
                             maxLength: 253
                             minLength: 1
                             type: string
@@ -103,11 +110,11 @@ spec:
                     type: object
                   headerRewritesRef:
                     description: |-
-                      HeaderRewritesRef selects the relevant HeaderRewrites.
+                      headerRewritesRef selects the relevant HeaderRewrites.
                       If undefined, default settings are applied, designed to work with most upstream web application services.
                     properties:
                       name:
-                        description: Name of the resource
+                        description: name of the resource
                         maxLength: 253
                         minLength: 1
                         type: string
@@ -116,11 +123,11 @@ spec:
                     type: object
                   limitsRef:
                     description: |-
-                      LimitsRef selects the relevant Limits configuration resource.
+                      limitsRef selects the relevant Limits configuration resource.
                       If undefined, default settings are applied, designed to work with most upstream web application services.
                     properties:
                       name:
-                        description: Name of the resource
+                        description: name of the resource
                         maxLength: 253
                         minLength: 1
                         type: string
@@ -129,11 +136,11 @@ spec:
                     type: object
                   parserRef:
                     description: |-
-                      ParserRef selects the relevant Parser configuration resource.
+                      parserRef selects the relevant Parser configuration resource.
                       If undefined, default settings are applied, designed to work with most upstream web application services.
                     properties:
                       name:
-                        description: Name of the resource
+                        description: name of the resource
                         maxLength: 253
                         minLength: 1
                         type: string
@@ -143,7 +150,7 @@ spec:
                 type: object
               targetRefs:
                 description: |-
-                  TargetRefs are the resources this policy is being attached to. Referenced resources must be in the same namespace as the policy.
+                  targetRefs are the resources this policy is being attached to. Referenced resources must be in the same namespace as the policy.
                   Support: HTTPRoute.
                 items:
                   description: |-
@@ -177,6 +184,11 @@ spec:
                 maxItems: 16
                 minItems: 1
                 type: array
+                x-kubernetes-list-map-keys:
+                - group
+                - kind
+                - name
+                x-kubernetes-list-type: map
                 x-kubernetes-validations:
                 - message: 'TargetRef Kind must be: HTTPRoute'
                   rule: self.all(t, t.kind == 'HTTPRoute')
@@ -188,14 +200,14 @@ spec:
                     == t2.kind && t1.name == t2.name))
               unsecured:
                 description: |-
-                  Unsecured disables all WAF functionality and therefore protection for the routes attached to this policy.
+                  unsecured disables all WAF functionality and therefore protection for the routes attached to this policy.
                   WARNING: Using this setting when the application is exposed to untrusted downstream traffic is highly discouraged.
                 type: object
             required:
             - targetRefs
             type: object
           status:
-            description: Status defines the state of the ContentSecurityPolicy.
+            description: status describes the current status of the ContentSecurityPolicy.
             properties:
               ancestors:
                 description: |-
@@ -483,10 +495,12 @@ spec:
                       type: string
                   required:
                   - ancestorRef
+                  - conditions
                   - controllerName
                   type: object
                 maxItems: 16
                 type: array
+                x-kubernetes-list-type: atomic
             required:
             - ancestors
             type: object

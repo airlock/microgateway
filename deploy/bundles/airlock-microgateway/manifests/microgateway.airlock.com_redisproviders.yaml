@@ -2,11 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: redisproviders.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -22,8 +21,8 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: RedisProvider contains a client configuration for connecting
-          to a Redis database.
+        description: RedisProvider defines a client configuration for connecting to
+          a Redis database.
         properties:
           apiVersion:
             description: |-
@@ -43,20 +42,20 @@ spec:
           metadata:
             type: object
           spec:
-            description: Specification of a Redis database client configuration.
+            description: spec defines the desired Redis client configuration.
             properties:
               auth:
-                description: Auth specifies the Redis credentials.
+                description: auth specifies the Redis credentials.
                 properties:
                   password:
-                    description: Password specifies the Redis password.
+                    description: password specifies the Redis password.
                     properties:
                       secretRef:
-                        description: SecretRef selects the secret containing the Redis
+                        description: secretRef selects the secret containing the Redis
                           password under the key 'redis.password'.
                         properties:
                           name:
-                            description: Name of the resource
+                            description: name of the resource
                             maxLength: 253
                             minLength: 1
                             type: string
@@ -68,8 +67,9 @@ spec:
                     type: object
                   username:
                     default: default
-                    description: Username specifies the Redis username to authenticate
+                    description: username specifies the Redis username to authenticate
                       with.
+                    maxLength: 128
                     minLength: 1
                     pattern: ^[^\s]+$
                     type: string
@@ -77,78 +77,95 @@ spec:
                 - password
                 type: object
               mode:
-                description: Mode configures the redis deployment mode.
+                description: mode configures the redis deployment mode.
                 properties:
                   cluster:
-                    description: Cluster specifies the Redis Cluster to connect to.
+                    description: cluster specifies the Redis Cluster to connect to.
                     properties:
                       nodes:
-                        description: Nodes specifies the Cluster nodes.
+                        description: nodes specifies the Cluster nodes.
                         items:
                           properties:
                             host:
-                              description: Host specifies the IP or hostname.
+                              description: host specifies the IP or hostname.
+                              maxLength: 256
                               minLength: 1
                               pattern: ^(\d{1,3}(\.\d{1,3}){3}|([0-9a-fA-F]{1,4}|:)+(:\d{1,3}(\.\d{1,3}){3})?|[a-z0-9\-]+(\.[a-z0-9\-]+)*)$
                               type: string
                             port:
                               default: 6379
-                              description: Port specifies the port.
+                              description: port specifies the port.
+                              format: int64
                               maximum: 65535
                               minimum: 1
                               type: integer
                           required:
                           - host
                           type: object
+                        maxItems: 1024
                         minItems: 1
                         type: array
+                        x-kubernetes-list-map-keys:
+                        - host
+                        - port
+                        x-kubernetes-list-type: map
                     required:
                     - nodes
                     type: object
                   sentinel:
-                    description: Sentinel specifies the Redis Sentinels to connect
+                    description: sentinel specifies the Redis Sentinels to connect
                       to.
                     properties:
                       masterName:
-                        description: MasterName specifies the master name.
+                        description: masterName specifies the master name.
+                        maxLength: 256
                         minLength: 1
                         type: string
                       nodes:
-                        description: Nodes specifies the Sentinel nodes.
+                        description: nodes specifies the Sentinel nodes.
                         items:
                           properties:
                             host:
-                              description: Host specifies the IP or hostname.
+                              description: host specifies the IP or hostname.
+                              maxLength: 256
                               minLength: 1
                               pattern: ^(\d{1,3}(\.\d{1,3}){3}|([0-9a-fA-F]{1,4}|:)+(:\d{1,3}(\.\d{1,3}){3})?|[a-z0-9\-]+(\.[a-z0-9\-]+)*)$
                               type: string
                             port:
                               default: 6379
-                              description: Port specifies the port.
+                              description: port specifies the port.
+                              format: int64
                               maximum: 65535
                               minimum: 1
                               type: integer
                           required:
                           - host
                           type: object
+                        maxItems: 32
                         minItems: 1
                         type: array
+                        x-kubernetes-list-map-keys:
+                        - host
+                        - port
+                        x-kubernetes-list-type: map
                     required:
                     - masterName
                     - nodes
                     type: object
                   standalone:
-                    description: Standalone specifies the standalone Redis instance
+                    description: standalone specifies the standalone Redis instance
                       to connect to.
                     properties:
                       host:
-                        description: Host specifies the IP or hostname.
+                        description: host specifies the IP or hostname.
+                        maxLength: 256
                         minLength: 1
                         pattern: ^(\d{1,3}(\.\d{1,3}){3}|([0-9a-fA-F]{1,4}|:)+(:\d{1,3}(\.\d{1,3}){3})?|[a-z0-9\-]+(\.[a-z0-9\-]+)*)$
                         type: string
                       port:
                         default: 6379
-                        description: Port specifies the port.
+                        description: port specifies the port.
+                        format: int64
                         maximum: 65535
                         minimum: 1
                         type: integer
@@ -157,47 +174,47 @@ spec:
                     type: object
                 type: object
               timeouts:
-                description: Timeouts specifies the timeouts when interacting with
+                description: timeouts specifies the timeouts when interacting with
                   the Redis endpoint.
                 properties:
                   connect:
                     default: 5s
-                    description: Connect specifies the timeout for establishing a
+                    description: connect specifies the timeout for establishing a
                       connection.
                     type: string
                   maxDuration:
                     default: 2s
-                    description: MaxDuration specifies the response timeout.
+                    description: maxDuration specifies the response timeout.
                     type: string
                 type: object
               tls:
-                description: TLS defines TLS settings. If not specified, TLS is disabled
+                description: tls defines TLS settings. If not specified, TLS is disabled
                   i.e. unencrypted TCP is used when connecting to the Redis instance.
                 properties:
                   certificateVerification:
-                    description: CertificateVerification specifies how the certificate
+                    description: certificateVerification specifies how the certificate
                       presented by the server is verified.
                     properties:
                       custom:
-                        description: Custom explicitly specifies how the server certificate
+                        description: custom explicitly specifies how the server certificate
                           should be verified.
                         properties:
                           trustedCA:
-                            description: TrustedCA defines which CA certificates are
+                            description: trustedCA defines which CA certificates are
                               trusted.
                             properties:
                               certificates:
-                                description: Certificates defines the list of secretRefs
+                                description: certificates defines the list of secretRefs
                                   containing trusted CA certificates.
                                 items:
                                   properties:
                                     secretRef:
-                                      description: SecretRef defines the reference
+                                      description: secretRef defines the reference
                                         to a secret containing one or more CA certificates
                                         under the key 'ca.crt'.
                                       properties:
                                         name:
-                                          description: Name of the resource
+                                          description: name of the resource
                                           maxLength: 253
                                           minLength: 1
                                           type: string
@@ -207,8 +224,10 @@ spec:
                                   required:
                                   - secretRef
                                   type: object
+                                maxItems: 16
                                 minItems: 1
                                 type: array
+                                x-kubernetes-list-type: atomic
                             required:
                             - certificates
                             type: object
@@ -216,13 +235,12 @@ spec:
                         - trustedCA
                         type: object
                       disabled:
-                        description: 'Disabled specifies to trust any certificate
-                          without verification. THIS IS INSECURE AND SHOULD ONLY BE
-                          USED FOR TESTING. Note: This setting currently also disables
-                          TLS SNI.'
+                        description: |-
+                          disabled specifies to trust any certificate without verification. THIS IS INSECURE AND SHOULD ONLY BE USED FOR TESTING.
+                          Note: This setting currently also disables TLS SNI.
                         type: object
                       publicCAs:
-                        description: PublicCAs specifies to only accept certificates
+                        description: publicCAs specifies to only accept certificates
                           with a SAN matching the host and which are signed by a CA
                           which is either directly or indirectly trusted by any of
                           the root CA certificates shipped with the Airlock Microgateway
@@ -230,15 +248,15 @@ spec:
                         type: object
                     type: object
                   clientCertificate:
-                    description: ClientCertificate configures client certificate authentication.
+                    description: clientCertificate configures client certificate authentication.
                       If not specified, TLS-based client authentication is disabled.
                     properties:
                       secretRef:
-                        description: SecretRef specifies the client certificate to
+                        description: secretRef specifies the client certificate to
                           use (secret of type kubernetes.io/tls).
                         properties:
                           name:
-                            description: Name of the resource
+                            description: name of the resource
                             maxLength: 253
                             minLength: 1
                             type: string

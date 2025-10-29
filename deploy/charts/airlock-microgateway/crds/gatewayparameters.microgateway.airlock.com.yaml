@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -47,55 +47,56 @@ spec:
             metadata:
               type: object
             spec:
-              description: GatewayParametersSpec defines additional configuration parameters for the Gateway.
+              description: spec defines the desired Gateway configuration parameters values.
               properties:
                 defaults:
-                  description: Defaults specifies default configurations and policies for the Gateway.
+                  description: defaults specifies default configurations and policies for the Gateway.
                   properties:
                     downstream:
-                      description: Downstream defines the downstream configuration for this Gateway.
+                      description: downstream defines the downstream configuration for this Gateway.
                       properties:
                         remoteIP:
                           description: |-
-                            RemoteIP defines how the remote IP of a client is propagated.
+                            remoteIP defines how the remote IP of a client is propagated.
                             Default: connectionIP: {...}
                           properties:
                             connectionIP:
-                              description: ConnectionIP configures to use the source IP address of the direct downstream connection.
+                              description: connectionIP configures to use the source IP address of the direct downstream connection.
                               type: object
                             customHeader:
-                              description: CustomHeader specifies to use a custom header for remote IP extraction.
+                              description: customHeader specifies to use a custom header for remote IP extraction.
                               properties:
                                 headerName:
-                                  description: HeaderName specifies the name of the custom header containing the remote IP.
+                                  description: headerName specifies the name of the custom header containing the remote IP.
+                                  maxLength: 256
                                   minLength: 1
                                   type: string
                                 required:
                                   default: true
-                                  description: Required specifies if the custom header is required. If true and not available the request will be rejected with 403.
+                                  description: required specifies if the custom header is required. If true and not available the request will be rejected with 403.
                                   type: boolean
                               required:
                                 - headerName
                               type: object
                             proxyProtocol:
                               description: |-
-                                ProxyProtocol configures to use the proxy protocol connection header for IP extraction. The proxy protocol adds a header to TCP connections to preserve the client's IP address.
+                                proxyProtocol configures to use the proxy protocol connection header for IP extraction. The proxy protocol adds a header to TCP connections to preserve the client's IP address.
                                 For more details, refer to the protocol specification: https://www.haproxy.org/download/3.1/doc/proxy-protocol.txt
                                 Note: When this field is set, all incoming connections must use the proxy protocol, otherwise, the connection will be closed.
                               properties:
                                 version:
-                                  description: Version specifies the version of the proxy protocol. If unspecified, all versions are accepted.
+                                  description: version specifies the version of the proxy protocol. If unspecified, all versions are accepted.
                                   enum:
                                     - V1
                                     - V2
                                   type: string
                               type: object
                             xff:
-                              description: XFF configures to use the standard 'X-Forwarded-For' header for IP extraction.
+                              description: xff configures to use the standard 'X-Forwarded-For' header for IP extraction.
                               properties:
                                 numTrustedHops:
                                   description: |-
-                                    NumTrustedHops specifies to extract the client's originating IP from the nth rightmost entry in the X-Forwarded-For header. With the default value of 1, the IP is extracted from the rightmost entry.
+                                    numTrustedHops specifies to extract the client's originating IP from the nth rightmost entry in the X-Forwarded-For header. With the default value of 1, the IP is extracted from the rightmost entry.
                                     Only one of numTrustedHops and trustedCIDRRanges can be set.
                                     Default: 1
                                   format: int32
@@ -103,22 +104,25 @@ spec:
                                   type: integer
                                 trustedCIDRRanges:
                                   description: |-
-                                    TrustedCIDRRanges specifies the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28`` to trust when evaluating the remote IP address to determine the original client’s IP address. When the remote IP address matches a trusted CIDR and the X-Forwarded-For header was sent, each entry in the X-Forwarded-For header is evaluated from right to left and the first non-trusted address is used as the original client address. If all addresses in X-Forwarded-For are within the trusted list, the first (leftmost) entry is used.
+                                    trustedCIDRRanges specifies the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28`` to trust when evaluating the remote IP address to determine the original client’s IP address. When the remote IP address matches a trusted CIDR and the X-Forwarded-For header was sent, each entry in the X-Forwarded-For header is evaluated from right to left and the first non-trusted address is used as the original client address. If all addresses in X-Forwarded-For are within the trusted list, the first (leftmost) entry is used.
                                     Only one of numTrustedHops and trustedCIDRRanges can be set.
                                   items:
                                     description: CIDRRange defines an IPv4 or IPv6 CIDR range, e.g. “196.148.3.128/26“ or “2001:db8::/28“.
                                     format: cidr
+                                    maxLength: 49
+                                    minLength: 1
                                     type: string
+                                  maxItems: 64
                                   minItems: 1
                                   type: array
                               type: object
                           type: object
                       type: object
                     sessionHandlingRef:
-                      description: SessionHandlingRef selects the default SessionHandling configuration for the Gateway.
+                      description: sessionHandlingRef selects the default SessionHandling configuration for the Gateway.
                       properties:
                         name:
-                          description: Name of the resource
+                          description: name of the resource
                           maxLength: 253
                           minLength: 1
                           type: string
@@ -126,10 +130,10 @@ spec:
                         - name
                       type: object
                     telemetryRef:
-                      description: TelemetryRef selects the default Telemetry configuration (logging, metrics, and tracing) for the Gateway.
+                      description: telemetryRef selects the default Telemetry configuration (logging, metrics, and tracing) for the Gateway.
                       properties:
                         name:
-                          description: Name of the resource
+                          description: name of the resource
                           maxLength: 253
                           minLength: 1
                           type: string
@@ -137,33 +141,336 @@ spec:
                         - name
                       type: object
                   type: object
+                experimental:
+                  description: |-
+                    experimental specifies configurations and policies for the Gateway.
+                    Note: Experimental contains Gateway API settings which are not graduated yet. Therefore, they are subject to change or might be removed in future releases.
+                  properties:
+                    tls:
+                      description: |-
+                        tls specifies frontend and backend tls configuration for the entire Gateway.
+
+                        Note: If `.spec.tls.frontend` is specified in the Gateway resource, the `frontend` configuration here in GatewayParameters will be ignored.
+                        Note: If `.spec.tls.backend` is specified in the Gateway resource, the `backend` configuration here in GatewayParameters will be ignored.
+                      properties:
+                        backend:
+                          description: |-
+                            backend describes the TLS configuration for the Gateway when connecting to backends.
+
+                            Note: This contains only details for the Gateway as a TLS client and does _not_ imply behavior about how to choose which backend should get a TLS connection. That is determined by the presence of a BackendTLSPolicy. More info: https://gateway-api.sigs.k8s.io/api-types/backendtlspolicy/
+                            Note: If `.spec.tls.backend` is specified in the Gateway resource, this field will be ignored.
+                          properties:
+                            clientCertificateRef:
+                              description: |-
+                                clientCertificateRef is a reference to an object that contains a Client Certificate
+                                under the key 'tls.crt' and the associated private key 'tls.key'.
+                                It can reference to the standard Kubernetes Secret resource of type 'kubernetes.io/tls'.
+                              properties:
+                                group:
+                                  default: ""
+                                  description: |-
+                                    Group is the group of the referent. For example, "gateway.networking.k8s.io".
+                                    When unspecified or empty string, core API group is inferred.
+                                  maxLength: 253
+                                  pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                kind:
+                                  default: Secret
+                                  description: Kind is kind of the referent. For example "Secret".
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                                  type: string
+                                name:
+                                  description: Name is the name of the referent.
+                                  maxLength: 253
+                                  minLength: 1
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    Namespace is the namespace of the referenced object. When unspecified, the local
+                                    namespace is inferred.
+
+                                    Note that when a namespace different than the local namespace is specified,
+                                    a ReferenceGrant object is required in the referent namespace to allow that
+                                    namespace's owner to accept the reference. See the ReferenceGrant
+                                    documentation for details.
+
+                                    Support: Core
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              required:
+                                - name
+                              type: object
+                          type: object
+                        frontend:
+                          description: |-
+                            frontend describes the TLS configuration when a client connects to the Gateway.
+
+                            Note: If `.spec.tls.frontend` is specified in the Gateway resource, this field will be ignored.
+                          properties:
+                            default:
+                              description: |-
+                                default specifies the default client certificate validation configuration
+                                for all Listeners handling HTTPS traffic, unless a per-port configuration is defined.
+                              properties:
+                                validation:
+                                  description: |-
+                                    validation holds configuration information for validating the frontend (client).
+                                    Setting this field will result in mutual authentication when connecting to the Gateway.
+                                    In browsers this may result in a dialog appearing that requests a user to specify the client certificate.
+                                  properties:
+                                    caCertificateRefs:
+                                      description: |-
+                                        caCertificateRefs contains one or more references to Kubernetes objects (ConfigMap or Secret)
+                                        that contain TLS certificates of the Certificate Authorities (CA) that can be used
+                                        as a trust anchor to validate the certificates presented by the client.
+
+                                        The CA certificate must be in a key named 'ca.crt'.
+
+                                        References to a resource in a different namespace are invalid UNLESS there
+                                        is a ReferenceGrant in the target namespace that allows the certificate to be attached.
+                                      items:
+                                        description: |-
+                                          ObjectReference identifies an API object including its namespace.
+
+                                          The API object must be valid in the cluster; the Group and Kind must
+                                          be registered in the cluster for this reference to be valid.
+
+                                          References to objects with invalid Group and Kind are not valid, and must
+                                          be rejected by the implementation, with appropriate Conditions set
+                                          on the containing object.
+                                        properties:
+                                          group:
+                                            description: |-
+                                              Group is the group of the referent. For example, "gateway.networking.k8s.io".
+                                              When set to the empty string, core API group is inferred.
+                                            maxLength: 253
+                                            pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                            type: string
+                                          kind:
+                                            description: Kind is kind of the referent. For example "ConfigMap" or "Service".
+                                            maxLength: 63
+                                            minLength: 1
+                                            pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                                            type: string
+                                          name:
+                                            description: Name is the name of the referent.
+                                            maxLength: 253
+                                            minLength: 1
+                                            type: string
+                                          namespace:
+                                            description: |-
+                                              Namespace is the namespace of the referenced object. When unspecified, the local
+                                              namespace is inferred.
+
+                                              Note that when a namespace different than the local namespace is specified,
+                                              a ReferenceGrant object is required in the referent namespace to allow that
+                                              namespace's owner to accept the reference. See the ReferenceGrant
+                                              documentation for details.
+
+                                              Support: Core
+                                            maxLength: 63
+                                            minLength: 1
+                                            pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                            type: string
+                                        required:
+                                          - group
+                                          - kind
+                                          - name
+                                        type: object
+                                      maxItems: 8
+                                      minItems: 1
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                    mode:
+                                      default: AllowValidOnly
+                                      description: |-
+                                        mode defines the mode for validating the client certificate.
+                                        There are two possible modes:
+
+                                        - AllowValidOnly: In this mode, the Gateway will accept connections only if
+                                          the client presents a valid certificate. This certificate must successfully
+                                          pass validation against the CA certificates specified in `CACertificateRefs`.
+
+                                        - AllowInsecureFallback: In this mode, the Gateway will accept connections
+                                          even if the client certificate is not presented or fails verification.
+
+                                          This approach delegates client authorization to the backend and introduces
+                                          a significant security risk. It should be used in testing environments or
+                                          on a temporary basis in non-testing environments.
+                                      enum:
+                                        - AllowValidOnly
+                                        - AllowInsecureFallback
+                                      type: string
+                                  required:
+                                    - caCertificateRefs
+                                  type: object
+                              type: object
+                            perPort:
+                              description: |-
+                                perPort specifies the TLS configuration assigned per port.
+                                Once set, this configuration overrides the default configuration
+                                for all Listeners handling HTTPS traffic that match this port.
+                                Each override port requires a unique TLS configuration.
+                              items:
+                                properties:
+                                  port:
+                                    description: |-
+                                      port indicates the Port Number to which the TLS configuration will be applied.
+                                      This configuration will be applied to all Listeners handling HTTPS traffic that match this port.
+                                    format: int64
+                                    maximum: 65535
+                                    minimum: 1
+                                    type: integer
+                                  tls:
+                                    description: tls stores the configuration that will be applied to all Listeners handling HTTPS traffic and matching the given port.
+                                    properties:
+                                      validation:
+                                        description: |-
+                                          validation holds configuration information for validating the frontend (client).
+                                          Setting this field will result in mutual authentication when connecting to the Gateway.
+                                          In browsers this may result in a dialog appearing that requests a user to specify the client certificate.
+                                        properties:
+                                          caCertificateRefs:
+                                            description: |-
+                                              caCertificateRefs contains one or more references to Kubernetes objects (ConfigMap or Secret)
+                                              that contain TLS certificates of the Certificate Authorities (CA) that can be used
+                                              as a trust anchor to validate the certificates presented by the client.
+
+                                              The CA certificate must be in a key named 'ca.crt'.
+
+                                              References to a resource in a different namespace are invalid UNLESS there
+                                              is a ReferenceGrant in the target namespace that allows the certificate to be attached.
+                                            items:
+                                              description: |-
+                                                ObjectReference identifies an API object including its namespace.
+
+                                                The API object must be valid in the cluster; the Group and Kind must
+                                                be registered in the cluster for this reference to be valid.
+
+                                                References to objects with invalid Group and Kind are not valid, and must
+                                                be rejected by the implementation, with appropriate Conditions set
+                                                on the containing object.
+                                              properties:
+                                                group:
+                                                  description: |-
+                                                    Group is the group of the referent. For example, "gateway.networking.k8s.io".
+                                                    When set to the empty string, core API group is inferred.
+                                                  maxLength: 253
+                                                  pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                                  type: string
+                                                kind:
+                                                  description: Kind is kind of the referent. For example "ConfigMap" or "Service".
+                                                  maxLength: 63
+                                                  minLength: 1
+                                                  pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                                                  type: string
+                                                name:
+                                                  description: Name is the name of the referent.
+                                                  maxLength: 253
+                                                  minLength: 1
+                                                  type: string
+                                                namespace:
+                                                  description: |-
+                                                    Namespace is the namespace of the referenced object. When unspecified, the local
+                                                    namespace is inferred.
+
+                                                    Note that when a namespace different than the local namespace is specified,
+                                                    a ReferenceGrant object is required in the referent namespace to allow that
+                                                    namespace's owner to accept the reference. See the ReferenceGrant
+                                                    documentation for details.
+
+                                                    Support: Core
+                                                  maxLength: 63
+                                                  minLength: 1
+                                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                                  type: string
+                                              required:
+                                                - group
+                                                - kind
+                                                - name
+                                              type: object
+                                            maxItems: 8
+                                            minItems: 1
+                                            type: array
+                                            x-kubernetes-list-type: atomic
+                                          mode:
+                                            default: AllowValidOnly
+                                            description: |-
+                                              mode defines the mode for validating the client certificate.
+                                              There are two possible modes:
+
+                                              - AllowValidOnly: In this mode, the Gateway will accept connections only if
+                                                the client presents a valid certificate. This certificate must successfully
+                                                pass validation against the CA certificates specified in `CACertificateRefs`.
+
+                                              - AllowInsecureFallback: In this mode, the Gateway will accept connections
+                                                even if the client certificate is not presented or fails verification.
+
+                                                This approach delegates client authorization to the backend and introduces
+                                                a significant security risk. It should be used in testing environments or
+                                                on a temporary basis in non-testing environments.
+                                            enum:
+                                              - AllowValidOnly
+                                              - AllowInsecureFallback
+                                            type: string
+                                        required:
+                                          - caCertificateRefs
+                                        type: object
+                                    type: object
+                                required:
+                                  - port
+                                  - tls
+                                type: object
+                              maxItems: 64
+                              type: array
+                              x-kubernetes-list-map-keys:
+                                - port
+                              x-kubernetes-list-type: map
+                              x-kubernetes-validations:
+                                - message: Port for TLS configuration must be unique within the Gateway
+                                  rule: self.all(t1, self.exists_one(t2, t1.port == t2.port))
+                          required:
+                            - default
+                          type: object
+                      type: object
+                  type: object
                 features:
-                  description: Features specifies which optional features are enabled for the Gateway.
+                  description: features specifies which optional features are enabled for the Gateway.
                   properties:
                     envoyExtensionPolicyEnabled:
                       default: false
                       description: |-
-                        EnvoyExtensionPolicyEnabled specifies whether the controller processes EnvoyExtensionPolicy resources for HTTPRoutes attached to the Gateway.
+                        envoyExtensionPolicyEnabled specifies whether the controller processes EnvoyExtensionPolicy resources for HTTPRoutes attached to the Gateway.
                         Use EnvoyExtensionPolicy only if the features of Airlock Microgateway and Kubernetes Gateway API do not provide this functionality. If you identify missing features or use cases, please report them to help improve our product.
                         Note: Invalid or malformed Envoy configurations may prevent the Gateway's configuration from being updated.
                       type: boolean
+                    insecureTLSAllowed:
+                      default: false
+                      description: |-
+                        insecureTLSAllowed specifies whether this Gateway accepts BackendTLSPolicy that disables certificate validation. Allowing insecure TLS may expose the Gateway to man-in-the-middle attacks and other vulnerabilities.
+                        THIS IS INSECURE AND SHOULD ONLY BE USED FOR TESTING.
+                      type: boolean
                   type: object
                 kubernetes:
-                  description: Kubernetes defines the configuration for Kubernetes resources provisioned for the Gateway.
+                  description: kubernetes defines the configuration for Kubernetes resources provisioned for the Gateway.
                   properties:
                     deployment:
-                      description: Deployment configures the Kubernetes Deployment provisioned for the Gateway.
+                      description: deployment configures the Kubernetes Deployment provisioned for the Gateway.
                       properties:
                         automountServiceAccountToken:
                           default: false
-                          description: AutomountServiceAccountToken configures whether a service account token should be automatically mounted. Set this to `true` only if a sidecar that requires a service account token (e.g., OpenShift ServiceMesh) is injected to the Gateway Deployment.
+                          description: automountServiceAccountToken configures whether a service account token should be automatically mounted. Set this to `true` only if a sidecar that requires a service account token (e.g., OpenShift ServiceMesh) is injected to the Gateway Deployment.
                           type: boolean
                         engineContainer:
-                          description: EngineContainer configures the container running the Airlock Microgateway Engine.
+                          description: engineContainer configures the container running the Airlock Microgateway Engine.
                           properties:
                             resources:
                               description: |-
-                                Resources specifies the compute resources required for this container.
+                                resources specifies the compute resources required for this container.
                                 If undefined, default resource settings are applied: `{"requests":{"cpu":"100m","memory":"256Mi"}}`.
                                 Setting this field overrides the defaults entirely, values are not merged.
                                 See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for details.
@@ -173,7 +480,7 @@ spec:
                                     Claims lists the names of resources, defined in spec.resourceClaims,
                                     that are used by this container.
 
-                                    This is an alpha field and requires enabling the
+                                    This field depends on the
                                     DynamicResourceAllocation feature gate.
 
                                     This field is immutable. It can only be set for containers.
@@ -224,8 +531,13 @@ spec:
                                     More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                                   type: object
                               type: object
+                              x-kubernetes-validations:
+                                - message: cpu request must be less than or equal to cpu limit
+                                  rule: '!has(self.requests) || !has(self.limits) || !(''cpu'' in self.requests) || !(''cpu'' in self.limits) || quantity(string(self.requests[''cpu''])).compareTo(quantity(string(self.limits[''cpu'']))) <= 0'
+                                - message: memory request must be less than or equal to memory limit
+                                  rule: '!has(self.requests) || !has(self.limits) || !(''memory'' in self.requests) || !(''memory'' in self.limits) || quantity(string(self.requests[''memory''])).compareTo(quantity(string(self.limits[''memory'']))) <= 0'
                             volumeMounts:
-                              description: VolumeMounts specifies the list of volumes to mount into the EngineContainer's filesystem.
+                              description: volumeMounts specifies the list of volumes to mount into the EngineContainer's filesystem.
                               items:
                                 description: VolumeMount describes a mounting of a Volume within a container.
                                 properties:
@@ -294,7 +606,7 @@ spec:
                           type: object
                         imagePullSecrets:
                           description: |-
-                            ImagePullSecrets configures the list of references to secrets in the same namespace, which will be used in the Gateway deployment for pulling any of the images.
+                            imagePullSecrets configures the list of references to secrets in the same namespace, which will be used in the Gateway deployment for pulling any of the images.
                             More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod
                           items:
                             description: |-
@@ -312,15 +624,16 @@ spec:
                                 type: string
                             type: object
                             x-kubernetes-map-type: atomic
+                          maxItems: 32
                           type: array
                           x-kubernetes-list-map-keys:
                             - name
                           x-kubernetes-list-type: map
                         placement:
-                          description: Placement configures scheduling of the Airlock Microgateway Engine pod.
+                          description: placement configures scheduling of the Airlock Microgateway Engine pod.
                           properties:
                             affinity:
-                              description: Affinity specifies affinity and anti-affinity rules for the Airlock Microgateway Engine pods.
+                              description: affinity specifies affinity and anti-affinity rules for the Airlock Microgateway Engine pods.
                               properties:
                                 nodeAffinity:
                                   description: Describes node affinity scheduling rules for the pod.
@@ -861,8 +1174,8 @@ spec:
                                         most preferred is the one with the greatest sum of weights, i.e.
                                         for each node that meets all of the scheduling requirements (resource
                                         request, requiredDuringScheduling anti-affinity expressions, etc.),
-                                        compute a sum by iterating through the elements of this field and adding
-                                        "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the
+                                        compute a sum by iterating through the elements of this field and subtracting
+                                        "weight" from the sum if the node has pods which matches the corresponding podAffinityTerm; the
                                         node(s) with the highest sum are the most preferred.
                                       items:
                                         description: The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
@@ -1195,10 +1508,11 @@ spec:
                             nodeSelector:
                               additionalProperties:
                                 type: string
-                              description: NodeSelector is a selector which must be true for the Airlock Microgateway Engine pods to fit on a node.
+                              description: nodeSelector is a selector which must be true for the Airlock Microgateway Engine pods to fit on a node.
                               type: object
+                              x-kubernetes-map-type: atomic
                             tolerations:
-                              description: Tolerations allows scheduling of Airlock Microgateway Engine pods on tainted nodes.
+                              description: tolerations allows scheduling of Airlock Microgateway Engine pods on tainted nodes.
                               items:
                                 description: |-
                                   The pod this Toleration is attached to tolerates any taint that matches
@@ -1235,10 +1549,12 @@ spec:
                                       If the operator is Exists, the value should be empty, otherwise just a regular string.
                                     type: string
                                 type: object
+                              maxItems: 64
                               type: array
+                              x-kubernetes-list-type: atomic
                             topologySpreadConstraints:
                               description: |-
-                                TopologySpreadConstraints describes how the Airlock Microgateway Engine pods ought to spread across topology domains (e.g., nodes, zones).
+                                topologySpreadConstraints describes how the Airlock Microgateway Engine pods ought to spread across topology domains (e.g., nodes, zones).
                                 If the label selector of the constraints is undefined, the label selector of the deployment will be used instead.
                               items:
                                 description: TopologySpreadConstraint specifies how to spread matching pods among the given topology.
@@ -1408,17 +1724,21 @@ spec:
                                   - topologyKey
                                   - whenUnsatisfiable
                                 type: object
+                              maxItems: 64
                               type: array
+                              x-kubernetes-list-map-keys:
+                                - topologyKey
+                              x-kubernetes-list-type: map
                           type: object
                         replicas:
                           default: 2
-                          description: Replicas sets the number of Gateway Deployment replicas.
+                          description: replicas sets the number of Gateway Deployment replicas.
                           format: int32
                           minimum: 1
                           type: integer
                         strategy:
                           description: |-
-                            Strategy configures the deployment strategy which is used to replace existing Airlock Microgateway Engine pods with new ones.
+                            strategy configures the deployment strategy which is used to replace existing Airlock Microgateway Engine pods with new ones.
                             If undefined, default settings (RollingUpdate) are applied.
                           properties:
                             rollingUpdate:
@@ -1465,7 +1785,7 @@ spec:
                               type: string
                           type: object
                         volumes:
-                          description: Volumes specify the list of Kubernetes Volumes that can be mounted by EngineContainer belonging to the Gateway deployment.
+                          description: volumes specify the list of Kubernetes Volumes that can be mounted by EngineContainer belonging to the Gateway deployment.
                           items:
                             description: Volume represents a named volume in a pod that may be accessed by any container in the pod.
                             properties:
@@ -2105,15 +2425,13 @@ spec:
                                               volumeAttributesClassName may be used to set the VolumeAttributesClass used by this claim.
                                               If specified, the CSI driver will create or update the volume with the attributes defined
                                               in the corresponding VolumeAttributesClass. This has a different purpose than storageClassName,
-                                              it can be changed after the claim is created. An empty string value means that no VolumeAttributesClass
-                                              will be applied to the claim but it's not allowed to reset this field to empty string once it is set.
-                                              If unspecified and the PersistentVolumeClaim is unbound, the default VolumeAttributesClass
-                                              will be set by the persistentvolume controller if it exists.
+                                              it can be changed after the claim is created. An empty string or nil value indicates that no
+                                              VolumeAttributesClass will be applied to the claim. If the claim enters an Infeasible error state,
+                                              this field can be reset to its previous value (including nil) to cancel the modification.
                                               If the resource referred to by volumeAttributesClass does not exist, this PersistentVolumeClaim will be
                                               set to a Pending state, as reflected by the modifyVolumeStatus field, until such as a resource
                                               exists.
                                               More info: https://kubernetes.io/docs/concepts/storage/volume-attributes-classes/
-                                              (Beta) Using this field requires the VolumeAttributesClass feature gate to be enabled (off by default).
                                             type: string
                                           volumeMode:
                                             description: |-
@@ -2287,12 +2605,9 @@ spec:
                                 description: |-
                                   glusterfs represents a Glusterfs mount on the host that shares a pod's lifetime.
                                   Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported.
-                                  More info: https://examples.k8s.io/volumes/glusterfs/README.md
                                 properties:
                                   endpoints:
-                                    description: |-
-                                      endpoints is the endpoint name that details Glusterfs topology.
-                                      More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
+                                    description: endpoints is the endpoint name that details Glusterfs topology.
                                     type: string
                                   path:
                                     description: |-
@@ -2371,7 +2686,7 @@ spec:
                                 description: |-
                                   iscsi represents an ISCSI Disk resource that is attached to a
                                   kubelet's host machine and then exposed to the pod.
-                                  More info: https://examples.k8s.io/volumes/iscsi/README.md
+                                  More info: https://kubernetes.io/docs/concepts/storage/volumes/#iscsi
                                 properties:
                                   chapAuthDiscovery:
                                     description: chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
@@ -2761,6 +3076,110 @@ spec:
                                               type: array
                                               x-kubernetes-list-type: atomic
                                           type: object
+                                        podCertificate:
+                                          description: |-
+                                            Projects an auto-rotating credential bundle (private key and certificate
+                                            chain) that the pod can use either as a TLS client or server.
+
+                                            Kubelet generates a private key and uses it to send a
+                                            PodCertificateRequest to the named signer.  Once the signer approves the
+                                            request and issues a certificate chain, Kubelet writes the key and
+                                            certificate chain to the pod filesystem.  The pod does not start until
+                                            certificates have been issued for each podCertificate projected volume
+                                            source in its spec.
+
+                                            Kubelet will begin trying to rotate the certificate at the time indicated
+                                            by the signer using the PodCertificateRequest.Status.BeginRefreshAt
+                                            timestamp.
+
+                                            Kubelet can write a single file, indicated by the credentialBundlePath
+                                            field, or separate files, indicated by the keyPath and
+                                            certificateChainPath fields.
+
+                                            The credential bundle is a single file in PEM format.  The first PEM
+                                            entry is the private key (in PKCS#8 format), and the remaining PEM
+                                            entries are the certificate chain issued by the signer (typically,
+                                            signers will return their certificate chain in leaf-to-root order).
+
+                                            Prefer using the credential bundle format, since your application code
+                                            can read it atomically.  If you use keyPath and certificateChainPath,
+                                            your application must make two separate file reads. If these coincide
+                                            with a certificate rotation, it is possible that the private key and leaf
+                                            certificate you read may not correspond to each other.  Your application
+                                            will need to check for this condition, and re-read until they are
+                                            consistent.
+
+                                            The named signer controls chooses the format of the certificate it
+                                            issues; consult the signer implementation's documentation to learn how to
+                                            use the certificates it issues.
+                                          properties:
+                                            certificateChainPath:
+                                              description: |-
+                                                Write the certificate chain at this path in the projected volume.
+
+                                                Most applications should use credentialBundlePath.  When using keyPath
+                                                and certificateChainPath, your application needs to check that the key
+                                                and leaf certificate are consistent, because it is possible to read the
+                                                files mid-rotation.
+                                              type: string
+                                            credentialBundlePath:
+                                              description: |-
+                                                Write the credential bundle at this path in the projected volume.
+
+                                                The credential bundle is a single file that contains multiple PEM blocks.
+                                                The first PEM block is a PRIVATE KEY block, containing a PKCS#8 private
+                                                key.
+
+                                                The remaining blocks are CERTIFICATE blocks, containing the issued
+                                                certificate chain from the signer (leaf and any intermediates).
+
+                                                Using credentialBundlePath lets your Pod's application code make a single
+                                                atomic read that retrieves a consistent key and certificate chain.  If you
+                                                project them to separate files, your application code will need to
+                                                additionally check that the leaf certificate was issued to the key.
+                                              type: string
+                                            keyPath:
+                                              description: |-
+                                                Write the key at this path in the projected volume.
+
+                                                Most applications should use credentialBundlePath.  When using keyPath
+                                                and certificateChainPath, your application needs to check that the key
+                                                and leaf certificate are consistent, because it is possible to read the
+                                                files mid-rotation.
+                                              type: string
+                                            keyType:
+                                              description: |-
+                                                The type of keypair Kubelet will generate for the pod.
+
+                                                Valid values are "RSA3072", "RSA4096", "ECDSAP256", "ECDSAP384",
+                                                "ECDSAP521", and "ED25519".
+                                              type: string
+                                            maxExpirationSeconds:
+                                              description: |-
+                                                maxExpirationSeconds is the maximum lifetime permitted for the
+                                                certificate.
+
+                                                Kubelet copies this value verbatim into the PodCertificateRequests it
+                                                generates for this projection.
+
+                                                If omitted, kube-apiserver will set it to 86400(24 hours). kube-apiserver
+                                                will reject values shorter than 3600 (1 hour).  The maximum allowable
+                                                value is 7862400 (91 days).
+
+                                                The signer implementation is then free to issue a certificate with any
+                                                lifetime *shorter* than MaxExpirationSeconds, but no shorter than 3600
+                                                seconds (1 hour).  This constraint is enforced by kube-apiserver.
+                                                `kubernetes.io` signers will never issue certificates with a lifetime
+                                                longer than 24 hours.
+                                              format: int32
+                                              type: integer
+                                            signerName:
+                                              description: Kubelet's generated CSRs will be addressed to this signer.
+                                              type: string
+                                          required:
+                                            - keyType
+                                            - signerName
+                                          type: object
                                         secret:
                                           description: secret information about the secret data to project
                                           properties:
@@ -2890,7 +3309,6 @@ spec:
                                 description: |-
                                   rbd represents a Rados Block Device mount on the host that shares a pod's lifetime.
                                   Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported.
-                                  More info: https://examples.k8s.io/volumes/rbd/README.md
                                 properties:
                                   fsType:
                                     description: |-
@@ -3170,17 +3588,17 @@ spec:
                           x-kubernetes-list-type: map
                       type: object
                     service:
-                      description: Service configures the Kubernetes Service provisioned for the Gateway.
+                      description: service configures the Kubernetes Service provisioned for the Gateway.
                       properties:
                         allocateLoadBalancerNodePorts:
                           description: |-
-                            AllocateLoadBalancerNodePorts defines if NodePorts will be automatically allocated for services with type LoadBalancer.
+                            allocateLoadBalancerNodePorts defines if NodePorts will be automatically allocated for services with type LoadBalancer.
                             If undefined, the default is `true`. It may be set to `false` if the cluster load-balancer does not rely on NodePorts.
                           type: boolean
                         annotations:
                           additionalProperties:
                             type: string
-                          description: Annotations specifies additional annotations for the Service, e.g., for configuring cloud LoadBalancers.
+                          description: annotations specifies additional annotations for the Service, e.g., for configuring cloud LoadBalancers.
                           maxProperties: 8
                           type: object
                           x-kubernetes-validations:
@@ -3192,7 +3610,7 @@ spec:
                               rule: self.all(key, size(self[key]) <= 4096)
                         externalTrafficPolicy:
                           description: |-
-                            ExternalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses (NodePorts, and LoadBalancer IPs). Meaning of the possible values:
+                            externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses (NodePorts, and LoadBalancer IPs). Meaning of the possible values:
                             _Local_: preserves the source IP of the traffic by routing only to endpoints on the same node as the traffic was received on (dropping the traffic if there are no local endpoints).
                             _Cluster_: routes traffic to all endpoints. Be aware that this may break client IP detection and dependent features (e.g., deny rule exceptions or access control policies with request conditions matching remote IPs).
                             If undefined, the `Local` policy is applied.
@@ -3202,7 +3620,7 @@ spec:
                           type: string
                         type:
                           default: ClusterIP
-                          description: Type specifies the type of Kubernetes Service.
+                          description: type specifies the type of Kubernetes Service.
                           enum:
                             - ClusterIP
                             - NodePort
@@ -3216,11 +3634,11 @@ spec:
                           rule: '!has(self.allocateLoadBalancerNodePorts) || self.type == "LoadBalancer"'
                   type: object
                 logging:
-                  description: Logging specifies Envoy system logging settings for the Gateway.
+                  description: logging specifies Envoy system logging settings for the Gateway.
                   properties:
                     level:
                       default: info
-                      description: Level specifies the logging level for the Envoy system logs of the Airlock Microgateway Engine.
+                      description: level specifies the logging level for the Envoy system logs of the Airlock Microgateway Engine.
                       enum:
                         - "off"
                         - critical

@@ -146,7 +146,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "A"
@@ -227,7 +227,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -292,7 +292,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total 1xx Requests",
               "range": true,
               "refId": "Total 1xx Requests"
@@ -357,7 +357,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total 2xx Requests",
               "range": true,
               "refId": "Total 2xx Requests"
@@ -433,7 +433,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total 3xx Requests",
               "range": true,
               "refId": "Total 3xx Requests"
@@ -513,7 +513,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total 4xx Requests",
               "range": true,
               "refId": "Total 4xx Requests"
@@ -593,7 +593,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total 5xx Requests",
               "range": true,
               "refId": "Total 5xx Requests"
@@ -735,7 +735,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -747,7 +747,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]) or on() vector(0))/\nsum (rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum (rate(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]) or on() vector(0))/\nsum (rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -889,7 +889,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "legendFormat": "25th Percentile",
               "range": true,
               "refId": "25th Percentile"
@@ -900,7 +900,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "50th Percentile",
@@ -913,7 +913,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "95th Percentile",
@@ -1010,7 +1010,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "1xx Requests per second",
               "range": true,
@@ -1105,7 +1105,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "3xx Requests per second",
               "range": true,
@@ -1201,7 +1201,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "2xx Requests per second",
               "range": true,
@@ -1297,7 +1297,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "4xx Requests per second",
               "range": true,
@@ -1393,7 +1393,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "5xx Requests per second",
               "range": true,
@@ -1472,7 +1472,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum(increase(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Total Connections",
               "range": true,
               "refId": "Total Connections"
@@ -1537,7 +1537,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum(increase(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Data received",
               "range": true,
               "refId": "Data received"
@@ -1602,7 +1602,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum(increase(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Data sent",
               "range": true,
               "refId": "Data sent"
@@ -1697,7 +1697,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "Connections per second",
               "range": true,
@@ -1838,7 +1838,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "legendFormat": "25th Percentile",
               "range": true,
               "refId": "25th Percentile"
@@ -1849,7 +1849,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "50th Percentile",
@@ -1862,7 +1862,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "95th Percentile",
@@ -1959,7 +1959,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Data received",
@@ -2056,7 +2056,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "legendFormat": "Data sent",
               "range": true,
               "refId": "Data sent"
@@ -2197,6 +2197,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-downstreammetrics

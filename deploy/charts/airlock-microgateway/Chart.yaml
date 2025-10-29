@@ -3,14 +3,14 @@ name: microgateway
 description: A Helm chart for deploying the Airlock Microgateway
 type: application
 home: https://www.airlock.com/en/microgateway
-version: "4.7.3"
-appVersion: "4.7.3"
+version: "4.8.0-alpha1"
+appVersion: "4.8.0-alpha1"
 annotations:
   charts.openshift.io/name: Airlock Microgateway
   artifacthub.io/category: security
   artifacthub.io/links: |
     - name: Airlock Microgateway Documentation
-      url: https://docs.airlock.com/microgateway/4.7/
+      url: https://docs.airlock.com/microgateway/4.8/
     - name: Airlock Microgateway Labs
       url: https://airlock.instruqt.com/pages/airlock-microgateway-labs
     - name: Airlock Microgateway Forum
@@ -38,4 +38,4 @@ maintainers:
   - email: support@airlock.com
     name: Airlock
     url: https://www.airlock.com/
-kubeVersion: ">=1.25.0-0"
+kubeVersion: ">=1.29.0-0"

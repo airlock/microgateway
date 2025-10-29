@@ -123,7 +123,7 @@ tests:
           path: data["session_agent_container_template.yaml"]
           pattern: "imagePullPolicy: Always"
 
-  - it: should set grpc liveness/readiness probe for session-agent if kubeversion >= 1.27.0
+  - it: should set grpc liveness/readiness probe for session-agent
     capabilities:
       majorVersion: 1
       minorVersion: 27
@@ -140,25 +140,6 @@ tests:
           pattern: |-
             readinessProbe:
             \s*grpc:
-            \s* port: 19004
-
-  - it: should set tcp liveness/readiness probe for session-agent if kubeversion < 1.27.0
-    capabilities:
-      majorVersion: 1
-      minorVersion: 26
-    asserts:
-      - matchRegex:
-          path: data["session_agent_container_template.yaml"]
-          pattern: |-
-            livenessProbe:
-            \s*tcpSocket:
-            \s* port: 19004
-
-      - matchRegex:
-          path: data["session_agent_container_template.yaml"]
-          pattern: |-
-            readinessProbe:
-            \s*tcpSocket:
             \s* port: 19004
 
   - it: should set imagePullPolicy for network-validator container in configmap

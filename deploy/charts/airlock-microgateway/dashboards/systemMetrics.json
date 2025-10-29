@@ -1303,7 +1303,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(microgateway_build_info{gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"},pod)",
+        "definition": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
         "description": "Allows to select the pod to display the system metrics for.",
         "hide": 2,
         "includeAll": true,
@@ -1312,12 +1312,12 @@
         "name": "pod",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(microgateway_build_info{gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"},pod)",
+          "qryType": 3,
+          "query": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
-        "regex": "",
+        "regex": "/pod=\"([^\"]+)\"/",
         "type": "query"
       }
     ]
@@ -1330,6 +1330,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway System - Metrics",
   "uid": "ceg3c5leab4ddfzkd",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

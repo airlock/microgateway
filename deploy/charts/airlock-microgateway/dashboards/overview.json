@@ -894,7 +894,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                    "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                     "instant": false,
                     "legendFormat": "25th Percentile",
                     "range": true,
@@ -906,7 +906,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                    "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "50th Percentile",
@@ -919,7 +919,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\",gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                    "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\",gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "95th Percentile",

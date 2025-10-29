@@ -19,8 +19,6 @@ data:
             # disable the new JSON formatter as it is not omitting empty fields
             # see https://github.com/envoyproxy/envoy/issues/37941
             envoy.reloadable_features.logging_with_fast_json_formatter: false
-            # disable the new http2 codec
-            envoy.reloadable_features.http2_use_oghttp2: false
     admin:
       address:
         socket_address:
@@ -49,6 +47,7 @@ data:
     static_resources:
       listeners:
       - name: probe
+        stat_prefix: probe
         address:
           socket_address:
             address: 0.0.0.0
@@ -85,6 +84,7 @@ data:
                 typed_config:
                   '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       - name: metrics
+        stat_prefix: metrics
         address:
           socket_address:
             address: 0.0.0.0
@@ -123,9 +123,13 @@ data:
                         '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       clusters:
       - name: xds_cluster
+        cluster_type:
+          name: envoy.clusters.dns
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.clusters.dns.v3.DnsCluster
+            all_addresses_in_single_endpoint: false
+            respect_dns_ttl: true
         connect_timeout: 1s
-        type: STRICT_DNS
-        respect_dns_ttl: true
         load_assignment:
           cluster_name: xds_cluster
           endpoints:
@@ -310,6 +314,8 @@ data:
     args:
       - "--port"
       - "19004"
+      - "--metrics-port"
+      - "19005"
       - "--config-path"
       - "/app/config/config.json"
     volumeMounts:
@@ -329,40 +335,26 @@ data:
             fieldPath: metadata.namespace
     ports:
       - containerPort: 19004
+      - containerPort: 19005
     livenessProbe:
-      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
       grpc:
         port: 19004
-      {{- else }}
-      tcpSocket:
-        port: 19004
-      {{- end }}
       initialDelaySeconds: 0
       periodSeconds: 10
       failureThreshold: 3
       successThreshold: 1
       timeoutSeconds: 2
     readinessProbe:
-      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
       grpc:
         port: 19004
-      {{- else }}
-      tcpSocket:
-        port: 19004
-      {{- end }}
       initialDelaySeconds: 0
       periodSeconds: 5
       failureThreshold: 3
       successThreshold: 1
       timeoutSeconds: 1
     startupProbe:
-      {{- if (semverCompare ">=1.27 || >=1.27.1-0" .Capabilities.KubeVersion.Version)}}
       grpc:
         port: 19004
-      {{- else }}
-      tcpSocket:
-        port: 19004
-      {{- end }}
       initialDelaySeconds: 0
       periodSeconds: 1
       failureThreshold: 30

@@ -897,7 +897,7 @@ data:
                             "uid": "${DS_PROMETHEUS}"
                         },
                         "editorMode": "code",
-                        "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                        "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                         "instant": false,
                         "legendFormat": "25th Percentile",
                         "range": true,
@@ -909,7 +909,7 @@ data:
                             "uid": "${DS_PROMETHEUS}"
                         },
                         "editorMode": "code",
-                        "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                        "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                         "hide": false,
                         "instant": false,
                         "legendFormat": "50th Percentile",
@@ -922,7 +922,7 @@ data:
                             "uid": "${DS_PROMETHEUS}"
                         },
                         "editorMode": "code",
-                        "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\",gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+                        "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\",gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                         "hide": false,
                         "instant": false,
                         "legendFormat": "95th Percentile",
@@ -1277,6 +1277,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-overview

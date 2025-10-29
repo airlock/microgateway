@@ -2,11 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: jwts.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -26,7 +25,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: JWT configures client authentication via a JSON Web Token.
+        description: JWT defines client authentication via a JSON Web Token.
         properties:
           apiVersion:
             description: |-
@@ -46,92 +45,101 @@ spec:
           metadata:
             type: object
           spec:
-            description: Specification of the JWT authentication.
+            description: spec defines the desired JWT authentication configuration.
             properties:
               clockSkewTolerance:
                 default: 60s
-                description: ClockSkewTolerance specifies the maximum allowed clock
+                description: clockSkewTolerance specifies the maximum allowed clock
                   skew when verifying JWT time constraints (such as `exp` or `nbf`).
                 type: string
               expirationRequired:
                 description: |-
-                  ExpirationRequired specifies whether the `exp` claim is mandatory.
+                  expirationRequired specifies whether the `exp` claim is mandatory.
                   If set to true and the extracted JWT does not contain a valid `exp` claim, the request will be blocked.
                 type: boolean
               extractionSources:
                 description: |-
-                  ExtractionSources defines possible JWT sources. The JWT is extracted from the first source (in list order) that is present in the request.
+                  extractionSources defines possible JWT sources. The JWT is extracted from the first source (in list order) that is present in the request.
                   If not specified, the JWT is extracted from the Authorization (Bearer) header.
                 items:
                   properties:
                     bearerToken:
-                      description: BearerToken specifies to extract the bearer token
+                      description: bearerToken specifies to extract the bearer token
                         from the Authorization header.
                       type: object
                     cookie:
-                      description: Cookie from which to extract the token.
+                      description: cookie from which to extract the token.
                       properties:
                         name:
-                          description: Name of the cookie.
+                          description: name of the cookie.
+                          maxLength: 256
                           minLength: 1
                           type: string
                       required:
                       - name
                       type: object
                     header:
-                      description: Header from which to extract the token.
+                      description: header from which to extract the token.
                       properties:
                         name:
-                          description: Name of the header (case-insensitive).
+                          description: name of the header (case-insensitive).
+                          maxLength: 256
                           minLength: 1
                           type: string
                       required:
                       - name
                       type: object
                     queryParameter:
-                      description: QueryParameter from which to extract the token.
+                      description: queryParameter from which to extract the token.
                       properties:
                         name:
-                          description: Name of the parameter.
+                          description: name of the parameter.
+                          maxLength: 256
                           minLength: 1
                           type: string
                       required:
                       - name
                       type: object
                   type: object
+                maxItems: 16
                 minItems: 1
                 type: array
+                x-kubernetes-list-type: atomic
               maxLifetime:
                 description: |-
-                  MaxLifetime specifies the maximum allowed token lifetime.
+                  maxLifetime specifies the maximum allowed token lifetime.
                   If set, JWTs with a lifetime (`exp` - `nbf`, or `exp` - `iat` if no `nbf`) greater than this value and JWTs without the necessary claims (`exp` and `nbf` or `iat`) will be considered invalid and the corresponding request will be blocked.
                 type: string
               requireAny:
                 description: |-
-                  RequireAny defines a list of requirements of which at least one must be satisfied by the extracted JWT.
+                  requireAny defines a list of requirements of which at least one must be satisfied by the extracted JWT.
                   A JWT satisfies a requirement (list entry) if it is verifiable by the entry's JWKS and matches all additional specified matchers (e.g. `issuer`, `audiences`).
                 items:
                   properties:
                     audiences:
-                      description: Audiences specifies the accepted token audiences.
+                      description: audiences specifies the accepted token audiences.
                         If specified, the JWT's `aud` claim must contain at least
                         one of these audiences.
                       items:
+                        maxLength: 1024
                         minLength: 1
                         type: string
+                      maxItems: 64
                       minItems: 1
                       type: array
+                      x-kubernetes-list-type: set
                     issuer:
-                      description: Issuer specifies the accepted issuer. If specified,
+                      description: issuer specifies the accepted issuer. If specified,
                         the JWT's `iss` claim must match this value.
+                      maxLength: 1024
                       minLength: 1
                       type: string
                     jwksRef:
-                      description: JWKSRef selects the JWKS used to verify the token
+                      description: jwksRef selects the JWKS used to verify the token
                         signature.
                       properties:
                         name:
-                          description: Name of the resource
+                          description: name of the resource
                           maxLength: 253
                           minLength: 1
                           type: string
@@ -139,7 +147,7 @@ spec:
                       - name
                       type: object
                     subject:
-                      description: Subject matches the accepted token subjects. If
+                      description: subject matches the accepted token subjects. If
                         specified, the JWT's `sub` claim must match.
                       properties:
                         matcher:
@@ -147,39 +155,44 @@ spec:
                           properties:
                             contains:
                               description: |-
-                                Contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
                                 Only one of exact, prefix, suffix, regex or contains can be set.
+                              maxLength: 1024
                               minLength: 1
                               type: string
                             exact:
                               description: |-
-                                Exact defines an explicit match on the string specified here.
+                                exact defines an explicit match on the string specified here.
                                 Only one of exact, prefix, suffix, regex or contains can be set.
+                              maxLength: 1024
                               minLength: 1
                               type: string
                             ignoreCase:
                               default: false
-                              description: IgnoreCase indicates whether the matching
+                              description: ignoreCase indicates whether the matching
                                 should be case-insensitive. In case of a regex match,
                                 the regex gets wrapped with a group `(?i:...)`.
                               type: boolean
                             prefix:
                               description: |-
-                                Prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
                                 Only one of exact, prefix, suffix, regex or contains can be set.
+                              maxLength: 1024
                               minLength: 1
                               type: string
                             regex:
                               description: |-
-                                Regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                 The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                 Only one of exact, prefix, suffix, regex or contains can be set.
+                              maxLength: 1024
                               minLength: 1
                               type: string
                             suffix:
                               description: |-
-                                Suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
                                 Only one of exact, prefix, suffix, regex or contains can be set.
+                              maxLength: 1024
                               minLength: 1
                               type: string
                           type: object
@@ -189,8 +202,10 @@ spec:
                   required:
                   - jwksRef
                   type: object
+                maxItems: 128
                 minItems: 1
                 type: array
+                x-kubernetes-list-type: atomic
             required:
             - expirationRequired
             - requireAny

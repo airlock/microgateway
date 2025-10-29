@@ -2,11 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: identitypropagations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -26,7 +25,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: IdentityPropagation specifies the desired identity propagation.
+        description: IdentityPropagation defines an identity propagation operation.
         properties:
           apiVersion:
             description: |-
@@ -46,36 +45,100 @@ spec:
           metadata:
             type: object
           spec:
-            description: Specification of the desired identity propagation.
+            description: spec defines the desired identity propagation.
             properties:
               bearerToken:
-                description: BearerToken configures identity propagation via an authorization
+                description: bearerToken configures identity propagation via an authorization
                   header containing a bearer token.
                 properties:
                   source:
-                    description: Source from which to extract the token.
+                    description: source from which to extract the token.
                     properties:
+                      clientCertificate:
+                        description: clientCertificate specifies to extract a value
+                          from the presented client certificate.
+                        properties:
+                          issuer:
+                            description: issuer specifies to extract the value from
+                              the presented client certificate's issuer.
+                            properties:
+                              field:
+                                description: |-
+                                  field specifies the field to extract as value.
+                                  If the certificate contains multiple occurrences of the field, all their values are joined into a comma-separated list.
+                                enum:
+                                - CommonName
+                                - Organization
+                                - OrganizationalUnit
+                                - Country
+                                - State
+                                - Locality
+                                type: string
+                            required:
+                            - field
+                            type: object
+                          san:
+                            description: san specifies to extract the value from the
+                              presented client certificate's subject alternative names.'
+                            properties:
+                              type:
+                                description: |-
+                                  type specifies to extract subject alternative names with this type.
+                                  If there are multiple such SANs, they are joined into a comma-separated list.
+                                enum:
+                                - DNS
+                                - Email
+                                - URI
+                                - IPAddress
+                                type: string
+                            required:
+                            - type
+                            type: object
+                          subject:
+                            description: subject specifies to extract the value from
+                              the presented client certificate's subject.
+                            properties:
+                              field:
+                                description: |-
+                                  field specifies the field to extract as value.
+                                  If the certificate contains multiple occurrences of the field, all their values are joined into a comma-separated list.
+                                enum:
+                                - CommonName
+                                - Organization
+                                - OrganizationalUnit
+                                - Country
+                                - State
+                                - Locality
+                                type: string
+                            required:
+                            - field
+                            type: object
+                        type: object
                       jwt:
-                        description: JWT specifies to extract a value from a JWT.
+                        description: jwt specifies to extract a value from a JWT.
                         properties:
                           claim:
-                            description: The JWT claim to extract as value. If omitted,
-                              the entire JWT will be used as value.
+                            description: claim specifies the JWT claim to extract
+                              as value. If omitted, the entire JWT will be used as
+                              value.
+                            maxLength: 1024
                             minLength: 1
                             type: string
                         type: object
                       metadata:
-                        description: Metadata specifies to extract a value from an
+                        description: metadata specifies to extract a value from an
                           Envoy dynamic filter metadata key.
                         properties:
                           key:
-                            description: Key specifies the metadata key from which
+                            description: key specifies the metadata key from which
                               to load the value, e.g. `some_payload.aud`.
+                            maxLength: 1024
                             minLength: 1
                             type: string
                           namespace:
-                            description: Namespace specifies the metadata namespace
+                            description: namespace specifies the metadata namespace
                               within which the lookup should be performed, e.g. `envoy.filters.http.jwt_authn`.
+                            maxLength: 1024
                             minLength: 1
                             type: string
                         required:
@@ -83,20 +146,21 @@ spec:
                         - namespace
                         type: object
                       oidc:
-                        description: OIDC specifies to extract a value from the result
+                        description: oidc specifies to extract a value from the result
                           of an OpenID Connect flow.
                         properties:
                           accessToken:
-                            description: AccessToken specifies to extract the value
+                            description: accessToken specifies to extract the value
                               from the OpenID Connect Access Token.
                             type: object
                           idToken:
-                            description: IDToken specifies to extract the value from
+                            description: idToken specifies to extract the value from
                               the OpenID Connect ID Token.
                             properties:
                               claim:
-                                description: Claim selects the JWT claim from which
-                                  to extract the value.
+                                description: claim specifies the JWT claim to extract
+                                  as value.
+                                maxLength: 1024
                                 minLength: 1
                                 type: string
                             required:
@@ -104,13 +168,14 @@ spec:
                             type: object
                         type: object
                       tokenExchange:
-                        description: TokenExchange specifies to use the token obtained
+                        description: tokenExchange specifies to use the token obtained
                           via token exchange as value.
                         properties:
                           claim:
                             description: |-
-                              Claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                              claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
                               Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
+                            maxLength: 1024
                             minLength: 1
                             type: string
                         type: object
@@ -119,41 +184,107 @@ spec:
                 - source
                 type: object
               header:
-                description: Header configures identity propagation via a request
+                description: header configures identity propagation via a request
                   header.
                 properties:
                   name:
-                    description: Name of the header to set.
+                    description: name of the header to set.
+                    maxLength: 256
                     minLength: 1
                     type: string
                   value:
-                    description: Value to propagate to the application.
+                    description: value to propagate to the application.
                     properties:
                       source:
-                        description: Source from which to extract the value.
+                        description: source from which to extract the value.
                         properties:
+                          clientCertificate:
+                            description: clientCertificate specifies to extract a
+                              value from the presented client certificate.
+                            properties:
+                              issuer:
+                                description: issuer specifies to extract the value
+                                  from the presented client certificate's issuer.
+                                properties:
+                                  field:
+                                    description: |-
+                                      field specifies the field to extract as value.
+                                      If the certificate contains multiple occurrences of the field, all their values are joined into a comma-separated list.
+                                    enum:
+                                    - CommonName
+                                    - Organization
+                                    - OrganizationalUnit
+                                    - Country
+                                    - State
+                                    - Locality
+                                    type: string
+                                required:
+                                - field
+                                type: object
+                              san:
+                                description: san specifies to extract the value from
+                                  the presented client certificate's subject alternative
+                                  names.'
+                                properties:
+                                  type:
+                                    description: |-
+                                      type specifies to extract subject alternative names with this type.
+                                      If there are multiple such SANs, they are joined into a comma-separated list.
+                                    enum:
+                                    - DNS
+                                    - Email
+                                    - URI
+                                    - IPAddress
+                                    type: string
+                                required:
+                                - type
+                                type: object
+                              subject:
+                                description: subject specifies to extract the value
+                                  from the presented client certificate's subject.
+                                properties:
+                                  field:
+                                    description: |-
+                                      field specifies the field to extract as value.
+                                      If the certificate contains multiple occurrences of the field, all their values are joined into a comma-separated list.
+                                    enum:
+                                    - CommonName
+                                    - Organization
+                                    - OrganizationalUnit
+                                    - Country
+                                    - State
+                                    - Locality
+                                    type: string
+                                required:
+                                - field
+                                type: object
+                            type: object
                           jwt:
-                            description: JWT specifies to extract a value from a JWT.
+                            description: jwt specifies to extract a value from a JWT.
                             properties:
                               claim:
-                                description: The JWT claim to extract as value. If
-                                  omitted, the entire JWT will be used as value.
+                                description: claim specifies the JWT claim to extract
+                                  as value. If omitted, the entire JWT will be used
+                                  as value.
+                                maxLength: 1024
                                 minLength: 1
                                 type: string
                             type: object
                           metadata:
-                            description: Metadata specifies to extract a value from
+                            description: metadata specifies to extract a value from
                               an Envoy dynamic filter metadata key.
                             properties:
                               key:
-                                description: Key specifies the metadata key from which
+                                description: key specifies the metadata key from which
                                   to load the value, e.g. `some_payload.aud`.
+                                maxLength: 1024
                                 minLength: 1
                                 type: string
                               namespace:
-                                description: Namespace specifies the metadata namespace
+                                description: namespace specifies the metadata namespace
                                   within which the lookup should be performed, e.g.
                                   `envoy.filters.http.jwt_authn`.
+                                maxLength: 1024
                                 minLength: 1
                                 type: string
                             required:
@@ -161,20 +292,21 @@ spec:
                             - namespace
                             type: object
                           oidc:
-                            description: OIDC specifies to extract a value from the
+                            description: oidc specifies to extract a value from the
                               result of an OpenID Connect flow.
                             properties:
                               accessToken:
-                                description: AccessToken specifies to extract the
+                                description: accessToken specifies to extract the
                                   value from the OpenID Connect Access Token.
                                 type: object
                               idToken:
-                                description: IDToken specifies to extract the value
+                                description: idToken specifies to extract the value
                                   from the OpenID Connect ID Token.
                                 properties:
                                   claim:
-                                    description: Claim selects the JWT claim from
-                                      which to extract the value.
+                                    description: claim specifies the JWT claim to
+                                      extract as value.
+                                    maxLength: 1024
                                     minLength: 1
                                     type: string
                                 required:
@@ -182,13 +314,14 @@ spec:
                                 type: object
                             type: object
                           tokenExchange:
-                            description: TokenExchange specifies to use the token
+                            description: tokenExchange specifies to use the token
                               obtained via token exchange as value.
                             properties:
                               claim:
                                 description: |-
-                                  Claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                  claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
                                   Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
+                                maxLength: 1024
                                 minLength: 1
                                 type: string
                             type: object

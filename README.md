@@ -66,7 +66,7 @@ For an easy start in non-production environments, you may deploy the same cert-m
 ```console
 helm install cert-manager \
   oci://quay.io/jetstack/charts/cert-manager \
-  --version 'v1.18.2' \
+  --version 'v1.19.1' \
   --namespace cert-manager \
   --create-namespace \
   --wait \
@@ -76,7 +76,7 @@ helm install cert-manager \
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -96,7 +96,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
    helm install airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
+     --version '4.8.0-alpha1' \
      -n airlock-microgateway-system \
      --wait \
      --set operator.sidecarGateway.enabled=false \
@@ -107,7 +107,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
    ```console
    helm upgrade airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
+     --version '4.8.0-alpha1' \
      -n airlock-microgateway-system \
      --set tests.enabled=true \
      --reuse-values
@@ -116,7 +116,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 
    helm upgrade airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
+     --version '4.8.0-alpha1' \
      -n airlock-microgateway-system \
      --set tests.enabled=false \
      --reuse-values
@@ -127,7 +127,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.7.3 \
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.8.0-alpha1 \
   --server-side \
   --force-conflicts
 ```

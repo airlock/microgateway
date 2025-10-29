@@ -2,11 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0-alpha1
   name: graphqls.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -22,7 +21,7 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: GraphQL contains the configuration for the GraphQL specification.
+        description: GraphQL defines a policy for enforcing a GraphQL schema.
         properties:
           apiVersion:
             description: |-
@@ -42,34 +41,34 @@ spec:
           metadata:
             type: object
           spec:
-            description: Specification of the desired GraphQL specification.
+            description: spec defines the desired GraphQL schema enforcement configuration.
             properties:
               settings:
-                description: Settings defines the settings to configure GraphQL.
+                description: settings defines the settings to configure GraphQL.
                 properties:
                   allowIntrospection:
                     default: true
-                    description: AllowIntrospection specifies if the introspection
+                    description: allowIntrospection specifies if the introspection
                       system is exposed.
                     type: boolean
                   allowMutations:
                     default: true
-                    description: AllowMutations specifies if mutations are allowed.
+                    description: allowMutations specifies if mutations are allowed.
                     type: boolean
                   schema:
-                    description: Specifies the GraphQL schema.
+                    description: schema specifies the GraphQL schema.
                     properties:
                       source:
-                        description: Source specifies the GraphQL (October 2021 Edition)
+                        description: source specifies the GraphQL (October 2021 Edition)
                           schema to be enforced.
                         properties:
                           configMapRef:
                             description: |-
-                              ConfigMapRef references the configmap by its name containing the well-known key `schema.graphql`. Use the `data` field for plaintext or the `binaryData` for compressed data. Supported compression formats are zstd, gzip or zip.
+                              configMapRef references the configmap by its name containing the well-known key `schema.graphql`. Use the `data` field for plaintext or the `binaryData` for compressed data. Supported compression formats are zstd, gzip or zip.
                               Note: If the provided GraphQL schema is invalid (e.g., due to syntax errors), the Airlock Microgateway Engine will log an error, GraphQL validation will always fail, and requests will be blocked.
                             properties:
                               name:
-                                description: Name of the resource
+                                description: name of the resource
                                 maxLength: 253
                                 minLength: 1
                                 type: string
@@ -82,7 +81,7 @@ spec:
                     type: object
                   threatHandlingMode:
                     default: Block
-                    description: ThreatHandlingMode specifies how threats should be
+                    description: threatHandlingMode specifies how threats should be
                       handled.
                     enum:
                     - Block

@@ -159,6 +159,46 @@ Operator validating webhooks
     service:
       name: airlock-microgateway-operator-webhook
       namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-customresponse
+  failurePolicy: Fail
+  name: validate-customresponse.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - customresponses
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-microgateway-airlock-com-v1alpha1-customresponsepolicy
+  failurePolicy: Fail
+  name: validate-customresponsepolicy.microgateway.airlock.com
+  rules:
+    - apiGroups:
+        - microgateway.airlock.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - customresponsepolicies
+  sideEffects: None
+- admissionReviewVersions:
+    - v1
+  clientConfig:
+    service:
+      name: airlock-microgateway-operator-webhook
+      namespace: '{{ .Release.Namespace }}'
       path: /validate-microgateway-airlock-com-v1alpha1-denyrules
   failurePolicy: Fail
   name: validate-denyrules.microgateway.airlock.com

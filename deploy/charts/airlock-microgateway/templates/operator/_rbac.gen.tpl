@@ -161,6 +161,8 @@ Operator rbac permission rules
     - contentsecurities
     - contentsecuritypolicies
     - csrfprotections
+    - customresponsepolicies
+    - customresponses
     - denyrules
     - envoyclusters
     - envoyextensionpolicies
@@ -189,6 +191,7 @@ Operator rbac permission rules
   resources:
     - accesscontrolpolicies/status
     - contentsecuritypolicies/status
+    - customresponsepolicies/status
     - envoyextensionpolicies/status
   verbs:
     - patch

@@ -1,3 +1,11 @@
+--- DEPRECATED ---
+
+This chart has been deprecated. Microgateway 4.8 is the final release with sidecar support which requires the Airlock Microgateway CNI plugin.
+This release will be supported for 9 months from publication.
+Future Airlock Microgateway releases will only support the sidecarless architecture based on the Kubernetes Gateway API.
+For further information, consider our manual at https://docs.airlock.com/microgateway/{{ include "airlock-microgateway-cni.docsVersion" . }}/index/1725073468781.html
+or if you need further assistance, please contact order@airlock.com.
+
 Thank you for installing Airlock Microgateway CNI.
 
 Please ensure that the helm values'.config.cniNetDir' and '.config.cniBinDir' are configured for your Kubernetes distribution.

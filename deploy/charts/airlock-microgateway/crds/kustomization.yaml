@@ -7,6 +7,8 @@ resources:
 - contentsecurities.microgateway.airlock.com.yaml
 - contentsecuritypolicies.microgateway.airlock.com.yaml
 - csrfprotections.microgateway.airlock.com.yaml
+- customresponsepolicies.microgateway.airlock.com.yaml
+- customresponses.microgateway.airlock.com.yaml
 - denyrules.microgateway.airlock.com.yaml
 - envoyclusters.microgateway.airlock.com.yaml
 - envoyconfigurations.microgateway.airlock.com.yaml

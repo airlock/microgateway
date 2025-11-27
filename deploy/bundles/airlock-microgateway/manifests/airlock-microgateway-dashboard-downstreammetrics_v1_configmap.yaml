@@ -15,6 +15,12 @@ data:
       "__elements": {},
       "__requires": [
         {
+          "type": "panel",
+          "id": "barchart",
+          "name": "Bar chart",
+          "version": ""
+        },
+        {
           "type": "grafana",
           "id": "grafana",
           "name": "Grafana",
@@ -106,7 +112,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "text"
+                    "color": "text",
+                    "value": 0
                   }
                 ]
               },
@@ -146,7 +153,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "A"
@@ -167,6 +174,16 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "text",
+                      "index": 1,
+                      "text": "0%"
+                    }
+                  },
+                  "type": "value"
+                },
                 {
                   "options": {
                     "match": "null+nan",
@@ -227,7 +244,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -292,7 +309,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total 1xx Requests",
               "range": true,
               "refId": "Total 1xx Requests"
@@ -357,7 +374,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total 2xx Requests",
               "range": true,
               "refId": "Total 2xx Requests"
@@ -433,7 +450,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total 3xx Requests",
               "range": true,
               "refId": "Total 3xx Requests"
@@ -513,7 +530,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total 4xx Requests",
               "range": true,
               "refId": "Total 4xx Requests"
@@ -593,7 +610,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total 5xx Requests",
               "range": true,
               "refId": "Total 5xx Requests"
@@ -735,7 +752,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -747,7 +764,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]) or on() vector(0))/\nsum (rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum (rate(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]) or on() vector(0))/\nsum (rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -889,7 +906,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "legendFormat": "25th Percentile",
               "range": true,
               "refId": "25th Percentile"
@@ -900,7 +917,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "50th Percentile",
@@ -913,7 +930,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "95th Percentile",
@@ -1010,7 +1027,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "1xx Requests per second",
               "range": true,
@@ -1105,7 +1122,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "3xx Requests per second",
               "range": true,
@@ -1201,7 +1218,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "2xx Requests per second",
               "range": true,
@@ -1297,7 +1314,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "4xx Requests per second",
               "range": true,
@@ -1393,7 +1410,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "5xx Requests per second",
               "range": true,
@@ -1411,9 +1428,9 @@ data:
             "x": 0,
             "y": 38
           },
-          "id": 23,
+          "id": 35,
           "panels": [],
-          "title": "Downstream Connection Metrics",
+          "title": "Downstream TLS Connection Metrics",
           "type": "row"
         },
         {
@@ -1421,7 +1438,7 @@ data:
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Number of connections from downstream clients.",
+          "description": "Number of successful TLS handshakes from downstream clients.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1432,7 +1449,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "text"
+                    "color": "text",
+                    "value": 0
                   }
                 ]
               },
@@ -1445,6 +1463,879 @@ data:
             "w": 5,
             "x": 0,
             "y": 39
+          },
+          "id": 36,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "round(sum(increase(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "legendFormat": "TLS Connection Handshakes",
+              "range": true,
+              "refId": "TLS Connection Handshakes"
+            }
+          ],
+          "title": "TLS Connection Handshakes",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Percentage of downstream TLS connection errors (does not include failed certificate verifications).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "text",
+                      "index": 1,
+                      "text": "0%"
+                    }
+                  },
+                  "type": "value"
+                },
+                {
+                  "options": {
+                    "match": "null+nan",
+                    "result": {
+                      "color": "text",
+                      "index": 0,
+                      "text": "0%"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "orange",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 5,
+            "y": 39
+          },
+          "id": 37,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "sum (increase(envoy_listener_ssl_connection_error{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "legendFormat": "TLS Connection Error Rate",
+              "range": true,
+              "refId": "TLS Connection Error Rate"
+            }
+          ],
+          "title": "TLS Connection Error Rate",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Number of downstream TLS connection errors (does not include failed certificate verifications).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null+nan",
+                    "result": {
+                      "index": 0,
+                      "text": "0"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 10,
+            "y": 39
+          },
+          "id": 39,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "round(sum (increase(envoy_listener_ssl_connection_error{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "legendFormat": "TLS Connection Errors",
+              "range": true,
+              "refId": "TLS Connection Errors"
+            }
+          ],
+          "title": "TLS Connection Errors",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "TLS connection handshakes and number of TLS connection errors per second.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 25,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "TLS connection errors per second",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "TLS connection errors per second"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.stacking",
+                    "value": {
+                      "group": "A",
+                      "mode": "none"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "TLS handshakes per second"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 44
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "hide": false,
+              "legendFormat": "TLS handshakes per second",
+              "range": true,
+              "refId": "TLS handshakes per second"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(envoy_listener_ssl_connection_error{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "TLS connection errors per second",
+              "range": true,
+              "refId": "TLS connection errors per second"
+            }
+          ],
+          "title": "TLS Connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "TLS protocols by versions used in successful TLS connections.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 53
+          },
+          "id": 34,
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.8,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "hideZeros": false,
+              "maxHeight": 600,
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "Field",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "round(sum by (envoy_ssl_version) (increase(envoy_listener_ssl_versions{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "TLS Protocols"
+            }
+          ],
+          "title": "TLS Protocols",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "labelsToFields": false,
+                "reducers": [
+                  "lastNotNull"
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Last *": "# Observations"
+                }
+              }
+            }
+          ],
+          "type": "barchart"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "TLS signature algorithms used in successful mTLS connections.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 53
+          },
+          "id": 40,
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.8,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "Field",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "round(sum by (envoy_ssl_sigalg) (increase(envoy_listener_ssl_sigalgs{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "TLS Signature Algorithms"
+            }
+          ],
+          "title": "TLS Signature Algorithms",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "reducers": [
+                  "lastNotNull"
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Last *": "# Observations"
+                }
+              }
+            }
+          ],
+          "type": "barchart"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "TLS Ciphers used in successful TLS connections.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 61
+          },
+          "id": 33,
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.8,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "hideZeros": false,
+              "maxHeight": 600,
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "Field",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "round(sum by (envoy_ssl_cipher) (increase(envoy_listener_ssl_ciphers{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "TLS Ciphers"
+            }
+          ],
+          "title": "TLS Ciphers",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "labelsToFields": false,
+                "reducers": [
+                  "lastNotNull"
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Last *": "# Observations"
+                }
+              }
+            }
+          ],
+          "type": "barchart"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "TLS Curves used in successful TLS connections.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 61
+          },
+          "id": 38,
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.8,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "hideZeros": false,
+              "maxHeight": 600,
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "Field",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "round(sum by (envoy_ssl_curve) (increase(envoy_listener_ssl_curves{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "TLS Curves"
+            }
+          ],
+          "title": "TLS Curves",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "labelsToFields": false,
+                "reducers": [
+                  "lastNotNull"
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Last *": "# Observations"
+                }
+              }
+            }
+          ],
+          "type": "barchart"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 69
+          },
+          "id": 23,
+          "panels": [],
+          "title": "Downstream TCP Connection Metrics",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Number of newly established TCP connections from downstream clients.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 0,
+            "y": 70
           },
           "id": 26,
           "options": {
@@ -1472,13 +2363,13 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "round(sum(increase(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
               "legendFormat": "Total Connections",
               "range": true,
               "refId": "Total Connections"
             }
           ],
-          "title": "Connections",
+          "title": "TCP Connections",
           "type": "stat"
         },
         {
@@ -1509,7 +2400,7 @@ data:
             "h": 5,
             "w": 5,
             "x": 5,
-            "y": 39
+            "y": 70
           },
           "id": 29,
           "options": {
@@ -1537,7 +2428,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum(increase(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Data received",
               "range": true,
               "refId": "Data received"
@@ -1574,7 +2465,7 @@ data:
             "h": 5,
             "w": 5,
             "x": 10,
-            "y": 39
+            "y": 70
           },
           "id": 28,
           "options": {
@@ -1602,7 +2493,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(increase(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
+              "expr": "sum(increase(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
               "legendFormat": "Data sent",
               "range": true,
               "refId": "Data sent"
@@ -1616,7 +2507,7 @@ data:
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Connections per second from downstream clients.",
+          "description": "Newly established connections per second from downstream clients.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1673,7 +2564,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 44
+            "y": 75
           },
           "id": 1,
           "options": {
@@ -1697,7 +2588,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "legendFormat": "Connections per second",
               "range": true,
@@ -1814,7 +2705,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 44
+            "y": 75
           },
           "id": 8,
           "options": {
@@ -1838,7 +2729,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "legendFormat": "25th Percentile",
               "range": true,
               "refId": "25th Percentile"
@@ -1849,7 +2740,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.5, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "50th Percentile",
@@ -1862,7 +2753,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "95th Percentile",
@@ -1935,7 +2826,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 52
+            "y": 83
           },
           "id": 22,
           "options": {
@@ -1959,7 +2850,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Data received",
@@ -2032,7 +2923,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 52
+            "y": 83
           },
           "id": 5,
           "options": {
@@ -2056,7 +2947,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=\"http\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
+              "expr": "sum(rate(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway_kind=~\"${gateway_kind:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
               "legendFormat": "Data sent",
               "range": true,
               "refId": "Data sent"
@@ -2185,7 +3076,7 @@ data:
       "timezone": "browser",
       "title": "Airlock Microgateway Downstream - Metrics",
       "uid": "aeidgtlu8wqv4c",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -2197,6 +3088,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.7.3
+    app.kubernetes.io/version: 4.8.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-downstreammetrics

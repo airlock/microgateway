@@ -1,6 +1,5 @@
 # Airlock Microgateway
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/airlock-microgateway)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/airlock-microgateway-cni)](https://artifacthub.io/packages/helm/airlock-microgateway-cni/microgateway-cni)
 
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
@@ -66,7 +65,7 @@ For an easy start in non-production environments, you may deploy the same cert-m
 ```console
 helm install cert-manager \
   oci://quay.io/jetstack/charts/cert-manager \
-  --version 'v1.18.2' \
+  --version 'v1.19.1' \
   --namespace cert-manager \
   --create-namespace \
   --wait \
@@ -76,7 +75,7 @@ helm install cert-manager \
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -96,30 +95,17 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
    helm install airlock-microgateway \
      oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
+     --version '4.8.0' \
      -n airlock-microgateway-system \
      --wait \
      --set operator.sidecarGateway.enabled=false \
      --set operator.gatewayAPI.enabled=true
    ```
 
-2. Verify the correctness of the installation (Recommended).
+2. Verify that the operator started successfully:
    ```console
-   helm upgrade airlock-microgateway \
-     oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
-     -n airlock-microgateway-system \
-     --set tests.enabled=true \
-     --reuse-values
-
-   helm test airlock-microgateway -n airlock-microgateway-system --logs
-
-   helm upgrade airlock-microgateway \
-     oci://quay.io/airlockcharts/microgateway \
-     --version '4.7.3' \
-     -n airlock-microgateway-system \
-     --set tests.enabled=false \
-     --reuse-values
+   kubectl -n airlock-microgateway-system wait \
+     --for=condition=Available deployments --all --timeout=3m
    ```
 
 ### Upgrading CRDs
@@ -127,7 +113,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.7.3 \
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.8.0 \
   --server-side \
   --force-conflicts
 ```

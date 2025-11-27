@@ -21,7 +21,7 @@ For an easy start in non-production environments, you may deploy the same cert-m
 ```console
 helm install cert-manager \
   oci://quay.io/jetstack/charts/cert-manager \
-  --version 'v1.18.2' \
+  --version 'v1.19.1' \
   --namespace cert-manager \
   --create-namespace \
   --wait \
@@ -44,12 +44,12 @@ helm install cert-manager \
 
    # Install the operator and activate the Gateway API support.
    helm install airlock-microgateway \
-    oci://quay.io/airlockcharts/microgateway \
-    --version '4.7.3' \
-    -n airlock-microgateway-system \
-    --wait \
-    --set operator.sidecarGateway.enabled=false \
-    --set operator.gatewayAPI.enabled=true
+     oci://quay.io/airlockcharts/microgateway \
+     --version '4.8.0' \
+     -n airlock-microgateway-system \
+     --wait \
+     --set operator.sidecarGateway.enabled=false \
+     --set operator.gatewayAPI.enabled=true
    ```
 
 2. Verify that the operator started successfully:
@@ -57,7 +57,6 @@ helm install cert-manager \
    kubectl -n airlock-microgateway-system wait \
      --for=condition=Available deployments --all --timeout=3m
    ```
-
 3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report
    ```console
    kubectl apply -f manifests/conformance-report.yaml
@@ -67,4 +66,3 @@ helm install cert-manager \
    ```console
    kubectl logs jobs/gateway-conformance-tests -f
    ```
-

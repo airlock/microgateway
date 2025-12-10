@@ -19,10 +19,10 @@ image:
   # -- Image repository from which to pull the Airlock Microgateway CNI image.
   repository: "quay.io/airlock/microgateway-cni"
   # -- Image tag to pull.
-  tag: "4.7.4"
+  tag: "4.7.5"
   # -- SHA256 image digest to pull (in the format "sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a").
   # Overrides tag when specified.
-  digest: "sha256:ccbdbe8f11ec96541a86c759ce531738ae36fc9b40605e510b34ff449b4d5353"
+  digest: "sha256:1e5ec5e655a2ebcd3244dc89cdaa402fe0c0f04fc4b75ae95c9a7b702313fefd"
   # -- Pull policy for this image.
   pullPolicy: IfNotPresent
 # -- Annotations to add to all Pods.

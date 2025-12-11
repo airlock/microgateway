@@ -32,37 +32,41 @@ helm install cert-manager \
 
 > This guide assumes a microgateway-license.txt file is present in the working directory.
 
-1. Install CRDs and Operator.
-   ```console
-   # Create namespace
-   kubectl create namespace airlock-microgateway-system
+1. Install CRDs and Operator:
 
-   # Install License
-   kubectl create secret generic airlock-microgateway-license \
-     -n airlock-microgateway-system \
-     --from-file=microgateway-license.txt
+    ```console
+    # Create namespace
+    kubectl create namespace airlock-microgateway-system
 
-   # Install the operator and activate the Gateway API support.
-   helm install airlock-microgateway \
-     oci://quay.io/airlockcharts/microgateway \
-     --version '4.8.0' \
-     -n airlock-microgateway-system \
-     --wait \
-     --set operator.sidecarGateway.enabled=false \
-     --set operator.gatewayAPI.enabled=true
-   ```
+    # Install License
+    kubectl create secret generic airlock-microgateway-license \
+      -n airlock-microgateway-system \
+      --from-file=microgateway-license.txt
 
-2. Verify that the operator started successfully:
-   ```console
-   kubectl -n airlock-microgateway-system wait \
-     --for=condition=Available deployments --all --timeout=3m
-   ```
-3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report
-   ```console
-   kubectl apply -f manifests/conformance-report.yaml
-   ```
+    # Install the Operator and activate the Gateway API support.
+    helm install airlock-microgateway \
+      oci://quay.io/airlockcharts/microgateway \
+      --version '4.8.1' \
+      -n airlock-microgateway-system \
+      --wait \
+      --set operator.sidecarGateway.enabled=false \
+      --set operator.gatewayAPI.enabled=true
+    ```
+
+2. Verify that the Operator started successfully:
+
+    ```console
+    kubectl -n airlock-microgateway-system wait \
+      --for=condition=Available deployments --all --timeout=3m
+    ```
+3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report:
+
+    ```console
+    kubectl apply -f manifests/conformance-report.yaml
+    ```
 
 4. After running, see the conformance report:
-   ```console
-   kubectl logs jobs/gateway-conformance-tests -f
-   ```
+
+    ```console
+    kubectl logs jobs/gateway-conformance-tests -f
+    ```

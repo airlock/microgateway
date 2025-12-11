@@ -23,7 +23,7 @@ spec:
 
               tries=4
               for i in $(seq $tries); do
-                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch release-1.4; then
+                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.4.1; then
                   exit 0
                 elif [ $i -eq $tries ]; then
                   exit 1
@@ -43,7 +43,7 @@ spec:
               cd /workspace/gateway-api
               
               go test ./conformance -run TestConformance -args \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.8.0  --contact="https://www.airlock.com/en/contact" \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.8.1  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

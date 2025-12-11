@@ -75,45 +75,47 @@ helm install cert-manager \
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
 
 > This guide assumes a microgateway-license.txt file is present in the working directory.
 
-1. Install CRDs and Operator.
-   ```console
-   # Create namespace
-   kubectl create namespace airlock-microgateway-system
+1. Install CRDs and Operator:
 
-   # Install License
-   kubectl create secret generic airlock-microgateway-license \
-     -n airlock-microgateway-system \
-     --from-file=microgateway-license.txt
+    ```console
+    # Create namespace
+    kubectl create namespace airlock-microgateway-system
 
-   # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
-   helm install airlock-microgateway \
-     oci://quay.io/airlockcharts/microgateway \
-     --version '4.8.0' \
-     -n airlock-microgateway-system \
-     --wait \
-     --set operator.sidecarGateway.enabled=false \
-     --set operator.gatewayAPI.enabled=true
-   ```
+    # Install License
+    kubectl create secret generic airlock-microgateway-license \
+      -n airlock-microgateway-system \
+      --from-file=microgateway-license.txt
 
-2. Verify that the operator started successfully:
-   ```console
-   kubectl -n airlock-microgateway-system wait \
-     --for=condition=Available deployments --all --timeout=3m
-   ```
+    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
+    helm install airlock-microgateway \
+      oci://quay.io/airlockcharts/microgateway \
+      --version '4.8.1' \
+      -n airlock-microgateway-system \
+      --wait \
+      --set operator.sidecarGateway.enabled=false \
+      --set operator.gatewayAPI.enabled=true
+    ```
+
+2. Verify that the Operator started successfully:
+
+    ```console
+    kubectl -n airlock-microgateway-system wait \
+      --for=condition=Available deployments --all --timeout=3m
+    ```
 
 ### Upgrading CRDs
 
 The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 ```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.8.0 \
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=4.8.1 \
   --server-side \
   --force-conflicts
 ```

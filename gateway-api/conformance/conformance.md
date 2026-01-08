@@ -46,7 +46,7 @@ helm install cert-manager \
     # Install the Operator and activate the Gateway API support.
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '4.8.1' \
+      --version '4.8.2' \
       -n airlock-microgateway-system \
       --wait \
       --set operator.sidecarGateway.enabled=false \

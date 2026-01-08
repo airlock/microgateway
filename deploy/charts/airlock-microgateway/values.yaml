@@ -38,10 +38,10 @@ operator:
     # -- Image repository from which to pull the Airlock Microgateway Operator image.
     repository: "quay.io/airlock/microgateway-operator"
     # -- Image tag to pull.
-    tag: "4.7.5"
+    tag: "4.7.6"
     # -- SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63").
     # Overrides tag when specified.
-    digest: "sha256:b72fe42310f8a0345381f5084915c7f70a989c37cc3ee159da34d05d12ca6ca0"
+    digest: "sha256:b258022ef3223cba87b39b0c707abd83c096e8457b4b00dda9dc79bd221ca881"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Annotations to add to all Pods.
@@ -150,10 +150,10 @@ engine:
     # -- Image repository from which to pull the Airlock Microgateway Engine image.
     repository: "quay.io/airlock/microgateway-engine"
     # -- Image tag to pull.
-    tag: "4.7.5"
+    tag: "4.7.6"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:9a827bd8e1d83ca9e96a1ec3fd1212c0d7e73d0d1bc50b4dbe2c2d0986310269"
+    digest: "sha256:7a576338708b009400abd834edfbf490c91b9ece0dbe9a0b4bbd3e4023ed7fb9"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Default resource restrictions to apply to the Airlock Microgateway Engine container when deployed as a sidecar.
@@ -188,10 +188,10 @@ sessionAgent:
     # -- Image repository from which to pull the Airlock Microgateway Session Agent image.
     repository: "quay.io/airlock/microgateway-session-agent"
     # -- Image tag to pull.
-    tag: "4.7.5"
+    tag: "4.7.6"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:b711018405f0e66a3e8ac37967aeddfef49f8a3302c006c929ff7ec3eb1d87d5"
+    digest: "sha256:f938866021c301d5bf58469ca35d32bfd116e14a0ad037fab0b876f52333f877"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # -- Resource restrictions to apply to the Airlock Microgateway Session Agent container when the Airlock Microgateway Engine is deployed as a sidecar.

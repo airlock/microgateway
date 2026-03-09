@@ -9,6 +9,8 @@ data:
             # disable the new JSON formatter as it is not omitting empty fields
             # see https://github.com/envoyproxy/envoy/issues/37941
             envoy.reloadable_features.logging_with_fast_json_formatter: false
+            # increase the maximum RE2 program size to support larger regex patterns used in CRs and built-in log masking
+            re2.max_program_size.error_level: 8192
     admin:
       address:
         socket_address:
@@ -426,5 +428,5 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.8.4
+    app.kubernetes.io/version: 4.8.5
   name: airlock-microgateway-operator-config

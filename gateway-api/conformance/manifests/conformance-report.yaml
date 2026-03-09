@@ -43,7 +43,7 @@ spec:
               cd /workspace/gateway-api
               
               go test ./conformance -run TestConformance -args \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.8.4  --contact="https://www.airlock.com/en/contact" \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.8.5  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

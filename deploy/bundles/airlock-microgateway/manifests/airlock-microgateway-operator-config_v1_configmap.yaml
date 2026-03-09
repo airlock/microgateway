@@ -11,6 +11,8 @@ data:
             envoy.reloadable_features.logging_with_fast_json_formatter: false
             # disable the new http2 codec
             envoy.reloadable_features.http2_use_oghttp2: false
+            # increase the maximum RE2 program size to support larger regex patterns used in CRs and built-in log masking
+            re2.max_program_size.error_level: 8192
     admin:
       address:
         socket_address:
@@ -405,5 +407,5 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.7.8
+    app.kubernetes.io/version: 4.7.9
   name: airlock-microgateway-operator-config

@@ -2,10 +2,8 @@ suite: helm.TestCommonNameLengthLimits
 templates:
   - "*.yaml"
 set:
-  operator.serviceMonitor.create: true
-  operator.gatewayAPI.enabled: true
-  operator.podDisruptionBudget.minAvailable: 1
-  engine.sidecar.podMonitor.create: true
+  serviceMonitor.create: true
+  podDisruptionBudget.minAvailable: 1
   dashboards.create: true
   tests.enabled: true
 capabilities:

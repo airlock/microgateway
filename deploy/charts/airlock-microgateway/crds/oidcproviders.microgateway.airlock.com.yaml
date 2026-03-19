@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.19.0
+    controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
   name: oidcproviders.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -28,7 +28,7 @@ spec:
           description: |-
             OIDCProvider defines an OpenID Provider (OP) configuration.
 
-            {{% notice info %}} The OIDC feature requires SessionHandling to be configured in the SidecarGateway. {{% /notice %}}
+            {{% notice info %}} The OIDC feature requires SessionHandling to be configured in the GatewayParameters. {{% /notice %}}
           properties:
             apiVersion:
               description: |-
@@ -79,10 +79,16 @@ spec:
                                   default: 5s
                                   description: connect specifies the timeout for establishing a connection.
                                   type: string
+                                  x-kubernetes-validations:
+                                    - message: duration must be greater than 0
+                                      rule: duration(self) > duration('0')
                                 maxDuration:
                                   default: 15s
                                   description: maxDuration specifies the response timeout.
                                   type: string
+                                  x-kubernetes-validations:
+                                    - message: duration must be greater than 0
+                                      rule: duration(self) > duration('0')
                               type: object
                             tls:
                               description: tls defines TLS settings.
@@ -139,7 +145,7 @@ spec:
                                                       regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                       The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                       Only one of exact, prefix, suffix, regex or contains can be set.
-                                                    maxLength: 1024
+                                                    maxLength: 256
                                                     minLength: 1
                                                     type: string
                                                   suffix:
@@ -150,6 +156,9 @@ spec:
                                                     minLength: 1
                                                     type: string
                                                 type: object
+                                                x-kubernetes-validations:
+                                                  - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
+                                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
                                               sanType:
                                                 description: sanType defines the type of SAN matcher.
                                                 enum:
@@ -162,6 +171,9 @@ spec:
                                               - matcher
                                               - sanType
                                             type: object
+                                            x-kubernetes-validations:
+                                              - message: sanType must not be Email when configuring server certificate verification
+                                                rule: self.sanType != 'Email'
                                           maxItems: 32
                                           minItems: 1
                                           type: array
@@ -200,6 +212,9 @@ spec:
                                               type: array
                                               x-kubernetes-list-type: set
                                           type: object
+                                          x-kubernetes-validations:
+                                            - message: at least one of the fields in [allowedSPKIs allowedHashes] must be set
+                                              rule: '[has(self.allowedSPKIs),has(self.allowedHashes)].filter(x,x==true).size() >= 1'
                                         crl:
                                           description: crl defines the Certificate Revocation List (CRL) settings.
                                           properties:
@@ -270,6 +285,11 @@ spec:
                                             - certificates
                                           type: object
                                       type: object
+                                      x-kubernetes-validations:
+                                        - message: '''allowedSANs'' cannot be set without configuring ''trustedCA'''
+                                          rule: '!has(self.allowedSANs) || has(self.trustedCA)'
+                                        - message: at least one of the fields in [trustedCA certificatePinning] must be set
+                                          rule: '[has(self.trustedCA),has(self.certificatePinning)].filter(x,x==true).size() >= 1'
                                     disabled:
                                       description: |-
                                         disabled specifies to trust any certificate without verification.
@@ -279,6 +299,9 @@ spec:
                                       description: publicCAs specifies to only accept certificates with a SAN matching "uri" and which are signed by a CA which is either directly or indirectly trusted by any of the root CA certificates shipped with the Airlock Microgateway Engine's base image.
                                       type: object
                                   type: object
+                                  x-kubernetes-validations:
+                                    - message: at most one of the fields in [disabled publicCAs custom] may be set
+                                      rule: '[has(self.disabled),has(self.publicCAs),has(self.custom)].filter(x,x==true).size() <= 1'
                                 ciphers:
                                   description: ciphers defines a list of the supported TLS cipher suites. For details on cipher list refer to the envoy documentation on cipher_suites in common tls configuration.
                                   items:
@@ -308,6 +331,9 @@ spec:
                                         - TLSv1_3
                                       type: string
                                   type: object
+                                  x-kubernetes-validations:
+                                    - message: protocol version minimum must be lower than maximum
+                                      rule: '!has(self.minimum) || !has(self.maximum) || self.maximum >= self.minimum'
                               type: object
                             uri:
                               description: uri specifies the endpoint address.
@@ -319,6 +345,9 @@ spec:
                           required:
                             - uri
                           type: object
+                          x-kubernetes-validations:
+                            - message: '''tls'' can only be configured if ''uri'' scheme is https'
+                              rule: '!has(self.tls) || url(self.uri).getScheme() == ''https'''
                         token:
                           description: token configures the endpoint from which the access, ID and refresh tokens are obtained.
                           properties:
@@ -329,10 +358,16 @@ spec:
                                   default: 5s
                                   description: connect specifies the timeout for establishing a connection.
                                   type: string
+                                  x-kubernetes-validations:
+                                    - message: duration must be greater than 0
+                                      rule: duration(self) > duration('0')
                                 maxDuration:
                                   default: 15s
                                   description: maxDuration specifies the response timeout.
                                   type: string
+                                  x-kubernetes-validations:
+                                    - message: duration must be greater than 0
+                                      rule: duration(self) > duration('0')
                               type: object
                             tls:
                               description: tls defines TLS settings.
@@ -389,7 +424,7 @@ spec:
                                                       regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                       The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                       Only one of exact, prefix, suffix, regex or contains can be set.
-                                                    maxLength: 1024
+                                                    maxLength: 256
                                                     minLength: 1
                                                     type: string
                                                   suffix:
@@ -400,6 +435,9 @@ spec:
                                                     minLength: 1
                                                     type: string
                                                 type: object
+                                                x-kubernetes-validations:
+                                                  - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
+                                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
                                               sanType:
                                                 description: sanType defines the type of SAN matcher.
                                                 enum:
@@ -412,6 +450,9 @@ spec:
                                               - matcher
                                               - sanType
                                             type: object
+                                            x-kubernetes-validations:
+                                              - message: sanType must not be Email when configuring server certificate verification
+                                                rule: self.sanType != 'Email'
                                           maxItems: 32
                                           minItems: 1
                                           type: array
@@ -450,6 +491,9 @@ spec:
                                               type: array
                                               x-kubernetes-list-type: set
                                           type: object
+                                          x-kubernetes-validations:
+                                            - message: at least one of the fields in [allowedSPKIs allowedHashes] must be set
+                                              rule: '[has(self.allowedSPKIs),has(self.allowedHashes)].filter(x,x==true).size() >= 1'
                                         crl:
                                           description: crl defines the Certificate Revocation List (CRL) settings.
                                           properties:
@@ -520,6 +564,11 @@ spec:
                                             - certificates
                                           type: object
                                       type: object
+                                      x-kubernetes-validations:
+                                        - message: '''allowedSANs'' cannot be set without configuring ''trustedCA'''
+                                          rule: '!has(self.allowedSANs) || has(self.trustedCA)'
+                                        - message: at least one of the fields in [trustedCA certificatePinning] must be set
+                                          rule: '[has(self.trustedCA),has(self.certificatePinning)].filter(x,x==true).size() >= 1'
                                     disabled:
                                       description: |-
                                         disabled specifies to trust any certificate without verification.
@@ -529,6 +578,9 @@ spec:
                                       description: publicCAs specifies to only accept certificates with a SAN matching "uri" and which are signed by a CA which is either directly or indirectly trusted by any of the root CA certificates shipped with the Airlock Microgateway Engine's base image.
                                       type: object
                                   type: object
+                                  x-kubernetes-validations:
+                                    - message: at most one of the fields in [disabled publicCAs custom] may be set
+                                      rule: '[has(self.disabled),has(self.publicCAs),has(self.custom)].filter(x,x==true).size() <= 1'
                                 ciphers:
                                   description: ciphers defines a list of the supported TLS cipher suites. For details on cipher list refer to the envoy documentation on cipher_suites in common tls configuration.
                                   items:
@@ -558,6 +610,9 @@ spec:
                                         - TLSv1_3
                                       type: string
                                   type: object
+                                  x-kubernetes-validations:
+                                    - message: protocol version minimum must be lower than maximum
+                                      rule: '!has(self.minimum) || !has(self.maximum) || self.maximum >= self.minimum'
                               type: object
                             uri:
                               description: uri specifies the endpoint address.
@@ -569,6 +624,9 @@ spec:
                           required:
                             - uri
                           type: object
+                          x-kubernetes-validations:
+                            - message: '''tls'' can only be configured if ''uri'' scheme is https'
+                              rule: '!has(self.tls) || url(self.uri).getScheme() == ''https'''
                       required:
                         - authorization
                         - token
@@ -604,6 +662,9 @@ spec:
                                     - name
                                   type: object
                               type: object
+                              x-kubernetes-validations:
+                                - message: exactly one of the fields in [disabled jwksRef] must be set
+                                  rule: '[has(self.disabled),has(self.jwksRef)].filter(x,x==true).size() == 1'
                           required:
                             - signatureVerification
                           type: object
@@ -616,6 +677,9 @@ spec:
                     - tokenValidation
                   type: object
               type: object
+              x-kubernetes-validations:
+                - message: exactly one of the fields in [static] must be set
+                  rule: '[has(self.static)].filter(x,x==true).size() == 1'
           required:
             - spec
           type: object

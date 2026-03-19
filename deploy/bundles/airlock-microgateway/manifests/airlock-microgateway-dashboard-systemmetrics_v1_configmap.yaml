@@ -18,7 +18,7 @@ data:
           "type": "grafana",
           "id": "grafana",
           "name": "Grafana",
-          "version": "11.4.0"
+          "version": "12.3.0"
         },
         {
           "type": "datasource",
@@ -112,7 +112,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -144,7 +144,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -154,7 +154,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "min(microgateway_config_resource_condition{kind=\"${gateway_kind}\", name=\"${gateway_name}\"})",
+              "expr": "min(microgateway_config_resource_condition{kind=\"Gateway\", name=\"${gateway_name}\"})",
               "format": "table",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
@@ -216,7 +216,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -248,7 +248,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -258,7 +258,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "min(envoy_server_live{gateway_kind=\"${gateway_kind}\", gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\"})",
+              "expr": "min(envoy_server_live{gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\"})",
               "format": "table",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
@@ -360,7 +360,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -501,7 +501,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -598,7 +598,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -665,7 +665,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -746,6 +746,7 @@ data:
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
@@ -761,7 +762,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -820,7 +821,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -939,7 +940,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -949,7 +950,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "envoy_server_state{gateway_kind=\"${gateway_kind}\", gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\", pod=\"${pod}\"}",
+              "expr": "envoy_server_state{gateway=\"${gateway_name}\", container=\"airlock-microgateway-engine\", pod=\"${pod}\"}",
               "format": "table",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
@@ -1013,6 +1014,7 @@ data:
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
@@ -1095,7 +1097,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -1259,7 +1261,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -1338,6 +1340,7 @@ data:
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
@@ -1353,7 +1356,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -1416,7 +1419,7 @@ data:
               "sort": "none"
             }
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -1521,7 +1524,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -1615,7 +1618,7 @@ data:
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "11.4.0",
+          "pluginVersion": "12.3.0",
           "targets": [
             {
               "datasource": {
@@ -1635,8 +1638,9 @@ data:
           "type": "stat"
         }
       ],
+      "preload": false,
       "refresh": "",
-      "schemaVersion": 40,
+      "schemaVersion": 42,
       "tags": [
         "airlock-microgateway"
       ],
@@ -1655,36 +1659,12 @@ data:
             "type": "datasource"
           },
           {
-            "allowCustomValue": false,
             "current": {},
             "datasource": {
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "label_values(microgateway_build_info,gateway_kind)",
-            "description": "Allows filtering on the gateway kind.",
-            "includeAll": false,
-            "label": "Gateway Kind",
-            "name": "gateway_kind",
-            "options": [],
-            "query": {
-              "qryType": 1,
-              "query": "label_values(microgateway_build_info,gateway_kind)",
-              "refId": "PrometheusVariableQueryEditor-VariableQuery"
-            },
-            "refresh": 1,
-            "regex": "",
-            "type": "query"
-          },
-          {
-            "allValue": ".+",
-            "allowCustomValue": false,
-            "current": {},
-            "datasource": {
-              "type": "prometheus",
-              "uid": "${DS_PROMETHEUS}"
-            },
-            "definition": "label_values(microgateway_build_info{gateway_kind=\"$gateway_kind\"},namespace)",
+            "definition": "label_values(microgateway_build_info{container=\"airlock-microgateway-engine\"},namespace)",
             "description": "Allows filtering on the namespaces in which gateways are deployed.",
             "includeAll": false,
             "label": "Gateway Namespace",
@@ -1692,7 +1672,7 @@ data:
             "options": [],
             "query": {
               "qryType": 1,
-              "query": "label_values(microgateway_build_info{gateway_kind=\"$gateway_kind\"},namespace)",
+              "query": "label_values(microgateway_build_info{container=\"airlock-microgateway-engine\"},namespace)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "refresh": 2,
@@ -1706,7 +1686,7 @@ data:
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "label_values(microgateway_build_info{namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+            "definition": "label_values(microgateway_build_info{namespace=~\"$namespace\"},gateway)",
             "description": "Allows filtering on specific gateway instance names within the selected namespaces.",
             "includeAll": false,
             "label": "Gateway Name",
@@ -1714,7 +1694,7 @@ data:
             "options": [],
             "query": {
               "qryType": 1,
-              "query": "label_values(microgateway_build_info{namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+              "query": "label_values(microgateway_build_info{namespace=~\"$namespace\"},gateway)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "refresh": 2,
@@ -1729,7 +1709,7 @@ data:
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
+            "definition": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
             "description": "Allows to select the pod to display the system metrics for.",
             "hide": 2,
             "includeAll": true,
@@ -1739,7 +1719,7 @@ data:
             "options": [],
             "query": {
               "qryType": 3,
-              "query": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", gateway_kind=\"$gateway_kind\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
+              "query": "query_result(max_over_time(microgateway_build_info{container=\"airlock-microgateway-engine\", namespace=\"$namespace\", gateway=\"$gateway_name\"}[$__range]) > 0)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "refresh": 2,
@@ -1756,7 +1736,7 @@ data:
       "timezone": "browser",
       "title": "Airlock Microgateway System - Metrics",
       "uid": "ceg3c5leab4ddfzkd",
-      "version": 4,
+      "version": 5,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -1768,6 +1748,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-systemmetrics

@@ -2,31 +2,16 @@
 
 ## Prerequisites
 * [Airlock Microgateway License](#obtain-airlock-microgateway-license)
-* [cert-manager](https://cert-manager.io/)
 * [Kubernetes Gateway API CRDs](https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api)
 * [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
 
-In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
-For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
-
 ### Obtain Airlock Microgateway License
 1. Either request a community or premium license
-   * Community license: [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
+   * Community license (free): [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
    * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
 2. Check your inbox and save the license file microgateway-license.txt locally.
 
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
-
-### Deploy cert-manager
-```console
-helm install cert-manager \
-  oci://quay.io/jetstack/charts/cert-manager \
-  --version 'v1.19.1' \
-  --namespace cert-manager \
-  --create-namespace \
-  --wait \
-  --set crds.enabled=true
-```
 
 ## Deploy Airlock Microgateway Operator
 
@@ -46,11 +31,9 @@ helm install cert-manager \
     # Install the Operator and activate the Gateway API support.
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '4.8.5' \
+      --version '5.0.0' \
       -n airlock-microgateway-system \
-      --wait \
-      --set operator.sidecarGateway.enabled=false \
-      --set operator.gatewayAPI.enabled=true
+      --wait
     ```
 
 2. Verify that the Operator started successfully:
@@ -70,3 +53,5 @@ helm install cert-manager \
     ```console
     kubectl logs jobs/gateway-conformance-tests -f
     ```
+
+

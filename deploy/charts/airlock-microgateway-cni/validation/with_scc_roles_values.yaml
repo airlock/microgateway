@@ -1,3 +1,0 @@
-# enable creation of scc role for validation
-rbac:
-  createSCCRole: true

@@ -14,7 +14,7 @@ spec:
     spec:
       initContainers:
         - name: git-checkout
-          image: bitnamisecure/git:latest
+          image: docker.io/bitnamisecure/git:latest
           command:
             - sh
             - -c
@@ -23,7 +23,7 @@ spec:
 
               tries=4
               for i in $(seq $tries); do
-                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.4.1; then
+                if git clone https://github.com/kubernetes-sigs/gateway-api.git --depth=1 --branch v1.5.1; then
                   exit 0
                 elif [ $i -eq $tries ]; then
                   exit 1
@@ -35,7 +35,7 @@ spec:
               mountPath: /workspace
       containers:
         - name: go-test
-          image: golang:1.25.4-alpine
+          image: docker.io/library/golang:1.26.1-alpine
           command:
             - sh
             - -c
@@ -43,7 +43,7 @@ spec:
               cd /workspace/gateway-api
               
               go test ./conformance -run TestConformance -args \
-                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v4.8.5  --contact="https://www.airlock.com/en/contact" \
+                --organization=airlock --project=microgateway --url="https://github.com/airlock/microgateway" --version=v5.0.0  --contact="https://www.airlock.com/en/contact" \
                 --conformance-profiles=GATEWAY-HTTP \
                 --report-output=/workspace/conformance-profile.yaml >/dev/null 2>&1
 

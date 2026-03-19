@@ -1,3 +1,0 @@
-# Enable tests to validate resulting test resources
-tests:
-  enabled: true

@@ -14,15 +14,6 @@
     "commonAnnotations": {
       "$ref": "#/definitions/StringMap"
     },
-    "crds": {
-      "type": "object",
-      "properties": {
-        "skipVersionCheck": {
-          "type": "boolean"
-        }
-      },
-      "additionalProperties": false
-    },
     "imagePullSecrets": {
       "anyOf": [
         {
@@ -50,302 +41,167 @@
         }
       ]
     },
-    "operator": {
+    "crds": {
       "type": "object",
       "properties": {
-        "replicaCount": {
-          "type": "integer",
-          "minimum": 0
+        "skipVersionCheck": {
+          "type": "boolean"
         },
-        "extraEnv": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NameValuePair"
-          }
-        },
-        "podDisruptionBudget": {
-          "type": "object"
-        },
-        "updateStrategy": {
-          "$ref": "#/definitions/UpdateStrategy"
-        },
-        "image": {
-          "$ref": "#/definitions/Image"
-        },
-        "podAnnotations": {
-          "$ref": "#/definitions/StringMap"
-        },
-        "podLabels": {
-          "$ref": "#/definitions/StringMap"
-        },
-        "serviceAnnotations": {
-          "$ref": "#/definitions/StringMap"
-        },
-        "serviceLabels": {
-          "$ref": "#/definitions/StringMap"
-        },
-        "resources": {
-          "type": "object"
-        },
-        "nodeSelector": {
-          "$ref": "#/definitions/StringMap"
-        },
-        "tolerations": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "affinity": {
-          "type": "object"
-        },
-        "topologySpreadConstraints": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "config": {
-          "type": "object",
-          "properties": {
-            "logLevel": {
-              "type": "string",
-              "enum": [
-                "debug",
-                "info",
-                "warn",
-                "error"
-              ]
-            }
-          },
-          "required": [
-            "logLevel"
-          ],
-          "additionalProperties": false
-        },
-        "webhook": {
-          "type": "object",
-          "properties": {
-            "certificateProvider": {
-              "type": "string",
-              "enum": [
-                "cert-manager",
-                "olm",
-                "none"
-              ]
-            }
-          },
-          "required": [
-            "certificateProvider"
-          ],
-          "additionalProperties": false
-        },
-        "serviceAccount": {
-          "type": "object",
-          "properties": {
-            "create": {
-              "type": "boolean"
-            },
-            "annotations": {
-              "$ref": "#/definitions/StringMap"
-            },
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "annotations",
-            "create",
-            "name"
-          ],
-          "additionalProperties": false
-        },
-        "watchNamespaces": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "watchNamespaceSelector": {
-          "$ref": "#/definitions/LabelSelector"
-        },
-        "rbac": {
-          "type": "object",
-          "properties": {
-            "create": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "create"
-          ],
-          "additionalProperties": false
-        },
-        "serviceMonitor": {
-          "type": "object",
-          "properties": {
-            "create": {
-              "type": "boolean"
-            },
-            "labels": {
-              "$ref": "#/definitions/StringMap"
-            }
-          },
-          "required": [
-            "create"
-          ],
-          "additionalProperties": false
-        },
-        "sidecarGateway": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "enabled"
-          ],
-          "additionalProperties": false
-        },
-        "gatewayAPI": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "controllerName" : {
-              "type": "string",
-              "pattern": "^microgateway\\.airlock\\.com\/[A-Za-z0-9\/\\-._~%!$&'()*+,;=:]+$"
-            },
-            "gatewayClass": {
-              "type" : "object",
-              "properties": {
-                "create" : {
-                  "type": "boolean"
-                },
-                "name" : {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 253,
-                  "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
-                }
-              },
-              "required": [
-                "create",
-                "name"
-              ],
-              "additionalProperties": false
-            },
-            "podMonitor" : {
-              "$ref": "#/definitions/PodMonitor"
-            }
-          },
-          "required": [
-            "enabled"
-          ],
-          "additionalProperties": false
+        "skipGatewayAPICheck": {
+          "type": "boolean"
         }
       },
-      "oneOf": [
-        {
-          "properties": {
-            "watchNamespaces": {
-              "minItems": 1
-            },
-            "watchNamespaceSelector": {
-              "additionalProperties": false
-            }
-          }
-        },
-        {
-          "properties": {
-            "watchNamespaces": {
-              "maxItems": 0
-            },
-            "watchNamespaceSelector": {
-              "$ref": "#/definitions/LabelSelector"
-            }
-          }
-        }
-      ],
-      "required": [
-        "affinity",
-        "webhook",
-        "config",
-        "extraEnv",
-        "podDisruptionBudget",
-        "image",
-        "updateStrategy",
-        "nodeSelector",
-        "podAnnotations",
-        "podLabels",
-        "rbac",
-        "replicaCount",
-        "serviceAccount",
-        "serviceAnnotations",
-        "serviceLabels",
-        "serviceMonitor",
-        "sidecarGateway",
-        "tolerations",
-        "topologySpreadConstraints"
-      ],
       "additionalProperties": false
     },
-    "engine": {
-      "type": "object",
+    "controllerName" : {
+      "type": "string",
+      "pattern": "^microgateway\\.airlock\\.com\/([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9]$"
+    },
+    "gatewayClass": {
+      "type" : "object",
       "properties": {
-        "image": {
-          "$ref": "#/definitions/Image"
+        "create" : {
+          "type": "boolean"
         },
-        "resources":  {
-          "type": "object"
-        },
-        "sidecar": {
-          "type": "object",
-          "properties":{
-            "podMonitor": {
-              "$ref": "#/definitions/PodMonitor"
-            }
-          },
-          "required": [
-            "podMonitor"
-          ],
-          "additionalProperties": false
+        "name" : {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
         }
       },
       "required": [
-        "image",
-        "sidecar"
+        "create",
+        "name"
       ],
       "additionalProperties": false
     },
-    "networkValidator": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "type": ["object", "null"],
-          "deprecated": true
-        },
-        "resources": {
-          "type": "object"
-        }
-      },
-      "required": [],
-      "additionalProperties": false
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 0
     },
-    "sessionAgent": {
+    "extraEnv": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/NameValuePair"
+      }
+    },
+    "podDisruptionBudget": {
+      "type": "object"
+    },
+    "updateStrategy": {
+      "$ref": "#/definitions/UpdateStrategy"
+    },
+    "image": {
+      "$ref": "#/definitions/Image"
+    },
+    "podAnnotations": {
+      "$ref": "#/definitions/StringMap"
+    },
+    "podLabels": {
+      "$ref": "#/definitions/StringMap"
+    },
+    "serviceAnnotations": {
+      "$ref": "#/definitions/StringMap"
+    },
+    "serviceLabels": {
+      "$ref": "#/definitions/StringMap"
+    },
+    "resources": {
+      "type": "object"
+    },
+    "nodeSelector": {
+      "$ref": "#/definitions/StringMap"
+    },
+    "tolerations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "affinity": {
+      "type": "object"
+    },
+    "topologySpreadConstraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "serviceAccount": {
       "type": "object",
       "properties": {
-        "image": {
-          "$ref": "#/definitions/Image"
+        "create": {
+          "type": "boolean"
         },
-        "resources":  {
-          "type": "object"
+        "annotations": {
+          "$ref": "#/definitions/StringMap"
+        },
+        "name": {
+          "type": "string"
         }
       },
       "required": [
-        "image"
+        "annotations",
+        "create",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "create"
+      ],
+      "additionalProperties": false
+    },
+    "serviceMonitor": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "labels": {
+          "$ref": "#/definitions/StringMap"
+        }
+      },
+      "required": [
+        "create"
+      ],
+      "additionalProperties": false
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "logLevel": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
+        },
+        "engineImage": {
+          "$ref": "#/definitions/Image"
+        },
+        "sessionAgentImage": {
+          "$ref": "#/definitions/Image"
+        },
+        "gatewayPodMonitor" : {
+          "$ref": "#/definitions/PodMonitor"
+        }
+      },
+      "required": [
+        "logLevel",
+        "engineImage",
+        "sessionAgentImage",
+        "gatewayPodMonitor"
       ],
       "additionalProperties": false
     },
@@ -431,6 +287,9 @@
             },
             "downstreamMetrics" : {
               "$ref": "#/definitions/DashboardInstance"
+            },
+            "accessCtrlMetrics" : {
+              "$ref": "#/definitions/DashboardInstance"
             }
           },
           "required": [
@@ -474,17 +333,32 @@
     }
   },
   "required": [
-    "commonAnnotations",
-    "commonLabels",
-    "crds",
-    "engine",
-    "fullnameOverride",
-    "imagePullSecrets",
-    "license",
     "nameOverride",
-    "operator",
-    "networkValidator",
-    "sessionAgent",
+    "fullnameOverride",
+    "commonLabels",
+    "commonAnnotations",
+    "imagePullSecrets",
+    "crds",
+    "controllerName",
+    "gatewayClass",
+    "replicaCount",
+    "extraEnv",
+    "podDisruptionBudget",
+    "updateStrategy",
+    "image",
+    "podLabels",
+    "podAnnotations",
+    "serviceLabels",
+    "serviceAnnotations",
+    "nodeSelector",
+    "tolerations",
+    "affinity",
+    "topologySpreadConstraints",
+    "serviceAccount",
+    "rbac",
+    "serviceMonitor",
+    "config",
+    "license",
     "dashboards",
     "tests"
   ],

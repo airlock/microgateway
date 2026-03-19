@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.19.0
+    controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -71,7 +71,7 @@ spec:
                           - 403 -> built-in 403 response
                           - 404 -> built-in 404 response
                           - 429 -> built-in 429 response
-                          - 4xx -> built-in 400 response (status code replaced with 400)
+                          - 4xx -> built-in 400 response (status code preserved for 421, others replaced with 400)
                           - 5xx -> built-in 5xx response (status code preserved for 502-504, others replaced with 500)
 
                           If you wish to customize all built-in error responses, we recommend at least the following set of rules as a starting point:
@@ -173,6 +173,11 @@ spec:
                                       - message: Range end must be >= start
                                         rule: self.end >= self.start
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [exact range]
+                                      must be set
+                                    rule: '[has(self.exact),has(self.range)].filter(x,x==true).size()
+                                      == 1'
                               required:
                               - matcher
                               type: object
@@ -251,6 +256,11 @@ spec:
                                           - message: Range end must be >= start
                                             rule: self.end >= self.start
                                       type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [exact
+                                          range] must be set
+                                        rule: '[has(self.exact),has(self.range)].filter(x,x==true).size()
+                                          == 1'
                                   required:
                                   - matcher
                                   type: object
@@ -340,7 +350,17 @@ spec:
                                 minItems: 1
                                 type: array
                             type: object
+                            x-kubernetes-validations:
+                            - message: at most one of the fields in [numTrustedHops
+                                trustedCIDRRanges] may be set
+                              rule: '[has(self.numTrustedHops),has(self.trustedCIDRRanges)].filter(x,x==true).size()
+                                <= 1'
                         type: object
+                        x-kubernetes-validations:
+                        - message: at most one of the fields in [connectionIP customHeader
+                            xff proxyProtocol] may be set
+                          rule: '[has(self.connectionIP),has(self.customHeader),has(self.xff),has(self.proxyProtocol)].filter(x,x==true).size()
+                            <= 1'
                     type: object
                   sessionHandlingRef:
                     description: sessionHandlingRef selects the default SessionHandling
@@ -681,6 +701,14 @@ spec:
                       envoyExtensionPolicyEnabled specifies whether the controller processes EnvoyExtensionPolicy resources for HTTPRoutes attached to the Gateway.
                       Use EnvoyExtensionPolicy only if the features of Airlock Microgateway and Kubernetes Gateway API do not provide this functionality. If you identify missing features or use cases, please report them to help improve our product.
                       Note: Invalid or malformed Envoy configurations may prevent the Gateway's configuration from being updated.
+                    type: boolean
+                  externalNameServicesAllowed:
+                    default: false
+                    description: |-
+                      externalNameServicesAllowed specifies whether the controller allows Kubernetes Services of type ExternalName to be used as backend references. This setting is disabled by default due to security concerns (CVE-2021-25740).
+                      Allowing ExternalName services may enable workloads to send traffic to destinations they would not otherwise have access to, potentially enabling confused deputy attacks (CVE-2021-25740) and weakening namespace isolation.
+                      Because ExternalName services can reference arbitrary CNAME DNS records, they may also redirect traffic to unintended external targets.
+                      Enable this option with caution. To mitigate risks, ensure TLS validation is enforced for all backends, use trusted DNS resolvers, apply appropriate NetworkPolicies, and separate Gateways serving internal and external traffic.
                     type: boolean
                   insecureTLSAllowed:
                     default: false
@@ -1865,9 +1893,10 @@ spec:
                                 operator:
                                   description: |-
                                     Operator represents a key's relationship to the value.
-                                    Valid operators are Exists and Equal. Defaults to Equal.
+                                    Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
                                     Exists is equivalent to wildcard for value, so that a pod can
                                     tolerate all taints of a particular category.
+                                    Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
                                   type: string
                                 tolerationSeconds:
                                   description: |-
@@ -2719,7 +2748,7 @@ spec:
                                         resources:
                                           description: |-
                                             resources represents the minimum resources the volume should have.
-                                            If RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource requirements
+                                            Users are allowed to specify resource requirements
                                             that are lower than previous value but must still be higher than capacity recorded in the
                                             status field of the claim.
                                             More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
@@ -3605,6 +3634,24 @@ spec:
                                             description: Kubelet's generated CSRs
                                               will be addressed to this signer.
                                             type: string
+                                          userAnnotations:
+                                            additionalProperties:
+                                              type: string
+                                            description: |-
+                                              userAnnotations allow pod authors to pass additional information to
+                                              the signer implementation.  Kubernetes does not restrict or validate this
+                                              metadata in any way.
+
+                                              These values are copied verbatim into the `spec.unverifiedUserAnnotations` field of
+                                              the PodCertificateRequest objects that Kubelet creates.
+
+                                              Entries are subject to the same validation as object metadata annotations,
+                                              with the addition that all keys must be domain-prefixed. No restrictions
+                                              are placed on values, except an overall size limitation on the entire field.
+
+                                              Signers should document the keys and values they support. Signers should
+                                              deny requests that contain keys they do not recognize.
+                                            type: object
                                         required:
                                         - keyType
                                         - signerName
@@ -4068,9 +4115,60 @@ spec:
                         - Cluster
                         - Local
                         type: string
+                      loadBalancerClass:
+                        description: |-
+                          loadBalancerClass describes which load balancer implementation is responsible for this Service.
+                          If undefined, the default load balancer implementation is used (typically provided by the cloud provider).
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^(([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])$
+                        type: string
+                      sessionAffinity:
+                        description: |-
+                          sessionAffinity describes how client requests are associated with service endpoints. Meaning of the possible values:
+                          _ClientIP_: ensures that requests from the same client IP address are routed to the same endpoint.
+                          _None_: disables session affinity, allowing requests to be routed to any available endpoint.
+                          If undefined, sessionAffinity defaults to `None`.
+                        enum:
+                        - ClientIP
+                        - None
+                        type: string
+                      sessionAffinityConfig:
+                        description: sessionAffinityConfig contains the configurations
+                          of session affinity.
+                        properties:
+                          clientIP:
+                            description: clientIP contains the configurations of Client
+                              IP based session affinity.
+                            properties:
+                              timeoutSeconds:
+                                description: |-
+                                  timeoutSeconds specifies the seconds of ClientIP type session sticky time.
+                                  The value must be >0 && <=86400(for 1 day) if ServiceAffinity == "ClientIP".
+                                  Default value is 10800(for 3 hours).
+                                format: int32
+                                type: integer
+                            type: object
+                        type: object
+                        x-kubernetes-validations:
+                        - message: clientIP.timeoutSeconds must be greater than 0
+                            and smaller or equal than 86400 (1 day)
+                          rule: '!(has(self.clientIP) && has(self.clientIP.timeoutSeconds))
+                            || self.clientIP.timeoutSeconds > 0 && self.clientIP.timeoutSeconds
+                            <= 86400'
+                      trafficDistribution:
+                        description: |-
+                          trafficDistribution offers a way to express preferences for how traffic is distributed to Service endpoints.
+                          If undefined, default routing is applied.
+                        enum:
+                        - PreferClose
+                        - PreferSameZone
+                        - PreferSameNode
+                        type: string
                       type:
                         default: ClusterIP
-                        description: type specifies the type of Kubernetes Service.
+                        description: type specifies how the Service of the Gateway
+                          is exposed.
                         enum:
                         - ClusterIP
                         - NodePort
@@ -4078,14 +4176,20 @@ spec:
                         type: string
                     type: object
                     x-kubernetes-validations:
-                    - message: ExternalTrafficPolicy can only be set for externally-accessible
+                    - message: externalTrafficPolicy can only be set for externally-accessible
                         service types (i.e., NodePort, LoadBalancer)
                       rule: '!has(self.externalTrafficPolicy) || self.type == "NodePort"
                         || self.type == "LoadBalancer"'
-                    - message: AllocateLoadBalancerNodePorts can only be set for service
+                    - message: allocateLoadBalancerNodePorts can only be set for service
                         type LoadBalancer
                       rule: '!has(self.allocateLoadBalancerNodePorts) || self.type
                         == "LoadBalancer"'
+                    - message: loadBalancerClass can only be set for service type
+                        LoadBalancer
+                      rule: '!has(self.loadBalancerClass) || self.type == "LoadBalancer"'
+                    - message: loadBalancerClass may not change once set
+                      rule: self.type != "LoadBalancer" || !has(oldSelf.loadBalancerClass)
+                        || self.loadBalancerClass == oldSelf.loadBalancerClass
                 type: object
               logging:
                 description: logging specifies Envoy system logging settings for the

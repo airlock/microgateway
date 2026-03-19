@@ -22,49 +22,111 @@ tests:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/4.2.*"
       - matchRegexRaw:
           pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/4.2/index/api/crds.*"
-  - it: should fail if tests are enabled and release namespace is not part of the watch namespaces
+  - it: should succeed if tests are enabled
     release:
       name: myoperator
       namespace: mytestnamespace
     set:
       tests.enabled: true
-      operator.watchNamespaces: [ "foo", "bar" ]
-    asserts:
-      - failedTemplate: {}
-  - it: should succeed if tests are enabled and release namespace is part of the watch namespaces
-    release:
-      name: myoperator
-      namespace: mytestnamespace
-    set:
-      tests.enabled: true
-      operator.watchNamespaces: [ "foo", "mytestnamespace", "bar" ]
     asserts:
       - notFailedTemplate: {}
-  - it: should fail if Gateway API is enabled and watch namespaces are set
-    release:
-      name: myoperator
-      namespace: mytestnamespace
-    set:
-      operator.gatewayAPI.enabled: true
-      operator.watchNamespaces: [ "foo", "bar" ]
+
+  - it: gateway API check should succeed without warning if no cluster available
     asserts:
-      - failedTemplate: {}
-  - it: should fail if Gateway API is enabled and watch namespace selector is set
-    release:
-      name: myoperator
-      namespace: mytestnamespace
+      - notFailedTemplate: {}
+      - notMatchRegexRaw:
+          pattern: "Warning: Gateway API check skipped"
+  - it: gateway API check should be skipped with warning if cluster available
     set:
-      operator.gatewayAPI.enabled: true
-      operator.watchNamespaceSelector:
-        matchLabels:
-          foo: bar
+      crds.skipGatewayAPICheck: true
+    kubernetesProvider:
+      scheme:
+        "v1/Namespace":
+          gvr:
+            version: "v1"
+            resource: "namespaces"
+          namespaced: false
+      objects:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: default
     asserts:
-      - failedTemplate: {}
-  - it: should succeed if Gateway API is enabled and neither a watch namespace nor watch namespace selector is set
-    release:
-      name: myoperator
-      namespace: mytestnamespace
-    set:
-      operator.gatewayAPI.enabled: true
+      - notFailedTemplate: { }
+      - matchRegexRaw:
+          pattern: "Warning: Gateway API check skipped"
+  - it: gateway API check should fail if cluster available without gateway CRD
+    kubernetesProvider:
+      scheme:
+        "v1/Namespace":
+          gvr:
+            version: "v1"
+            resource: "namespaces"
+          namespaced: false
+      objects:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: default
+    asserts:
+      - failedTemplate:
+          errorPattern: "Airlock Microgateway requires Gateway API v1 CRDs to be installed in the cluster"
+  - it: gateway API check should fail if cluster available without gateway v1 CRD
+    kubernetesProvider:
+      scheme:
+        "v1/Namespace":
+          gvr:
+            version: "v1"
+            resource: "namespaces"
+          namespaced: false
+        "apiextensions.k8s.io/v1/CustomResourceDefinition":
+          gvr:
+            group: apiextensions.k8s.io
+            version: "v1"
+            resource: "customresourcedefinitions"
+          namespaced: false
+      objects:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: default
+        - apiVersion: apiextensions.k8s.io/v1
+          kind: CustomResourceDefinition
+          metadata:
+            name: gateways.gateway.networking.k8s.io
+          spec:
+            versions:
+              - name: v1alpha1
+    asserts:
+      - failedTemplate:
+          errorPattern: "Airlock Microgateway requires Gateway API v1 CRDs to be installed in the cluster"
+  - it: gateway API check should succeed if cluster available with gateway v1 CRD
+    kubernetesProvider:
+      scheme:
+        "v1/Namespace":
+          gvr:
+            version: "v1"
+            resource: "namespaces"
+          namespaced: false
+        "apiextensions.k8s.io/v1/CustomResourceDefinition":
+          gvr:
+            group: apiextensions.k8s.io
+            version: "v1"
+            resource: "customresourcedefinitions"
+          namespaced: false
+      objects:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: default
+        - apiVersion: apiextensions.k8s.io/v1
+          kind: CustomResourceDefinition
+          metadata:
+            name: gateways.gateway.networking.k8s.io
+          spec:
+            versions:
+              - name: v1alpha1
+              - name: v1
+              - name: v1alpha3
     asserts:
       - notFailedTemplate: {}

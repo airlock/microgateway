@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.19.0
+    controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
     gateway.networking.k8s.io/policy: direct
   name: accesscontrolpolicies.microgateway.airlock.com
 spec:
@@ -164,13 +164,18 @@ spec:
                                               x-kubernetes-validations:
                                               - message: 'Probability must have a
                                                   value from the valid range: [`0.01%`,`99.99%`]'
-                                                rule: self.matches(r"""^[1-9]?[0-9](\.[0-9]{1,2})?%$""")
+                                                rule: self.matches(r"^[1-9]?[0-9](\.[0-9]{1,2})?%$")
                                                   && self != '0%' && self != '0.0%'
                                                   && self != '0.00%'
                                           required:
                                           - probability
                                           type: object
                                       type: object
+                                      x-kubernetes-validations:
+                                      - message: at most one of the fields in [always
+                                          random periodic] may be set
+                                        rule: '[has(self.always),has(self.random),has(self.periodic)].filter(x,x==true).size()
+                                          <= 1'
                                   type: object
                                 oidcRelyingPartyRef:
                                   description: oidcRelyingPartyRef configures how
@@ -185,14 +190,86 @@ spec:
                                   required:
                                   - name
                                   type: object
+                                timeouts:
+                                  description: timeouts specifies timeouts for OIDC
+                                    authentication properties.
+                                  properties:
+                                    acrValues:
+                                      default: 10m
+                                      description: acrValues specifies the time window
+                                        for which a particular ACR remains fulfilled
+                                        after it has last been included in an ID token.
+                                        Once the window has elapsed without a new
+                                        token containing that ACR having been issued
+                                        (e.g., during token refresh), policies enforcing
+                                        that ACR value will trigger a re-authentication
+                                        flow.
+                                      type: string
+                                      x-kubernetes-validations:
+                                      - message: duration must be greater than 0
+                                        rule: duration(self) > duration('0')
+                                  type: object
                               required:
                               - oidcRelyingPartyRef
                               type: object
                           type: object
+                          x-kubernetes-validations:
+                          - message: exactly one of the fields in [oidc jwt] must
+                              be set
+                            rule: '[has(self.oidc),has(self.jwt)].filter(x,x==true).size()
+                              == 1'
                         deny:
                           description: deny specifies to deny access for all requests
                             matching this policy.
                           type: object
+                        ensured:
+                          description: ensured specifies authentication properties
+                            to request from the client and which afterwards must be
+                            fulfilled in order for the request to be authorized (e.g.,
+                            an OIDC ACR to enforce 2FA).
+                          properties:
+                            oidc:
+                              description: oidc specifies properties related to OIDC
+                                authentication.
+                              minProperties: 1
+                              properties:
+                                acrInValues:
+                                  description: |-
+                                    acrInValues specifies that an ID token satisfying the following conditions must have been issued by the OIDC provider:
+                                    1. contains an ACR claim matching any of these values
+                                    2. not older than `authentication.oidc.timeouts.acrValues`
+                                    If no such claim is available, the client is redirected to the authorization endpoint of the OIDC provider with an `acr_values` parameter matching containing the specified values in the specified order (order of preference).
+                                  items:
+                                    maxLength: 1024
+                                    minLength: 1
+                                    pattern: ^[A-Za-z0-9!#$%&'()*+,\-./:;<=>?@\[\]^_\x60{|}~]+$
+                                    type: string
+                                  maxItems: 16
+                                  minItems: 1
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                                scopes:
+                                  description: scopes specifies OIDC scopes which
+                                    must have been granted in order for requests to
+                                    be authorized. If scopes are missing, the client
+                                    is redirected to the authorization endpoint of
+                                    the OIDC provider with a `scopes` parameter including
+                                    the missing scopes and all previously granted
+                                    scopes.
+                                  items:
+                                    maxLength: 1024
+                                    minLength: 1
+                                    pattern: ^[A-Za-z0-9!#$%&'()*+,\-./:;<=>?@\[\]^_\x60{|}~]+$
+                                    type: string
+                                  maxItems: 64
+                                  minItems: 1
+                                  type: array
+                                  x-kubernetes-list-type: set
+                              type: object
+                          type: object
+                          x-kubernetes-validations:
+                          - message: exactly one of the fields in [oidc] must be set
+                            rule: '[has(self.oidc)].filter(x,x==true).size() == 1'
                         requireAll:
                           description: requireAll specifies conditions which must
                             all be satisfied for the request to be authorized.
@@ -252,6 +329,11 @@ spec:
                                             - configMapRef
                                             type: object
                                         type: object
+                                        x-kubernetes-validations:
+                                        - message: exactly one of the fields in [values
+                                            valuesFrom] must be set
+                                          rule: '[has(self.values),has(self.valuesFrom)].filter(x,x==true).size()
+                                            == 1'
                                     required:
                                     - in
                                     type: object
@@ -313,7 +395,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -324,6 +406,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -387,7 +475,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -398,6 +486,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -463,7 +557,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -474,6 +568,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -482,6 +582,11 @@ spec:
                                     - value
                                     type: object
                                 type: object
+                                x-kubernetes-validations:
+                                - message: exactly one of the fields in [hash issuer
+                                    subject san] must be set
+                                  rule: '[has(self.hash),has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size()
+                                    == 1'
                               jwt:
                                 description: jwt specifies a condition on the JWT.
                                 properties:
@@ -540,7 +645,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -551,6 +656,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -619,7 +730,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -630,6 +741,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -698,7 +815,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -709,6 +826,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -719,6 +842,11 @@ spec:
                                 - claim
                                 type: object
                             type: object
+                            x-kubernetes-validations:
+                            - message: exactly one of the fields in [jwt oidc tokenExchange
+                                clientCertificate] must be set
+                              rule: '[has(self.jwt),has(self.oidc),has(self.tokenExchange),has(self.clientCertificate)].filter(x,x==true).size()
+                                == 1'
                           maxItems: 64
                           minItems: 1
                           type: array
@@ -781,6 +909,11 @@ spec:
                                             - configMapRef
                                             type: object
                                         type: object
+                                        x-kubernetes-validations:
+                                        - message: exactly one of the fields in [values
+                                            valuesFrom] must be set
+                                          rule: '[has(self.values),has(self.valuesFrom)].filter(x,x==true).size()
+                                            == 1'
                                     required:
                                     - in
                                     type: object
@@ -842,7 +975,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -853,6 +986,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -916,7 +1055,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -927,6 +1066,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -992,7 +1137,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -1003,6 +1148,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -1011,6 +1162,11 @@ spec:
                                     - value
                                     type: object
                                 type: object
+                                x-kubernetes-validations:
+                                - message: exactly one of the fields in [hash issuer
+                                    subject san] must be set
+                                  rule: '[has(self.hash),has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size()
+                                    == 1'
                               jwt:
                                 description: jwt specifies a condition on the JWT.
                                 properties:
@@ -1069,7 +1225,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -1080,6 +1236,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -1148,7 +1310,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -1159,6 +1321,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -1227,7 +1395,7 @@ spec:
                                                   regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                                   The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                                   Only one of exact, prefix, suffix, regex or contains can be set.
-                                                maxLength: 1024
+                                                maxLength: 256
                                                 minLength: 1
                                                 type: string
                                               suffix:
@@ -1238,6 +1406,12 @@ spec:
                                                 minLength: 1
                                                 type: string
                                             type: object
+                                            x-kubernetes-validations:
+                                            - message: exactly one of the fields in
+                                                [exact prefix suffix regex contains]
+                                                must be set
+                                              rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                                == 1'
                                         required:
                                         - matcher
                                         type: object
@@ -1248,6 +1422,11 @@ spec:
                                 - claim
                                 type: object
                             type: object
+                            x-kubernetes-validations:
+                            - message: exactly one of the fields in [jwt oidc tokenExchange
+                                clientCertificate] must be set
+                              rule: '[has(self.jwt),has(self.oidc),has(self.tokenExchange),has(self.clientCertificate)].filter(x,x==true).size()
+                                == 1'
                           maxItems: 64
                           minItems: 1
                           type: array
@@ -1255,14 +1434,25 @@ spec:
                       x-kubernetes-validations:
                       - message: cannot specify requireAny[*].jwt or requireAll[*].jwt
                           without authentication.jwt
-                        rule: has(self.authentication.jwt) || ((!has(self.requireAny)
-                          || self.requireAny.all(r, !has(r.jwt))) && (!has(self.requireAll)
-                          || self.requireAll.all(r, !has(r.jwt))))
+                        rule: (has(self.authentication) && has(self.authentication.jwt))
+                          || ((!has(self.requireAny) || self.requireAny.all(r, !has(r.jwt)))
+                          && (!has(self.requireAll) || self.requireAll.all(r, !has(r.jwt))))
                       - message: cannot specify requireAny[*].oidc or requireAll[*].oidc
                           without authentication.oidc
-                        rule: has(self.authentication.oidc) || ((!has(self.requireAny)
-                          || self.requireAny.all(r, !has(r.oidc))) && (!has(self.requireAll)
-                          || self.requireAll.all(r, !has(r.oidc))))
+                        rule: (has(self.authentication) && has(self.authentication.oidc))
+                          || ((!has(self.requireAny) || self.requireAny.all(r, !has(r.oidc)))
+                          && (!has(self.requireAll) || self.requireAll.all(r, !has(r.oidc))))
+                      - message: cannot specify ensured.oidc without authentication.oidc
+                        rule: '!(has(self.ensured) && has(self.ensured.oidc)) || (has(self.authentication)
+                          && has(self.authentication.oidc))'
+                      - message: at most one of the fields in [requireAny requireAll
+                          deny] may be set
+                        rule: '[has(self.requireAny),has(self.requireAll),has(self.deny)].filter(x,x==true).size()
+                          <= 1'
+                      - message: at most one of the fields in [deny authentication]
+                          may be set
+                        rule: '[has(self.deny),has(self.authentication)].filter(x,x==true).size()
+                          <= 1'
                     identityPropagation:
                       description: identityPropagation configures how the authenticated
                         user's identity is communicated to the protected application.
@@ -1344,7 +1534,7 @@ spec:
                                         regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                         The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                         Only one of exact, prefix, suffix, regex or contains can be set.
-                                      maxLength: 1024
+                                      maxLength: 256
                                       minLength: 1
                                       type: string
                                     suffix:
@@ -1355,6 +1545,11 @@ spec:
                                       minLength: 1
                                       type: string
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [exact prefix
+                                      suffix regex contains] must be set
+                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                      == 1'
                               required:
                               - matcher
                               type: object
@@ -1398,7 +1593,7 @@ spec:
                                         regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                         The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                         Only one of exact, prefix, suffix, regex or contains can be set.
-                                      maxLength: 1024
+                                      maxLength: 256
                                       minLength: 1
                                       type: string
                                     suffix:
@@ -1409,10 +1604,20 @@ spec:
                                       minLength: 1
                                       type: string
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [exact prefix
+                                      suffix regex contains] must be set
+                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                      == 1'
                               required:
                               - matcher
                               type: object
                           type: object
+                          x-kubernetes-validations:
+                          - message: at least one of the fields in [name value] must
+                              be set
+                            rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
+                              >= 1'
                         invert:
                           default: false
                           description: invert indicates whether the request condition
@@ -1453,7 +1658,7 @@ spec:
                                     regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                     The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                     Only one of exact, prefix, suffix, regex or contains can be set.
-                                  maxLength: 1024
+                                  maxLength: 256
                                   minLength: 1
                                   type: string
                                 suffix:
@@ -1464,6 +1669,11 @@ spec:
                                   minLength: 1
                                   type: string
                               type: object
+                              x-kubernetes-validations:
+                              - message: exactly one of the fields in [exact prefix
+                                  suffix regex contains] must be set
+                                rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                  == 1'
                           required:
                           - matcher
                           type: object
@@ -1524,7 +1734,7 @@ spec:
                                     regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
                                     The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
                                     Only one of exact, prefix, suffix, regex or contains can be set.
-                                  maxLength: 1024
+                                  maxLength: 256
                                   minLength: 1
                                   type: string
                                 suffix:
@@ -1535,13 +1745,18 @@ spec:
                                   minLength: 1
                                   type: string
                               type: object
+                              x-kubernetes-validations:
+                              - message: exactly one of the fields in [exact prefix
+                                  suffix regex contains] must be set
+                                rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
+                                  == 1'
                           required:
                           - matcher
                           type: object
                         remoteIP:
                           description: |-
                             remoteIP defines the matching remote IPs of a request.
-                            Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `SidecarGateway` / `GatewayParameters` resource to ensure correct client IP detection.
+                            Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
                           properties:
                             cidrRanges:
                               description: cidrRanges defines the IPv4 or IPv6 CIDR
@@ -1566,6 +1781,11 @@ spec:
                           - cidrRanges
                           type: object
                       type: object
+                      x-kubernetes-validations:
+                      - message: at least one of the fields in [path header method
+                          remoteIP mediaType] must be set
+                        rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size()
+                          >= 1'
                     tokenExchange:
                       description: tokenExchange configures how downstream authentication
                         tokens (e.g. JWT or OIDC Access Token) are exchanged with

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.19.0
+    controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
   name: identitypropagations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -109,6 +109,9 @@ spec:
                                 - field
                               type: object
                           type: object
+                          x-kubernetes-validations:
+                            - message: at most one of the fields in [issuer subject san] may be set
+                              rule: '[has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size() <= 1'
                         jwt:
                           description: jwt specifies to extract a value from a JWT.
                           properties:
@@ -151,6 +154,9 @@ spec:
                                   type: string
                               type: object
                           type: object
+                          x-kubernetes-validations:
+                            - message: exactly one of the fields in [idToken accessToken] must be set
+                              rule: '[has(self.idToken),has(self.accessToken)].filter(x,x==true).size() == 1'
                         tokenExchange:
                           description: tokenExchange specifies to use the token obtained via token exchange as value.
                           properties:
@@ -163,6 +169,9 @@ spec:
                               type: string
                           type: object
                       type: object
+                      x-kubernetes-validations:
+                        - message: exactly one of the fields in [clientCertificate jwt metadata oidc tokenExchange] must be set
+                          rule: '[has(self.clientCertificate),has(self.jwt),has(self.metadata),has(self.oidc),has(self.tokenExchange)].filter(x,x==true).size() == 1'
                   required:
                     - source
                   type: object
@@ -236,6 +245,9 @@ spec:
                                     - field
                                   type: object
                               type: object
+                              x-kubernetes-validations:
+                                - message: at most one of the fields in [issuer subject san] may be set
+                                  rule: '[has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size() <= 1'
                             jwt:
                               description: jwt specifies to extract a value from a JWT.
                               properties:
@@ -278,6 +290,9 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                              x-kubernetes-validations:
+                                - message: exactly one of the fields in [idToken accessToken] must be set
+                                  rule: '[has(self.idToken),has(self.accessToken)].filter(x,x==true).size() == 1'
                             tokenExchange:
                               description: tokenExchange specifies to use the token obtained via token exchange as value.
                               properties:
@@ -290,6 +305,9 @@ spec:
                                   type: string
                               type: object
                           type: object
+                          x-kubernetes-validations:
+                            - message: exactly one of the fields in [clientCertificate jwt metadata oidc tokenExchange] must be set
+                              rule: '[has(self.clientCertificate),has(self.jwt),has(self.metadata),has(self.oidc),has(self.tokenExchange)].filter(x,x==true).size() == 1'
                       required:
                         - source
                       type: object
@@ -298,6 +316,9 @@ spec:
                     - value
                   type: object
               type: object
+              x-kubernetes-validations:
+                - message: exactly one of the fields in [header bearerToken] must be set
+                  rule: '[has(self.header),has(self.bearerToken)].filter(x,x==true).size() == 1'
           required:
             - spec
           type: object

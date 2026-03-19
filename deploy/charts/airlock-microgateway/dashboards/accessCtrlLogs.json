@@ -23,13 +23,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.4.0"
+      "version": "12.3.0"
     },
     {
       "type": "datasource",
       "id": "loki",
       "name": "Loki",
-      "version": "1.0.0"
+      "version": "12.3.0"
     },
     {
       "type": "datasource",
@@ -63,7 +63,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "asDropdown": true,
@@ -83,7 +82,6 @@
   "panels": [
     {
       "datasource": {
-        "default": false,
         "type": "loki",
         "uid": "${DS_LOKI}"
       },
@@ -100,6 +98,9 @@
               "type": "auto"
             },
             "filterable": true,
+            "footer": {
+              "reducers": []
+            },
             "inspect": true
           },
           "mappings": [],
@@ -108,7 +109,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           }
@@ -299,19 +300,16 @@
       "id": 2,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
+        "enablePagination": true,
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Timestamp"
+          }
+        ]
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
           "datasource": {
@@ -382,9 +380,9 @@
               "namespace": 1,
               "policy": 7,
               "request_id": 15,
-              "session_id": 14,
               "request_size": 5,
               "response_code": 6,
+              "session_id": 14,
               "status": 11,
               "url": 4,
               "user_id": 8
@@ -399,10 +397,10 @@
               "http_method": "HTTP Method",
               "namespace": "Namespace",
               "policy": "Access Control Policy",
-              "session_id": "Session ID",
               "request_id": "Request ID",
               "request_size": "Request Size",
               "response_code": "HTTP Status",
+              "session_id": "Session ID",
               "status": "Status",
               "url": "URL Path",
               "user_id": "User ID"
@@ -413,7 +411,8 @@
       "type": "table"
     }
   ],
-  "schemaVersion": 40,
+  "preload": false,
+  "schemaVersion": 42,
   "tags": [
     "airlock-microgateway"
   ],
@@ -444,35 +443,14 @@
         "type": "datasource"
       },
       {
-        "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(microgateway_build_info,gateway_kind)",
-        "description": "Allows filtering on the gateway kind.",
-        "includeAll": true,
-        "label": "Gateway Kind",
-        "name": "gateway_kind",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(microgateway_build_info,gateway_kind)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
         "allValue": ".+",
-        "description" : "Allows filtering on the managing operator instance.",
         "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(microgateway_build_info,managed_by)",
+        "description": "Allows filtering on the managing operator instance.",
         "includeAll": true,
         "label": "Microgateway Operator",
         "multi": true,
@@ -490,12 +468,12 @@
       {
         "allValue": ".+",
         "current": {},
-        "description" : "Allows filtering on the namespaces in which gateways are deployed.",
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
+        "description": "Allows filtering on the namespaces in which gateways are deployed.",
         "includeAll": true,
         "label": "Gateway Namespace",
         "multi": true,
@@ -516,8 +494,8 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "description" : "Allows filtering on specific gateway instance names within the selected namespaces.",
-        "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+        "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
+        "description": "Allows filtering on specific gateway instance names within the selected namespaces.",
         "includeAll": true,
         "label": "Gateway Name",
         "multi": true,
@@ -525,7 +503,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\"},gateway)",
+          "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -540,7 +518,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\", gateway=~\"$gateway_name\"},pod)",
+        "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},pod)",
         "hide": 2,
         "includeAll": true,
         "label": "Gateway Pod",
@@ -549,7 +527,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway_kind=~\"$gateway_kind\", gateway=~\"$gateway_name\"},pod)",
+          "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},pod)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -566,6 +544,6 @@
   "timezone": "Europe/Zurich",
   "title": "Airlock Microgateway Access Control - Logs",
   "uid": "ce99ks6s11nuob",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

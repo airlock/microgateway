@@ -1,0 +1,598 @@
+suite: helm.TestDashboardConfigMaps
+templates:
+  - dashboard-configmap.yaml
+tests:
+  - it: should not create dashboard configmaps by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should set name and namespace on configmaps
+    set:
+      dashboards.create: true
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+
+  - it: should create all dashboards if default switch is true
+    release:
+      name: myoperator
+    set:
+      dashboards.create: true
+    asserts:
+      - hasDocuments:
+          count: 13
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-accessctrllogs
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-accessctrlmetrics
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blocklogs
+        documentIndex: 2
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blockmetrics
+        documentIndex: 3
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-downstreammetrics
+        documentIndex: 4
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-headerlogs
+        documentIndex: 5
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-license
+        documentIndex: 6
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-logonlylogs
+        documentIndex: 7
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-logonlymetrics
+        documentIndex: 8
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-overview
+        documentIndex: 9
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-requestlogs
+        documentIndex: 10
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-systemmetrics
+        documentIndex: 11
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-upstreammetrics
+        documentIndex: 12
+
+  - it: should be possible to only enable license dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          overview:
+            create: false
+          blockLogs:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-license
+
+  - it: should be possible to only enable blockMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          overview:
+            create: false
+          blockLogs:
+            create: false
+          license:
+            create: false
+          headerLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blockmetrics
+
+  - it: should be possible to only enable overview dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          blockLogs:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-overview
+
+  - it: should be possible to only enable headerLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          overview:
+            create: false
+          license:
+            create: false
+          blockLogs:
+            create: false
+          blockMetrics:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-headerlogs
+
+  - it: should be possible to only enable blockLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-blocklogs
+
+  - it: should be possible to only enable logOnlyMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-logonlymetrics
+
+  - it: should be possible to only enable logOnlyLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-logonlylogs
+
+  - it: should be possible to only enable requestLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-requestlogs
+
+  - it: should be possible to only enable accessCtrlLogs dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-accessctrllogs
+
+  - it: should be possible to only enable systemMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-systemmetrics
+
+  - it: should be possible to only enable upstreamMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          downstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-upstreammetrics
+
+  - it: should be possible to only enable downstreamMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          accessCtrlMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-downstreammetrics
+
+  - it: should be possible to only enable accessCtrlMetrics dashboard
+    release:
+      name: myoperator
+    set:
+      dashboards:
+        create: true
+        instances:
+          license:
+            create: false
+          overview:
+            create: false
+          blockMetrics:
+            create: false
+          headerLogs:
+            create: false
+          blockLogs:
+            create: false
+          logOnlyMetrics:
+            create: false
+          requestLogs:
+            create: false
+          logOnlyLogs:
+            create: false
+          accessCtrlLogs:
+            create: false
+          upstreamMetrics:
+            create: false
+          systemMetrics:
+            create: false
+          downstreamMetrics:
+            create: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-dashboard-accessctrlmetrics
+
+  - it: should set grafana label correctly
+    set:
+      dashboards.create: true
+      dashboards.config.grafana.dashboardLabel:
+        name: "my_dashboard"
+        value: "foo"
+    asserts:
+      - isSubset:
+          path: metadata.labels
+          content:
+            my_dashboard: "foo"
+
+  - it: should set grafana annotation correctly
+    set:
+      dashboards.create: true
+      dashboards.config.grafana.folderAnnotation:
+        name: "someFolder"
+        value: "Some Secret Project"
+    asserts:
+      - isSubset:
+          path: metadata.annotations
+          content:
+            someFolder: "Some Secret Project"

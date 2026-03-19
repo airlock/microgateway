@@ -1,0 +1,95 @@
+suite: helm.TestTests
+set:
+  tests.enabled: true
+tests:
+  - it: test should make sure image uses tag
+    set:
+      image.tag: 4.5.6
+      image.digest: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator:4.5.6
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should fallback to just a valid image if neither a tag or digest is set
+    set:
+      image.tag: ""
+      image.digest: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should make sure digest takes precedence over image tag
+    set:
+      image.tag: latest
+      image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should have imagePullSecrets if set as list of objects
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should have imagePullSecrets if set as list of strings
+    set:
+      imagePullSecrets:
+        - myRegistryPullSecret
+    asserts:
+      - contains:
+          path: spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret
+          count: 1
+          any: true
+    templates:
+      - tests/test-install.yaml
+
+  - it: test should set env variables
+    release:
+      name: test
+      namespace: test-ns
+    set:
+      fullnameOverride: test-fullname
+    asserts:
+      - equal:
+          path: spec.containers[0].env
+          value:
+            - name: HELM_RELEASE_NAME
+              value: test
+            - name: HELM_FULL_NAME
+              value: test-fullname
+            - name: RELEASE_NAMESPACE
+              value: test-ns
+
+            - name: OPERATOR_DEPLOYMENT_NAME
+              value: "test-fullname-operator"
+            - name: CONTROLLER_NAME
+              value: "microgateway.airlock.com/gatewayclass-controller"
+            - name: GATEWAY_NAME
+              value: "test-fullname-test-gw"
+            - name: TEST_GATEWAY_CLASS_NAME
+              value: "test-fullname-test-gwc"
+    templates:
+      - tests/test-install.yaml

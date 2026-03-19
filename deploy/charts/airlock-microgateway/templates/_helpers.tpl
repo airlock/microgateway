@@ -49,6 +49,14 @@ Create chart name and version as used by the chart label.
 {{/*
 Common labels
 */}}
+{{- define "airlock-microgateway.labels" -}}
+{{ include "airlock-microgateway.sharedLabels" . }}
+{{ include "airlock-microgateway.selectorLabels" . }}
+{{- end }}
+
+{{/*
+Shared labels
+*/}}
 {{- define "airlock-microgateway.sharedLabels" -}}
 helm.sh/chart: {{ include "airlock-microgateway.chart" . }}
 {{- if .Chart.AppVersion }}
@@ -61,11 +69,26 @@ app.kubernetes.io/part-of: {{ .Chart.Name }}
 {{- end }}
 {{- end }}
 
+
 {{/*
-Common Selector labels
+Selector labels
+*/}}
+{{- define "airlock-microgateway.selectorLabels" -}}
+{{ include "airlock-microgateway.sharedSelectorLabels" . }}
+app.kubernetes.io/name: {{ include "airlock-microgateway.name" . }}-operator
+app.kubernetes.io/component: controller
+{{- end }}
+
+{{/*
+Shared Selector labels
 */}}
 {{- define "airlock-microgateway.sharedSelectorLabels" -}}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/* Controller name with static prefix removed */}}
+{{- define "airlock-microgateway.controllerNameWithoutPrefix" -}}
+{{ trimPrefix "microgateway.airlock.com/" .Values.controllerName }}
 {{- end }}
 
 {{/*
@@ -80,6 +103,24 @@ capabilities:
 readOnlyRootFilesystem: true
 seccompProfile:
   type: RuntimeDefault
+{{- end }}
+
+{{/*
+Create the name of the service account to use for the operator
+*/}}
+{{- define "airlock-microgateway.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "airlock-microgateway.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+ServiceMonitor metrics regex pattern for leader only metrics
+*/}}
+{{- define "airlock-microgateway.metricsLeaderOnlyRegexPattern" -}}
+^(microgateway_license).*$
 {{- end }}
 
 {{/* Precondition: May only be used if AppVersion is isSemver */}}
@@ -118,6 +159,53 @@ seccompProfile:
 {{- end -}}
 {{- end -}}
 
+
+{{/* Returns true for helm install or helm template with --dry-run=server */}}
+{{- define "airlock-microgateway.isClusterAvailable" -}}
+{{- if (lookup "v1" "Namespace" "" "default") -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{- define "airlock-microgateway.hasGatewayCRDWithSupportedVersion" -}}
+{{- $gwcrd := (lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "gateways.gateway.networking.k8s.io") -}}
+{{- if $gwcrd }}
+    {{- $isSupportedGWAPIVersion := false }}
+    {{- range $gwcrd.spec.versions }}
+        {{- if eq .name "v1" }}
+            {{- $isSupportedGWAPIVersion = true }}
+        {{- end }}
+    {{- end }}
+    {{- if $isSupportedGWAPIVersion -}}
+    true
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "airlock-microgateway.gatewayAPICheck" -}}
+{{- if include "airlock-microgateway.isClusterAvailable" . -}}
+{{- if .Values.crds.skipGatewayAPICheck }}
+
+Warning: Gateway API check skipped
+{{- else -}}
+{{- if not (include "airlock-microgateway.hasGatewayCRDWithSupportedVersion" .) -}}
+    {{- fail (printf `
+
+Airlock Microgateway requires Gateway API v1 CRDs to be installed in the cluster.
+Please check https://gateway-api.sigs.k8s.io/guides/getting-started/#installing-gateway-api for instructions on how to install Gateway API CRDs and install a compatible version.
+
+To simply install the latest supported standard channel, use the following command:
+
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/%s/standard-install.yaml
+
+If you still want to proceed, you can suppress this error by setting the helm value 'crds.skipGatewayAPICheck=true'.`
+    (include "airlock-microgateway-operator.latestSupportedGatewayAPIVersion" .))
+    -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "airlock-microgateway.isSemver" -}}
 {{- regexMatch `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$` . -}}
 {{- end -}}
@@ -129,27 +217,6 @@ seccompProfile:
 {{- else -}}
     {{- print "latest" -}}
 {{- end -}}
-{{- end -}}
-
-{{- define "airlock-microgateway.watchNamespaceSelector.labelQuery" -}}
-{{- $list := list -}}
-{{- with .matchLabels -}}
-    {{- range $key, $value := . -}}
-        {{- $list = append $list (printf "%s=%s" $key $value) -}}
-    {{- end -}}
-{{- end -}}
-{{- with .matchExpressions -}}
-    {{- range . -}}
-        {{- if has .operator (list "In" "NotIn") -}}
-            {{- $list = append $list (printf "%s %s (%s)" .key (lower .operator) (join "," .values)) -}}
-        {{- else if eq .operator "Exists" -}}
-            {{- $list = append $list .key -}}
-        {{- else if eq .operator "DoesNotExist" -}}
-            {{- $list = append $list (printf "!%s" .key) -}}
-        {{- end -}}
-    {{- end -}}
-{{- end -}}
-{{- join "," $list -}}
 {{- end -}}
 
 {{/*

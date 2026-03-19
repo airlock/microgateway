@@ -1,0 +1,45 @@
+suite: helm.TestGatewayClass
+templates:
+  - gatewayclass.yaml
+tests:
+  - it: should create GatewayClass by default
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should not create GatewayClass if gatewayAPI.gatewayClass.create is false
+    set:
+      gatewayClass.create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create GatewayClass with default name and controller name
+    set:
+      gatewayClass.create: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: airlock-microgateway
+      - equal:
+          path: spec.controllerName
+          value: microgateway.airlock.com/gatewayclass-controller
+      - equal:
+          path: spec.description
+          value: GatewayClass for Airlock Microgateway.
+
+  - it: should create GatewayClass with specified name and controller name
+    set:
+      controllerName: microgateway.airlock.com/my-gatewayclass-controller
+      gatewayClass.create: true
+      gatewayClass.name: my-gateway-class
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-gateway-class
+      - equal:
+          path: spec.controllerName
+          value: microgateway.airlock.com/my-gatewayclass-controller
+      - equal:
+          path: spec.description
+          value: GatewayClass for Airlock Microgateway.

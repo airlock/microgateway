@@ -1,0 +1,588 @@
+suite: helm.TestDeployment
+# as a workaround to a limitation in the helm unittest framework while working with 'gotpl'
+# the template is specified for each test job
+tests:
+  - it: should set name and namespace
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: metadata.name
+          value: myoperator-microgateway-operator
+      - equal:
+          path: metadata.namespace
+          value: mytestnamespace
+    templates:
+      - deployment.yaml
+
+  - it: should override fullname if provided
+    set:
+      nameOverride: myoperatorname
+      fullnameOverride: operatorfullname
+    release:
+      name: operator-test-release
+    asserts:
+      - equal:
+          path: metadata.name
+          value: operatorfullname-operator
+    templates:
+      - deployment.yaml
+
+  - it: should make sure image uses tag for engine image in env var
+    set:
+      config.engineImage.tag: 4.5.6
+      config.engineImage.digest: ""
+      config.engineImage.repository: registry-mirror:8080/airlock/microgateway-engine
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: registry-mirror:8080/airlock/microgateway-engine:4.5.6
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest takes precedence over tag for engine image in env var
+    set:
+      config.engineImage.tag: latest
+      config.engineImage.digest: sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+      config.engineImage.repository: registry-mirror:8080/airlock/microgateway-engine
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: registry-mirror:8080/airlock/microgateway-engine@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest is also used if no tag is available for engine image in env var
+    set:
+      config.engineImage.tag: ""
+      config.engineImage.digest: sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+      config.engineImage.repository: registry-mirror:8080/airlock/microgateway-engine
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: registry-mirror:8080/airlock/microgateway-engine@sha256:9ddbd0631c0d217eae0eeb1faba05ab0792a6e9d26c471333fd9e49dc130353a
+    templates:
+      - deployment.yaml
+
+  - it: should make sure image uses tag for session agent image in env var
+    set:
+      config.sessionAgentImage.tag: 1.2.3
+      config.sessionAgentImage.digest: ""
+      config.sessionAgentImage.repository: registry-mirror:8080/airlock/microgateway-session-agent
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[1].value
+          value: registry-mirror:8080/airlock/microgateway-session-agent:1.2.3
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest takes precedence over tag for session agent image in env var
+    set:
+      config.sessionAgentImage.tag: latest
+      config.sessionAgentImage.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+      config.sessionAgentImage.repository: registry-mirror:8080/airlock/microgateway-session-agent
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[1].value
+          value: registry-mirror:8080/airlock/microgateway-session-agent@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest is also used if no tag is available for session agent image in env var
+    set:
+      config.sessionAgentImage.tag: ""
+      config.sessionAgentImage.digest: sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+      config.sessionAgentImage.repository: registry-mirror:8080/airlock/microgateway-session-agent
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[1].value
+          value: registry-mirror:8080/airlock/microgateway-session-agent@sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3
+    templates:
+      - deployment.yaml
+
+  - it: should make sure env vars use defaults and are absent if not set
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: info
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CONTROLLER_NAME
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_POD_MONITOR_CREATE
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_POD_MONITOR_ADDITIONAL_LABELS
+    templates:
+      - deployment.yaml
+
+  - it: should make sure env vars are set accordingly
+    set:
+      config.logLevel: debug
+      controllerName: microgateway.airlock.com/test-controller
+      config.gatewayPodMonitor:
+        create: true
+        labels:
+            env: test
+            foo: bar
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CONTROLLER_NAME
+            value: microgateway.airlock.com/test-controller
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_POD_MONITOR_CREATE
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GATEWAY_POD_MONITOR_ADDITIONAL_LABELS
+            value: "env=test,foo=bar"
+    templates:
+      - deployment.yaml
+
+  - it: should make sure extra env vars are set accordingly
+    set:
+      config.logLevel: debug
+      extraEnv:
+        - name: "newEnvVar"
+          value: "newEnvValue"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: newEnvVar
+            value: newEnvValue
+    templates:
+      - deployment.yaml
+
+  - it: should make sure extra env vars do not overwrite our env vars
+    set:
+      config.logLevel: debug
+      extraEnv:
+        - name: "LOG_LEVEL"
+          value: "info"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_LEVEL
+            value: debug
+    templates:
+      - deployment.yaml
+
+  - it: should set recommended labels and selector labels
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels
+          value:
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/component: controller
+    templates:
+      - deployment.yaml
+
+  - it: should set recommended labels on pod template spec
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    chart:
+      version: 1.2.3
+      appVersion: 4.5.6
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            helm.sh/chart: microgateway-1.2.3
+            app.kubernetes.io/version: "4.5.6"
+            app.kubernetes.io/name: microgateway-operator
+            app.kubernetes.io/instance: myoperator
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/component: controller
+            app.kubernetes.io/part-of: microgateway
+    templates:
+      - deployment.yaml
+
+  - it: should set specific and common labels on pod template spec
+    set:
+      commonLabels:
+        commonLabel: foo
+      podLabels:
+        podLabel: bar
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            commonLabel: foo
+            podLabel: bar
+    templates:
+      - deployment.yaml
+
+  - it: should set specific and common annotations on pod template spec
+    set:
+      commonAnnotations:
+        commonAnnotation: bar
+      podAnnotations:
+        podAnnotation: foo
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            commonAnnotation: bar
+            podAnnotation: foo
+    templates:
+      - deployment.yaml
+
+  - it: should merge annotations giving precedence on pod template spec to pod annotations over common annotations
+    set:
+      commonAnnotations:
+        myAnnotation: common2
+      podAnnotations:
+        podAnnotation: foo
+        myAnnotation: pod
+    asserts:
+      - isSubset:
+          path: spec.template.metadata.annotations
+          content:
+            podAnnotation: foo
+            myAnnotation: pod
+    templates:
+      - deployment.yaml
+
+  - it: should create checksum for configmap in annotations on pod spec
+    asserts:
+      - exists:
+          path: spec.template.metadata.annotations.checksum/config
+      - matchRegex:
+          path: spec.template.metadata.annotations.checksum/config
+          pattern: ^.{64}$
+    templates:
+      - deployment.yaml
+
+  - it: should make sure image uses tag
+    set:
+      image.tag: 4.5.6
+      image.digest: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator:4.5.6
+    templates:
+      - deployment.yaml
+
+  - it: should fallback to just a valid image if neither a tag or digest is set
+    set:
+      image.tag: ""
+      image.digest: ""
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest takes precedence over image tag
+    set:
+      image.tag: latest
+      image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+    templates:
+      - deployment.yaml
+
+  - it: should make sure digest is also used if no tag is available
+    set:
+      image.tag: ""
+      image.digest: sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+      image.repository: registry-mirror:8080/airlock/microgateway-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry-mirror:8080/airlock/microgateway-operator@sha256:c721875bd6a51e70e218451d3304b9e399c6a2e36f7ce91486f85b81becb1bfb
+    templates:
+      - deployment.yaml
+
+  - it: should set imagePullPolicy for container in pod spec
+    set:
+      image.pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+    templates:
+      - deployment.yaml
+
+  - it: should set replicaCount of deployment accordingly
+    set:
+      replicaCount: 2
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 2
+    templates:
+      - deployment.yaml
+
+  - it: should set default requests and limits resources for memory and cpu in pod spec
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 2000m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+    templates:
+      - deployment.yaml
+
+  - it: should set specified requests and limits resources for memory and cpu in pod spec
+    set:
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+            requests:
+              memory: 128Mi
+              cpu: 100m
+    templates:
+      - deployment.yaml
+
+  - it: does not create requests and limits resources if is set null
+    set:
+      resources: null
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
+    templates:
+      - deployment.yaml
+
+  - it: does not create imagePullSecrets if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+    templates:
+      - deployment.yaml
+
+  - it: should create imagePullSecrets if set as list of objects
+    set:
+      imagePullSecrets:
+        - name: myRegistryPullSecret1
+        - name: myRegistryPullSecret2
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret1
+          documentIndex: 0
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret2
+          documentIndex: 1
+    templates:
+      - deployment.yaml
+
+  - it: should create imagePullSecrets if set as list of strings
+    set:
+      imagePullSecrets:
+        - myRegistryPullSecret1
+        - myRegistryPullSecret2
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret1
+          documentIndex: 0
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myRegistryPullSecret2
+          documentIndex: 1
+    templates:
+      - deployment.yaml
+
+  - it: does not create node selectors if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.nodeSelector
+    templates:
+      - deployment.yaml
+
+  - it: should create node selectors if set
+    set:
+      nodeSelector:
+        label: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.label
+          value: foo
+    templates:
+      - deployment.yaml
+
+  - it: does not create tolerations if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.tolerations
+    templates:
+      - deployment.yaml
+
+  - it: should render tolerations if set
+    set:
+      tolerations:
+        - key: "example-key"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "example-key2"
+          operator: "Exists"
+          effect: "NoSchedule"
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].key
+          value: example-key
+      - equal:
+          path: spec.template.spec.tolerations[1].key
+          value: example-key2
+    templates:
+      - deployment.yaml
+
+  - it: does not create affinity if not set
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity
+    templates:
+      - deployment.yaml
+
+  - it: should set name of referenced volumes
+    release:
+      name: myoperator
+      namespace: mytestnamespace
+    set:
+      license.secretName: custom-license
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            configMap:
+              name: myoperator-microgateway-config
+          count: 1
+          any: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: airlock-microgateway-license
+            secret:
+              defaultMode: 292
+              optional: true
+              secretName: custom-license
+    templates:
+      - deployment.yaml
+
+  - it: should set custom name for service account name if provided
+    set:
+      serviceAccount.name: my-service-account
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: my-service-account
+    templates:
+      - deployment.yaml
+
+  - it: should set default update strategy for deployment
+    asserts:
+      - equal:
+          path: spec.strategy
+          value:
+            type: RollingUpdate
+    templates:
+      - deployment.yaml
+
+  - it: set Recreate update strategy for deployment
+    set:
+      updateStrategy:
+        type: Recreate
+    asserts:
+      - equal:
+          path: spec.strategy
+          value:
+            type: Recreate
+    templates:
+      - deployment.yaml
+
+  - it: should override defaults and set custom RollingUpdate update strategy for deployment
+    set:
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 10%
+          maxUnavailable: 1
+    asserts:
+      - equal:
+          path: spec.strategy
+          value:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 10%
+              maxUnavailable: 1
+    templates:
+      - deployment.yaml
+
+  - it: should set topologySpreadConstraints
+    set:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: microgateway-operator
+    asserts:
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints
+          content:
+            maxSkew: 1
+            topologyKey: topology.kubernetes.io/zone
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: microgateway-operator
+    templates:
+      - deployment.yaml

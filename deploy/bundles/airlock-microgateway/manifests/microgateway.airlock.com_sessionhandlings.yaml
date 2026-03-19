@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.19.0
+    controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 5.0.0
   name: sessionhandlings.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -183,19 +183,24 @@ spec:
                     type: string
                 type: object
               defaultTimeouts:
-                description: defaultTimeouts specifies the session timeouts to apply
-                  when not provided by the authentication method.
+                description: defaultTimeouts configures timeouts to apply to new sessions.
                 properties:
                   idle:
                     default: 10m
                     description: idle specifies the maximum duration a session can
                       remain inactive before it is considered expired.
                     type: string
+                    x-kubernetes-validations:
+                    - message: duration must be greater than 0
+                      rule: duration(self) > duration('0')
                   lifetime:
                     default: 12h
                     description: lifetime specifies the maximum duration a session
                       can exist.
                     type: string
+                    x-kubernetes-validations:
+                    - message: duration must be greater than 0
+                      rule: duration(self) > duration('0')
                 type: object
               limits:
                 description: limits configures session-related limits.
@@ -272,7 +277,20 @@ spec:
                         - message: logging must be less than blocking
                           rule: '!has(self.logging) || !has(self.blocking) || self.logging
                             < self.blocking'
+                        - message: at least one of the fields in [logging blocking]
+                            must be set
+                          rule: '[has(self.logging),has(self.blocking)].filter(x,x==true).size()
+                            >= 1'
                     type: object
+                    x-kubernetes-validations:
+                    - message: at most one of the fields in [disabled thresholds]
+                        may be set
+                      rule: '[has(self.disabled),has(self.thresholds)].filter(x,x==true).size()
+                        <= 1'
+                    - message: at most one of the fields in [disabled exceptions]
+                        may be set
+                      rule: '[has(self.disabled),has(self.exceptions)].filter(x,x==true).size()
+                        <= 1'
                 type: object
               mode:
                 default: OnDemand

@@ -37,22 +37,39 @@ metadata:
   namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
-    - microgateway.airlock.com
+    - gateway.networking.k8s.io
   resources:
-    - sidecargateways
+    - gateways
+  verbs:
+    - create
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gateways
   resourceNames:
-    - "{{ include "airlock-microgateway.fullname" . }}-test-sidecargateway"
+    - "{{ include "airlock-microgateway.fullname" . }}-test-gw"
   verbs:
     - get
     - list
     - watch
     - delete
 - apiGroups:
-    - microgateway.airlock.com
+    - gateway.networking.k8s.io
   resources:
-    - sidecargateways
+    - httproutes
   verbs:
     - create
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - httproutes
+  resourceNames:
+    - "{{ include "airlock-microgateway.fullname" . }}-test-http-route"
+  verbs:
+    - get
+    - list
+    - watch
+    - delete
 - apiGroups:
     - ""
   resources:
@@ -63,24 +80,11 @@ rules:
     - "apps"
   resources:
     - deployments
-  resourceNames:
-    - "{{ include "airlock-microgateway.operator.fullname" . }}"
+    - "{{ include "airlock-microgateway.fullname" . }}-test-gw"
   verbs:
     - get
     - list
     - watch
-- apiGroups:
-    - "apps"
-  resources:
-    - statefulsets
-    - statefulsets/scale
-  resourceNames:
-    - "{{ include "airlock-microgateway.fullname" . }}-test-backend"
-  verbs:
-    - get
-    - list
-    - watch
-    - patch
 - apiGroups:
     - ""
   resources:
@@ -88,10 +92,6 @@ rules:
     - pods/log
     - pods/status
     - pods/attach
-  resourceNames:
-    - "{{ include "airlock-microgateway.fullname" . }}-test-backend-0"
-    - "{{ include "airlock-microgateway.fullname" . }}-test-valid-request"
-    - "{{ include "airlock-microgateway.fullname" . }}-test-injection-request"
   verbs:
     - get
     - list
@@ -99,12 +99,19 @@ rules:
     - watch
     - delete
 - apiGroups:
-    - ""
+    - microgateway.airlock.com
   resources:
-    - pods
+    - gatewayparameters
   verbs:
     - create
-{{- if .Values.operator.watchNamespaceSelector }}
+- apiGroups:
+    - microgateway.airlock.com
+  resources:
+    - gatewayparameters
+  resourceNames:
+    - "{{ include "airlock-microgateway.fullname" . }}-test-gw"
+  verbs:
+    - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -139,5 +146,21 @@ rules:
   verbs:
     - get
     - list
-{{- end }}
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gatewayclasses
+  verbs:
+    - create
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gatewayclasses
+  resourceNames:
+    - "{{ include "airlock-microgateway.fullname" . }}-test-gwc"
+  verbs:
+    - get
+    - list
+    - watch
+    - delete
 {{- end -}}

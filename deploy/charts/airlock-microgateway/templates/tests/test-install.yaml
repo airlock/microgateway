@@ -17,7 +17,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: test
-    image: {{ include "airlock-microgateway.image" .Values.operator.image }}
+    image: {{ include "airlock-microgateway.image" .Values.image }}
     args:
       - "helm-test"
     resources:
@@ -32,21 +32,14 @@ spec:
       - name: RELEASE_NAMESPACE
         value: "{{ .Release.Namespace }}"
 
-      - name: BACKEND_STATEFULSET_NAME
-        value: "{{ include "airlock-microgateway.fullname" . }}-test-backend"
-      - name: BACKEND_SERVICE_NAME
-        value: "{{ include "airlock-microgateway.fullname" . }}-test-service"
       - name: OPERATOR_DEPLOYMENT_NAME
-        value: "{{ include "airlock-microgateway.operator.fullname" . }}"
-      - name: SIDECAR_GATEWAY_NAME
-        value: "{{ include "airlock-microgateway.fullname" . }}-test-sidecargateway"
-
-      - name: GATEWAY_API_ENABLED
-        value: "{{ .Values.operator.gatewayAPI.enabled | toString }}"
-      - name: SIDECAR_GATEWAY_ENABLED
-        value: "{{ .Values.operator.sidecarGateway.enabled | toString }}"
-      - name: WATCH_NAMESPACE_SELECTOR
-        value: "{{ include "airlock-microgateway.watchNamespaceSelector.labelQuery" .Values.operator.watchNamespaceSelector }}"
+        value: "{{ include "airlock-microgateway.fullname" . }}-operator"
+      - name: CONTROLLER_NAME
+        value: "{{ .Values.controllerName }}"
+      - name: GATEWAY_NAME
+        value: "{{ include "airlock-microgateway.fullname" . }}-test-gw"
+      - name: TEST_GATEWAY_CLASS_NAME
+        value: "{{ include "airlock-microgateway.fullname" . }}-test-gwc"
     securityContext:
       {{- include "airlock-microgateway.restrictedSecurityContext" . | nindent 6 }}
   {{- with .Values.imagePullSecrets }}

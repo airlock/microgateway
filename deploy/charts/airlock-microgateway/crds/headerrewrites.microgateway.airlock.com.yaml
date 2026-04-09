@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.0
+    app.kubernetes.io/version: 5.0.1
   name: headerrewrites.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -2471,10 +2471,15 @@ spec:
                   properties:
                     operationalMode:
                       default: Production
-                      description: operationalMode defines the behavior of the filter. In integration mode more information is logged about the requests and responses.
+                      description: |-
+                        operationalMode defines the behavior of the filter. Meaning of the possible values:
+                        _Production_: header modifications are applied as configured.
+                        _Integration_: header modifications are applied as configured. Detailed information about how the request and response headers have been modified is logged for every request.
+                        _LogOnly_: no header modifications are applied. Detailed information about how request and response headers would be modified based on the current configuration is logged for every request.
                       enum:
                         - Production
                         - Integration
+                        - LogOnly
                       type: string
                   type: object
               type: object

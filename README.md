@@ -6,9 +6,9 @@
   <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled.svg" width="400">
 </picture>
 
-[![Release](https://img.shields.io/badge/Release-v5.0.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.0.0)
+[![Release](https://img.shields.io/badge/Release-v5.0.1-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.0.1)
 [![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.5.1-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.5.1/airlock-microgateway)
-[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.0.0)
+[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.0.1)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)
 
@@ -80,24 +80,17 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.0' \
+      --version '5.0.1' \
       -n airlock-microgateway-system \
       --wait
     ```
 
-2. Verify that the Operator started successfully:
-
-    ```console
-    kubectl -n airlock-microgateway-system wait \
-      --for=condition=Available deployments --all --timeout=3m
-    ```
-
-3. Verify the correctness of the installation (Recommended):
+2. Verify the correctness of the installation (Recommended):
 
     ```console
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.0' \
+      --version '5.0.1' \
       -n airlock-microgateway-system \
       --set tests.enabled=true \
       --reuse-values
@@ -106,7 +99,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.0' \
+      --version '5.0.1' \
       -n airlock-microgateway-system \
       --set tests.enabled=false \
       --reuse-values
@@ -118,7 +111,7 @@ The `helm install/upgrade` command currently does not support upgrading CRDs tha
 CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
 
 ```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=5.0.0 \
+kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=5.0.1 \
   --server-side \
   --force-conflicts
 ```

@@ -28,27 +28,20 @@
       -n airlock-microgateway-system \
       --from-file=microgateway-license.txt
 
-    # Install the Operator and activate the Gateway API support.
+    # Install the Operator
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.0' \
+      --version '5.0.1' \
       -n airlock-microgateway-system \
       --wait
     ```
-
-2. Verify that the Operator started successfully:
-
-    ```console
-    kubectl -n airlock-microgateway-system wait \
-      --for=condition=Available deployments --all --timeout=3m
-    ```
-3. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report:
+2. Deploy manifests (GatewayClass, ServiceAccount and ClusterRoleBinding) and run Job to generate report:
 
     ```console
     kubectl apply -f manifests/conformance-report.yaml
     ```
 
-4. After running, see the conformance report:
+3. After running, see the conformance report:
 
     ```console
     kubectl logs jobs/gateway-conformance-tests -f

@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.5
+    app.kubernetes.io/version: 4.8.6
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -642,6 +642,10 @@ spec:
                         envoyExtensionPolicyEnabled specifies whether the controller processes EnvoyExtensionPolicy resources for HTTPRoutes attached to the Gateway.
                         Use EnvoyExtensionPolicy only if the features of Airlock Microgateway and Kubernetes Gateway API do not provide this functionality. If you identify missing features or use cases, please report them to help improve our product.
                         Note: Invalid or malformed Envoy configurations may prevent the Gateway's configuration from being updated.
+                      type: boolean
+                    externalNameServicesAllowed:
+                      default: false
+                      description: externalNameServicesAllowed is ignored by Microgateway <5.0. It was made available in 4.8 CRDs to facilitate migration to >= 5.0.
                       type: boolean
                     insecureTLSAllowed:
                       default: false

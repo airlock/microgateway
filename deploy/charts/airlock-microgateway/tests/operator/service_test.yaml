@@ -55,16 +55,8 @@ tests:
             app.kubernetes.io/instance: myoperator
             app.kubernetes.io/component: controller
         documentIndex: 0
-      - equal:
-          path: spec.selector
-          value:
-            app.kubernetes.io/name: microgateway-operator
-            app.kubernetes.io/instance: myoperator
-            app.kubernetes.io/component: controller
-            operator.microgateway.airlock.com/isLeader: "true"
-        documentIndex: 1
 
-  - it: xds_service should additionally include leader label in selector
+  - it: should set xds service selector labels
     templates:
       - operator/xds-service.yaml
     release:
@@ -77,8 +69,6 @@ tests:
             app.kubernetes.io/name: microgateway-operator
             app.kubernetes.io/instance: myoperator
             app.kubernetes.io/component: controller
-            operator.microgateway.airlock.com/isLeader: "true"
-
 
   - it: should set specific and common labels
     set:

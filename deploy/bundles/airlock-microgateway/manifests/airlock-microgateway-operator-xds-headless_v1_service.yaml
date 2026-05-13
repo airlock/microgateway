@@ -6,20 +6,19 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.8.6
-    operator.microgateway.airlock.com/isLeader: "true"
-  name: airlock-microgateway-operator-leader-metrics
+    app.kubernetes.io/version: 4.8.7
+  name: airlock-microgateway-operator-xds-headless
 spec:
+  clusterIP: None
   ports:
-  - appProtocol: http
-    name: metrics
-    port: 8080
+  - appProtocol: grpc
+    name: xds
+    port: 13377
     protocol: TCP
-    targetPort: 0
+    targetPort: 13377
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
-    operator.microgateway.airlock.com/isLeader: "true"
 status:
   loadBalancer: {}

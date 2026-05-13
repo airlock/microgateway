@@ -115,6 +115,24 @@ data:
                         '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       clusters:
       - name: xds_cluster
+        health_checks:
+        - timeout: 2s
+          interval: 5s
+          interval_jitter_percent: 10
+          unhealthy_threshold: 1
+          healthy_threshold: 1
+          reuse_connection: true
+          http_health_check:
+            path: /leader
+          transport_socket_match_criteria:
+            tls: false
+        outlier_detection:
+          consecutive_5xx: 2
+          max_ejection_percent: 100
+        common_lb_config:
+          ignore_new_hosts_until_first_hc: true
+          healthy_panic_threshold:
+            value: 0.0
         cluster_type:
           name: envoy.clusters.dns
           typed_config:
@@ -127,9 +145,11 @@ data:
           endpoints:
           - lb_endpoints:
             - endpoint:
+                health_check_config:
+                  port_value: 8082
                 address:
                   socket_address:
-                    address: airlock-microgateway-operator-xds.$(OPERATOR_NAMESPACE).svc.cluster.local
+                    address: airlock-microgateway-operator-xds-headless.$(OPERATOR_NAMESPACE).svc.cluster.local
                     port_value: 13377
         typed_extension_protocol_options:
           envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
@@ -139,23 +159,32 @@ data:
                 connection_keepalive:
                   interval: 360s
                   timeout: 5s
-        transport_socket:
-          name: envoy.transport_sockets.tls
-          typed_config:
-            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-            common_tls_context:
-              tls_params:
-                tls_minimum_protocol_version: TLSv1_3
-                tls_maximum_protocol_version: TLSv1_3
-              validation_context_sds_secret_config:
-                name: validation_context_sds
-                sds_config:
-                  resource_api_version: V3
-                  path_config_source:
-                    path: /app/config/validation_context_sds_secret.yaml
-                    watched_directory:
-                      path: /app/config/
-              tls_certificate_sds_secret_configs:
+        transport_socket_matches:
+        - name: "plaintext"
+          match: { tls: false }
+          transport_socket:
+            name: envoy.transport_sockets.raw_buffer
+            typed_config:
+              '@type': type.googleapis.com/envoy.extensions.transport_sockets.raw_buffer.v3.RawBuffer
+        - name: "tls"
+          match: {}
+          transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+              common_tls_context:
+                tls_params:
+                  tls_minimum_protocol_version: TLSv1_3
+                  tls_maximum_protocol_version: TLSv1_3
+                validation_context_sds_secret_config:
+                  name: validation_context_sds
+                  sds_config:
+                    resource_api_version: V3
+                    path_config_source:
+                      path: /app/config/validation_context_sds_secret.yaml
+                      watched_directory:
+                        path: /app/config/
+                tls_certificate_sds_secret_configs:
                 - name: tls_certificate_sds
                   sds_config:
                     resource_api_version: V3
@@ -428,5 +457,5 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.8.6
+    app.kubernetes.io/version: 4.8.7
   name: airlock-microgateway-operator-config

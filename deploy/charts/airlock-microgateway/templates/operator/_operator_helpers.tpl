@@ -33,10 +33,3 @@ Create the name of the service account to use for the operator
 {{- default "default" .Values.operator.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-ServiceMonitor metrics regex pattern for leader only metrics
-*/}}
-{{- define "airlock-microgateway.operator.metricsLeaderOnlyRegexPattern" -}}
-^(microgateway_license|microgateway_sidecars).*$
-{{- end }}

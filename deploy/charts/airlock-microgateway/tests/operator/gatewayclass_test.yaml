@@ -23,6 +23,16 @@ tests:
       - hasDocuments:
           count: 0
 
+  - it: gateway class name DNS1035 validation should work
+    set:
+      operator.gatewayAPI.enabled: true
+      operator.gatewayAPI.gatewayClass.name: "9.abcdefaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    asserts:
+      - failedTemplate:
+          errorPattern: "/gatewayClass/name': maxLength: got 64, want 63"
+      - failedTemplate:
+          errorPattern: "/gatewayClass/name': '9.abcdefaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' does not match pattern '^[a-z]([-a-z0-9]*[a-z0-9])?$"
+
   - it: should create GatewayClass with default name and controller name by default if gatewayAPI.enabled is true
     set:
       operator.gatewayAPI.enabled: true

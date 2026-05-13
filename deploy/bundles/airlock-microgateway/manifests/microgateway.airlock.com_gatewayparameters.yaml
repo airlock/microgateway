@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.6
+    app.kubernetes.io/version: 4.8.7
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -54,6 +54,27 @@ spec:
                 description: defaults specifies default configurations and policies
                   for the Gateway.
                 properties:
+                  contentSecurity:
+                    description: |-
+                      contentSecurity defines the default ContentSecurity configuration for the Gateway.
+
+                      Note: This field should be set explicitly before upgrading from versions <5.1 to prevent breaking behavior changes after the upgrade.
+
+                      In versions prior to 5.1, when no ContentSecurityPolicy was attached to an HTTPRoute, the default filter and mutation rules were implicitly applied.
+                      This implicit behavior is removed in 5.1, and HTTPRoutes without an explicit ContentSecurityPolicy no longer have default filter and mutation rules applied after the upgrade.
+
+                      To maintain the previous behavior, explicitly set this field to `secured: {}` before upgrading.
+                      This ensures that the default ContentSecurity configuration continues to be applied to HTTPRoutes that don't have a custom ContentSecurityPolicy attached.
+                    properties:
+                      secured:
+                        description: secured is ignored by Microgateway <5.1. It was
+                          made available in the CRDs to facilitate migration to >=
+                          5.1.
+                        type: object
+                    type: object
+                    x-kubernetes-validations:
+                    - message: at most one of the fields in [secured] may be set
+                      rule: '[has(self.secured)].filter(x,x==true).size() <= 1'
                   customResponses:
                     description: customResponses configures response replacement for
                       the Gateway.

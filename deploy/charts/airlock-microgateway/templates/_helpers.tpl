@@ -116,13 +116,6 @@ Create the name of the service account to use for the operator
 {{- end }}
 {{- end }}
 
-{{/*
-ServiceMonitor metrics regex pattern for leader only metrics
-*/}}
-{{- define "airlock-microgateway.metricsLeaderOnlyRegexPattern" -}}
-^(microgateway_license).*$
-{{- end }}
-
 {{/* Precondition: May only be used if AppVersion is isSemver */}}
 {{- define "airlock-microgateway.supportedCRDVersionPattern" -}}
 {{- $version := (semver .Chart.AppVersion) -}}

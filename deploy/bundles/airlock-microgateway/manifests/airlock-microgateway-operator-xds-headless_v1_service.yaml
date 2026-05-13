@@ -6,9 +6,10 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.1
-  name: airlock-microgateway-operator-xds
+    app.kubernetes.io/version: 5.0.2
+  name: airlock-microgateway-operator-xds-headless
 spec:
+  clusterIP: None
   ports:
   - appProtocol: grpc
     name: xds
@@ -19,6 +20,5 @@ spec:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
-    operator.microgateway.airlock.com/isLeader: "true"
 status:
   loadBalancer: {}

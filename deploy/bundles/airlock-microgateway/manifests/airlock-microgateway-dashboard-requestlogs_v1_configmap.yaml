@@ -97,9 +97,6 @@ data:
               },
               "custom": {
                 "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
                 "filterable": true,
                 "footer": {
                   "reducers": []
@@ -281,6 +278,20 @@ data:
                   {
                     "id": "custom.width",
                     "value": 272
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Details"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "json-view"
+                    }
                   }
                 ]
               }
@@ -530,7 +541,7 @@ data:
       "timezone": "browser",
       "title": "Airlock Microgateway Requests - Logs",
       "uid": "ee99ioci6gydcb",
-      "version": 3,
+      "version": 5,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -542,6 +553,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.3
+    app.kubernetes.io/version: 5.0.4
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-requestlogs

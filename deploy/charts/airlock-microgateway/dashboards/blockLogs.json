@@ -95,9 +95,6 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
             "filterable": true,
             "footer": {
               "reducers": []
@@ -243,6 +240,20 @@
               {
                 "id": "custom.width",
                 "value": 217
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Details"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "json-view"
+                }
               }
             ]
           }
@@ -525,6 +536,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway Threats Block - Logs",
   "uid": "adnyzcvwnyadcc",
-  "version": 5,
+  "version": 7,
   "weekStart": ""
 }

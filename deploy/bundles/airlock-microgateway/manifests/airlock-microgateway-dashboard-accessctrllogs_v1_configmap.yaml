@@ -97,9 +97,6 @@ data:
               },
               "custom": {
                 "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
                 "filterable": true,
                 "footer": {
                   "reducers": []
@@ -289,6 +286,20 @@ data:
                   {
                     "id": "custom.width",
                     "value": 124
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Details"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "json-view"
+                    }
                   }
                 ]
               }
@@ -547,7 +558,7 @@ data:
       "timezone": "Europe/Zurich",
       "title": "Airlock Microgateway Access Control - Logs",
       "uid": "ce99ks6s11nuob",
-      "version": 3,
+      "version": 5,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -559,6 +570,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.3
+    app.kubernetes.io/version: 5.0.4
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-accessctrllogs

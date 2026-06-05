@@ -486,9 +486,6 @@ data:
               },
               "custom": {
                 "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
                 "footer": {
                   "reducers": []
                 },
@@ -665,9 +662,6 @@ data:
               },
               "custom": {
                 "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
                 "footer": {
                   "reducers": []
                 },
@@ -1048,7 +1042,7 @@ data:
       "timezone": "browser",
       "title": "Airlock Microgateway License",
       "uid": "cdpq79bzrr01se",
-      "version": 3,
+      "version": 5,
       "weekStart": ""
     }
 kind: ConfigMap
@@ -1060,6 +1054,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.3
+    app.kubernetes.io/version: 5.0.4
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-license

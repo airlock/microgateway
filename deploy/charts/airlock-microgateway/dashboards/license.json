@@ -483,9 +483,6 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
             "footer": {
               "reducers": []
             },
@@ -662,9 +659,6 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
             "footer": {
               "reducers": []
             },
@@ -1045,6 +1039,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway License",
   "uid": "cdpq79bzrr01se",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }

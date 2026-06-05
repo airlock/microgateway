@@ -95,9 +95,6 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
             "filterable": true,
             "footer": {
               "reducers": []
@@ -227,6 +224,34 @@
               {
                 "id": "custom.align",
                 "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Header Actions"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "json-view"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Response Header Actions"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "json-view"
+                }
               }
             ]
           }
@@ -469,6 +494,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway Header Rewrites - Logs",
   "uid": "adnydadenyadcc",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }

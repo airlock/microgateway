@@ -96,9 +96,6 @@
           },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
             "filterable": true,
             "inspect": true
           },
@@ -276,6 +273,20 @@
               {
                 "id": "custom.width",
                 "value": 272
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Details"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "json-view"
+                }
               }
             ]
           }
@@ -548,6 +559,6 @@
   "timezone": "browser",
   "title": "Airlock Microgateway Requests - Logs",
   "uid": "ee99ioci6gydcb",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

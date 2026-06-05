@@ -99,9 +99,6 @@ data:
                         },
                         "custom": {
                             "align": "auto",
-                            "cellOptions": {
-                                "type": "auto"
-                            },
                             "filterable": true,
                             "inspect": true
                         },
@@ -217,6 +214,20 @@ data:
                                     "id": "custom.align",
                                     "value": "right"
                                 }
+                            ]
+                          },
+                          {
+                            "matcher": {
+                              "id": "byName",
+                              "options": "Details"
+                            },
+                            "properties": [
+                              {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                  "type": "json-view"
+                                }
+                              }
                             ]
                         }
                     ]
@@ -481,7 +492,7 @@ data:
         "timezone": "browser",
         "title": "Airlock Microgateway Threats LogOnly - Logs",
         "uid": "adnasdfdwnyadcc",
-        "version": 8,
+        "version": 10,
         "weekStart": ""
     }
 kind: ConfigMap
@@ -493,6 +504,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 4.8.7
+    app.kubernetes.io/version: 4.8.8
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-logonlylogs

@@ -149,7 +149,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Requests",
           "range": true,
           "refId": "Total Requests"
@@ -241,7 +241,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"[45]..\"}[$__range]))/\nsum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))",
+          "expr": "sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"[45]..\"}[$__range]))/\nsum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))",
           "legendFormat": "Request Error Rate",
           "range": true,
           "refId": "Request Error Rate"
@@ -307,7 +307,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"1..\"}[$__range])) or on () vector(0))",
+          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"1..\"}[$__range])) or on () vector(0))",
           "legendFormat": "Total 1xx Requests",
           "range": true,
           "refId": "1xx Requests"
@@ -373,7 +373,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"2..\"}[$__range])))",
+          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"2..\"}[$__range])))",
           "legendFormat": "Total 2xx Requests",
           "range": true,
           "refId": "2xx Requests"
@@ -450,7 +450,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"3..\"}[$__range])))",
+          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"3..\"}[$__range])))",
           "legendFormat": "Total 3xx Requests",
           "range": true,
           "refId": "3xx Requests"
@@ -531,7 +531,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"4..\"}[$__range])))",
+          "expr": "round(sum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"4..\"}[$__range])))",
           "legendFormat": "Total 4xx Requests",
           "range": true,
           "refId": "4xx Requests"
@@ -612,7 +612,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"5..\"}[$__range])))",
+          "expr": "round(sum (increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"5..\"}[$__range])))",
           "legendFormat": "Total 5xx Requests",
           "range": true,
           "refId": "5xx Requests"
@@ -752,7 +752,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "legendFormat": "Requests per second",
           "range": true,
@@ -764,7 +764,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"[45]..\"}[$__rate_interval]))/\nsum (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"[45]..\"}[$__rate_interval]))/\nsum (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "instant": false,
           "legendFormat": "Error rate",
@@ -908,7 +908,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "legendFormat": "25th Percentile",
           "range": true,
           "refId": "25th Percentile"
@@ -919,7 +919,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "50th Percentile",
@@ -932,7 +932,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_rq_time_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "95th Percentile",
@@ -1031,7 +1031,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"1..\"}[1m]))",
+          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"1..\"}[1m]))",
           "hide": false,
           "legendFormat": "1xx Requests per second",
           "range": true,
@@ -1129,7 +1129,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"3..\"}[1m]))",
+          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"3..\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1227,7 +1227,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"2..\"}[1m]))",
+          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"2..\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1329,7 +1329,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"4..\"}[1m]))",
+          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"4..\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1431,7 +1431,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, envoy_response_code=~\"5..\"}[1m]))",
+          "expr": "sum  by (envoy_response_code) (rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, envoy_response_code=~\"5..\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1512,7 +1512,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "round(sum(increase(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum(increase(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "instant": false,
           "legendFormat": "TLS Connection Handshakes",
           "range": true,
@@ -1605,7 +1605,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (increase(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))/\nsum (increase(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))",
+          "expr": "sum (increase(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))/\nsum (increase(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))",
           "legendFormat": "TLS Connection Error Rate",
           "range": true,
           "refId": "TLS Connection Error Rate"
@@ -1686,7 +1686,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "TLS Connection errors",
           "range": true,
           "refId": "TLS Connection errors"
@@ -1799,7 +1799,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_ssl_handshake{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "legendFormat": "TLS handshakes per second",
           "range": true,
           "refId": "TLS handshakes per second"
@@ -1810,7 +1810,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_ssl_connection_error{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "instant": false,
           "legendFormat": "TLS connection errors per second",
@@ -1907,7 +1907,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by (envoy_ssl_version) (increase(envoy_cluster_ssl_versions{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", upstream=~`${gateway_httproute:regex}`}[$__range]))",
+          "expr": "sum by (envoy_ssl_version) (increase(envoy_cluster_ssl_versions{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", upstream=~`${backend_service:regex}`}[$__range]))",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -2027,7 +2027,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "round(sum by (envoy_ssl_sigalg) (increase(envoy_cluster_ssl_sigalgs{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum by (envoy_ssl_sigalg) (increase(envoy_cluster_ssl_sigalgs{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -2144,7 +2144,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "round(sum by (cipher_suite) (increase(envoy_cluster_ssl_ciphers{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum by (cipher_suite) (increase(envoy_cluster_ssl_ciphers{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -2262,7 +2262,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "round(sum by (envoy_ssl_curve) (increase(envoy_cluster_ssl_curves{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum by (envoy_ssl_curve) (increase(envoy_cluster_ssl_curves{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -2363,7 +2363,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum(increase(envoy_cluster_upstream_cx_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum(increase(envoy_cluster_upstream_cx_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Connections",
           "range": true,
           "refId": "Connections"
@@ -2433,7 +2433,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum(increase(envoy_cluster_upstream_cx_connect_fail{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum(increase(envoy_cluster_upstream_cx_connect_fail{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Failed Connections",
           "range": true,
           "refId": "Total Failed Connections"
@@ -2499,7 +2499,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(increase(envoy_cluster_upstream_cx_tx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))",
+          "expr": "sum(increase(envoy_cluster_upstream_cx_tx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))",
           "legendFormat": "Data sent",
           "range": true,
           "refId": "Data sent"
@@ -2565,7 +2565,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(increase(envoy_cluster_upstream_cx_rx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))",
+          "expr": "sum(increase(envoy_cluster_upstream_cx_rx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))",
           "legendFormat": "Data received",
           "range": true,
           "refId": "Data received"
@@ -2662,7 +2662,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_upstream_cx_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_upstream_cx_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "legendFormat": "Connections per second",
           "range": true,
@@ -2760,7 +2760,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_upstream_cx_connect_fail{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_upstream_cx_connect_fail{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "legendFormat": "Failed Connections per second",
           "range": true,
           "refId": "Failed Connections per second"
@@ -2857,7 +2857,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_upstream_cx_tx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_upstream_cx_tx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "legendFormat": "Data sent",
           "range": true,
           "refId": "Data sent"
@@ -2954,7 +2954,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(envoy_cluster_upstream_cx_rx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum(rate(envoy_cluster_upstream_cx_rx_bytes_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "instant": false,
           "legendFormat": "Data received",
@@ -3098,7 +3098,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "legendFormat": "25th Percentile",
           "range": true,
           "refId": "25th Percentile"
@@ -3109,7 +3109,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "50th Percentile",
@@ -3122,7 +3122,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_cx_length_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "95th Percentile",
@@ -3266,7 +3266,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.25, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "legendFormat": "25th Percentile",
           "range": true,
           "refId": "25th Percentile"
@@ -3277,7 +3277,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.5, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "50th Percentile",
@@ -3290,7 +3290,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(envoy_cluster_upstream_cx_connect_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
           "hide": false,
           "instant": false,
           "legendFormat": "95th Percentile",
@@ -3398,11 +3398,11 @@
           "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},upstream)",
-        "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute.",
+        "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching backend Service.",
         "includeAll": true,
-        "label": "Gateway HTTPRoute",
+        "label": "Backend Service",
         "multi": true,
-        "name": "gateway_httproute",
+        "name": "backend_service",
         "options": [],
         "query": {
           "qryType": 1,

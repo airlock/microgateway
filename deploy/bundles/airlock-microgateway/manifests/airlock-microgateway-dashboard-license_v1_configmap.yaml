@@ -975,7 +975,16 @@ data:
                     "config": {
                       "id": "equal",
                       "options": {
-                        "value": "<MISSING>"
+                        "value": "<NONE>"
+                      }
+                    },
+                    "fieldName": "License ID"
+                  },
+                  {
+                    "config": {
+                      "id": "equal",
+                      "options": {
+                        "value": "<INVALID>"
                       }
                     },
                     "fieldName": "License ID"
@@ -1054,6 +1063,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.4
+    app.kubernetes.io/version: 5.1.0-alpha1
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-license

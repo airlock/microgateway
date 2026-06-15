@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.4
+    app.kubernetes.io/version: 5.1.0-alpha1
   name: headerrewrites.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -69,7 +69,8 @@ spec:
                                     value:
                                       description: |-
                                         value defines the value of the header.
-                                        Note: This field supports dynamic values via [Envoy command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators), e.g., `value: "%STREAM_ID%"`. Percentage signs not part of command operators must be escaped using `%%`.
+                                        Note: This field supports dynamic values via [Envoy command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators), e.g., `value: "%STREAM_ID%"`.
+                                        Note: Percentage signs (`%`) not part of command operators must be escaped using `%%`.
                                       maxLength: 8192
                                       pattern: ^[^%]*(%([A-Z][A-Z_]*(\([^()\s"]+\)(:\d+)?)?)?%[^%]*)*$
                                       type: string
@@ -813,9 +814,7 @@ spec:
                           properties:
                             alternativeForwardedHeaders:
                               default: true
-                              description: |-
-                                alternativeForwardedHeaders removes downstream request headers which could potentially
-                                be abused to alter the upstream's view of the remote connection.
+                              description: alternativeForwardedHeaders removes downstream request headers which could potentially be abused to alter the upstream's view of the remote connection.
                               type: boolean
                           type: object
                         custom:
@@ -1234,15 +1233,12 @@ spec:
                           properties:
                             csp:
                               default: false
-                              description: |-
-                                csp sets a content security policy which allows only same-origin requests except for images
-                                if the 'Content-Security-Policy' header is not set by the upstream.
+                              description: csp sets a content security policy which allows only same-origin requests except for images if the 'Content-Security-Policy' header is not set by the upstream.
                               type: boolean
                             featurePolicy:
                               default: false
                               description: |-
-                                featurePolicy sets a feature policy which prevents cross-origin use of several browser features
-                                if the 'Feature-Policy' header is not set by the upstream.
+                                featurePolicy sets a feature policy which prevents cross-origin use of several browser features if the 'Feature-Policy' header is not set by the upstream.
 
                                 Deprecated: Use permissionsPolicy instead.
                               type: boolean
@@ -1256,15 +1252,11 @@ spec:
                               type: boolean
                             permissionsPolicy:
                               default: true
-                              description: |-
-                                permissionsPolicy sets a permissions policy which prevents cross-origin use of several browser features
-                                if the 'Permissions-Policy' header is not set by the upstream.
+                              description: permissionsPolicy sets a permissions policy which prevents cross-origin use of several browser features if the 'Permissions-Policy' header is not set by the upstream.
                               type: boolean
                             referrerPolicy:
                               default: true
-                              description: |-
-                                referrerPolicy ensures that no 'Referer' header is sent for cross-origin requests
-                                if the 'Referrer-Policy' header is not set by the upstream.
+                              description: referrerPolicy ensures that no 'Referer' header is sent for cross-origin requests if the 'Referrer-Policy' header is not set by the upstream.
                               type: boolean
                             xContentTypeOptions:
                               default: true
@@ -1292,7 +1284,8 @@ spec:
                                     value:
                                       description: |-
                                         value defines the value of the header.
-                                        Note: This field supports dynamic values via [Envoy command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators), e.g., `value: "%STREAM_ID%"`. Percentage signs not part of command operators must be escaped using `%%`.
+                                        Note: This field supports dynamic values via [Envoy command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators), e.g., `value: "%STREAM_ID%"`.
+                                        Note: Percentage signs (`%`) not part of command operators must be escaped using `%%`.
                                       maxLength: 8192
                                       pattern: ^[^%]*(%([A-Z][A-Z_]*(\([^()\s"]+\)(:\d+)?)?)?%[^%]*)*$
                                       type: string
@@ -2472,10 +2465,12 @@ spec:
                     operationalMode:
                       default: Production
                       description: |-
-                        operationalMode defines the behavior of the filter. Meaning of the possible values:
-                        _Production_: header modifications are applied as configured.
-                        _Integration_: header modifications are applied as configured. Detailed information about how the request and response headers have been modified is logged for every request.
-                        _LogOnly_: no header modifications are applied. Detailed information about how request and response headers would be modified based on the current configuration is logged for every request.
+                        operationalMode defines the behavior of the filter.
+
+                        Meaning of the possible values:
+                        - _Production_: header modifications are applied as configured.
+                        - _Integration_: header modifications are applied as configured. Detailed information about how the request and response headers have been modified is logged for every request.
+                        - _LogOnly_: no header modifications are applied. Detailed information about how request and response headers would be modified based on the current configuration is logged for every request.
                       enum:
                         - Production
                         - Integration

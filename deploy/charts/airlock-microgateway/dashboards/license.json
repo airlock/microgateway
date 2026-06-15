@@ -972,7 +972,16 @@
                 "config": {
                   "id": "equal",
                   "options": {
-                    "value": "<MISSING>"
+                    "value": "<NONE>"
+                  }
+                },
+                "fieldName": "License ID"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "<INVALID>"
                   }
                 },
                 "fieldName": "License ID"

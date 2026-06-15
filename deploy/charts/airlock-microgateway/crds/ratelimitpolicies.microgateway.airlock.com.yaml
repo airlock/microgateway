@@ -7,16 +7,16 @@ metadata:
     app.kubernetes.io/name: airlock-microgateway-operator
     app.kubernetes.io/version: 5.1.0-alpha1
     gateway.networking.k8s.io/policy: direct
-  name: icappolicies.microgateway.airlock.com
+  name: ratelimitpolicies.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
   names:
     categories:
       - airlock-microgateway
-    kind: ICAPPolicy
-    listKind: ICAPPolicyList
-    plural: icappolicies
-    singular: icappolicy
+    kind: RateLimitPolicy
+    listKind: RateLimitPolicyList
+    plural: ratelimitpolicies
+    singular: ratelimitpolicy
   scope: Namespaced
   versions:
     - additionalPrinterColumns:
@@ -27,8 +27,8 @@ spec:
       schema:
         openAPIV3Schema:
           description: |-
-            ICAPPolicy is a Direct Attached Policy for the Kubernetes Gateway API.
-            It defines a rule-based policy for enforcing request filtering via ICAP.
+            RateLimitPolicy is a Direct Attached Policy for the Kubernetes Gateway API.
+            It defines a rule-based policy for enforcing rate limits.
           properties:
             apiVersion:
               description: |-
@@ -48,58 +48,96 @@ spec:
             metadata:
               type: object
             spec:
-              description: spec defines the desired ICAP.
+              description: spec defines the desired rate limit configuration.
               properties:
                 policies:
-                  description: policies configures ICAP policies. The first matching policy (from top to bottom) applies.
+                  description: |-
+                    policies configures rate limit policies. The first matching policy (from top to bottom) applies.
+                    Rate limits are enforced independently per policy item. Requests matched by one policy do not count towards the rate limit of other policies.
                   items:
-                    description: An ICAP policy defines which ICAP processing should take place if a request meets the specified conditions.
-                    minProperties: 1
                     properties:
-                      request:
-                        description: request configures ICAP processing for requests.
+                      blockResponse:
+                        description: blockResponse configures the "429 Too Many Requests" response sent when the rate limit is exceeded.
                         properties:
-                          actions:
+                          retryAfter:
                             description: |-
-                              actions specifies the chain of ICAP actions to execute.
-                              Note: Currently, only a single action is supported per policy.
-                            items:
-                              description: An ICAP action defines which ICAP server to contact and the fallback behavior in case communication fails.
-                              properties:
-                                icapProviderRef:
-                                  description: icapProviderRef selects the ICAP provider to use for this action.
-                                  properties:
-                                    name:
-                                      description: name of the resource
-                                      maxLength: 253
-                                      minLength: 1
-                                      type: string
-                                  required:
-                                    - name
-                                  type: object
-                                onError:
-                                  default: Block
-                                  description: |-
-                                    onError specifies the behavior for a request if an unexpected error occurs while connecting to the ICAP server or during ICAP processing.
-                                    Note: Certain errors during ICAP processing are not recoverable, in such cases the request will always be blocked regardless of this setting.
+                              retryAfter configures the Retry-After header sent in the response.
+                              If not specified, no Retry-After header is sent.
+                            properties:
+                              value:
+                                description: |-
+                                  value defines the duration sent in the Retry-After header.
+                                  If not set, it defaults to the value of `local.limit.per`.
 
-                                    Meaning of the possible values:
-                                    - _Block_: The current request is blocked.
-                                    - _Pass_: Request processing continuous as if the ICAP action had succeeded.
-                                  enum:
-                                    - Block
-                                    - Pass
-                                  type: string
-                              required:
-                                - icapProviderRef
-                              type: object
-                            maxItems: 1
-                            minItems: 1
-                            type: array
-                            x-kubernetes-list-type: atomic
-                        required:
-                          - actions
+                                  Must have second precision and be strictly positive (i.e., 0s or 1.5s are not allowed).
+                                type: string
+                                x-kubernetes-validations:
+                                  - message: duration must be greater than 0 and must have second precision
+                                    rule: duration(self) > duration('0') && duration(self).getMilliseconds() % 1000 == 0
+                            type: object
                         type: object
+                        x-kubernetes-validations:
+                          - message: at least one of the fields in [retryAfter] must be set
+                            rule: '[has(self.retryAfter)].filter(x,x==true).size() >= 1'
+                      countBy:
+                        description: |-
+                          countBy applies the rate limit separately per request property, e.g., per client IP.
+                          If not set, all requests share a single counter.
+                        properties:
+                          ip:
+                            description: ip applies the rate limit per client IP.
+                            properties:
+                              numberOfCounters:
+                                default: 10000
+                                description: |-
+                                  numberOfCounters specifies the maximum number of distinct client IP addresses tracked.
+                                  This has implications on the memory usage. Consult the documentation for more information.
+                                format: int64
+                                minimum: 1
+                                type: integer
+                            type: object
+                        type: object
+                        x-kubernetes-validations:
+                          - message: exactly one of the fields in [ip] must be set
+                            rule: '[has(self.ip)].filter(x,x==true).size() == 1'
+                      local:
+                        description: |-
+                          local configures rate limiting enforced per Airlock Microgateway Engine pod.
+                          If not set, no rate limiting is applied.
+                        properties:
+                          limit:
+                            description: limit configures the applied rate limit.
+                            properties:
+                              per:
+                                default: 1s
+                                description: per is the time window of the requests/time rate.
+                                type: string
+                                x-kubernetes-validations:
+                                  - message: duration must be greater than 0
+                                    rule: duration(self) > duration('0')
+                              requests:
+                                description: requests specifies the number of requests allowed per the given time window.
+                                format: int32
+                                minimum: 1
+                                type: integer
+                            required:
+                              - requests
+                            type: object
+                        required:
+                          - limit
+                        type: object
+                      rateLimitHeaders:
+                        default: Disabled
+                        description: |-
+                          rateLimitHeaders configures whether rate limit headers are sent with responses.
+
+                          Meaning of the possible values:
+                          - _Disabled_: No rate limit headers are sent.
+                          - _DraftVersion3_: The X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers are sent.
+                        enum:
+                          - Disabled
+                          - DraftVersion3
+                        type: string
                       requestConditions:
                         description: requestConditions defines additional request properties which must all be matched in order for this policy to apply. A policy without request conditions will always match.
                         properties:
@@ -366,7 +404,17 @@ spec:
                         x-kubernetes-validations:
                           - message: at least one of the fields in [path header method remoteIP mediaType] must be set
                             rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size() >= 1'
+                      threatHandlingMode:
+                        default: Block
+                        description: threatHandlingMode specifies how a threat is handled when the rate limit is exceeded.
+                        enum:
+                          - Block
+                          - LogOnly
+                        type: string
                     type: object
+                    x-kubernetes-validations:
+                      - message: blockResponse, countBy and rateLimitHeaders may only be set when 'local' is configured
+                        rule: has(self.local) || (!has(self.blockResponse) && !has(self.countBy) && self.rateLimitHeaders == 'Disabled')
                   maxItems: 128
                   minItems: 1
                   type: array
@@ -427,7 +475,7 @@ spec:
                 - targetRefs
               type: object
             status:
-              description: status describes the current status of the ICAP policy.
+              description: status describes the current status of the RateLimitPolicy.
               properties:
                 ancestors:
                   description: |-

@@ -150,7 +150,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Requests",
           "range": true,
           "refId": "Total Requests"
@@ -242,7 +242,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, authorized=\"false\"}[$__range])))/\nround(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, authorized=\"false\"}[$__range])))/\nround(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Non Authorized Request Rate",
           "range": true,
           "refId": "Non Authorized Request Rate"
@@ -308,7 +308,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"oidc\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"oidc\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Requests",
           "range": true,
           "refId": "Total Requests"
@@ -386,7 +386,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"jwt\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"jwt\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Requests",
           "range": true,
           "refId": "Total Requests"
@@ -464,7 +464,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"client_certificate\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"client_certificate\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "legendFormat": "Total Requests",
           "range": true,
           "refId": "Total Requests"
@@ -576,7 +576,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (authorized) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum by (authorized) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "hide": false,
           "legendFormat": "Authorized: {{authorized}}",
           "range": true,
@@ -673,7 +673,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "round(sum by (policy) (increase(microgateway_authenticated_requests_total{result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+          "expr": "round(sum by (policy) (increase(microgateway_authenticated_requests_total{result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -836,7 +836,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -977,7 +977,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{authorized=\"false\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+          "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{authorized=\"false\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1053,7 +1053,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "Total Requests"
@@ -1145,7 +1145,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -1285,7 +1285,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -1297,7 +1297,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -1396,7 +1396,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[$__rate_interval]))",
+              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "25th Percentile"
@@ -1492,7 +1492,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -1610,7 +1610,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -1712,7 +1712,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "Total Requests"
@@ -1804,7 +1804,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -1944,7 +1944,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -1956,7 +1956,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -2071,7 +2071,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[$__rate_interval]))",
+              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "25th Percentile"
@@ -2167,7 +2167,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -2285,7 +2285,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -2387,7 +2387,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "Total Requests"
@@ -2479,7 +2479,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -2619,7 +2619,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -2631,7 +2631,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -2730,7 +2730,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[$__rate_interval]))",
+              "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "25th Percentile"
@@ -2826,7 +2826,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -2944,7 +2944,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\", result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -3046,7 +3046,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Total Requests",
               "range": true,
               "refId": "Total Requests"
@@ -3138,7 +3138,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "legendFormat": "Request Error Rate",
               "range": true,
               "refId": "Request Error Rate"
@@ -3278,7 +3278,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum(rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -3290,7 +3290,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))",
+              "expr": "sum (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[1m]))/\nsum (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))",
               "hide": false,
               "instant": false,
               "legendFormat": "Error rate",
@@ -3389,7 +3389,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum by (result) (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`, result!=\"success\"}[$__rate_interval]))",
+              "expr": "sum by (result) (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`, result!=\"success\"}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "25th Percentile"
@@ -3485,7 +3485,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -3603,7 +3603,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum by (policy) (increase(microgateway_token_exchanges_total{result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range])))",
+              "expr": "round(sum by (policy) (increase(microgateway_token_exchanges_total{result!=\"success\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range])))",
               "instant": true,
               "legendFormat": "__auto",
               "range": false,
@@ -3735,11 +3735,11 @@
           "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},upstream)",
-        "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute.",
+        "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching backend Service.",
         "includeAll": true,
-        "label": "Gateway HTTPRoute",
+        "label": "Backend Service",
         "multi": true,
-        "name": "gateway_httproute",
+        "name": "backend_service",
         "options": [],
         "query": {
           "qryType": 1,

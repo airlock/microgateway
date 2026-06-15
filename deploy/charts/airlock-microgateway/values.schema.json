@@ -211,10 +211,18 @@
         "secretName": {
           "type": "string",
           "minLength": 1
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "optional",
+            "required"
+          ]
         }
       },
       "required": [
-        "secretName"
+        "secretName",
+        "mode"
       ],
       "additionalProperties": false
     },

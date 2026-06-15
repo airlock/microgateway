@@ -258,7 +258,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "round(sum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\",namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]) or on() vector(0)))",
+              "expr": "round(sum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\",namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]) or on() vector(0)))",
               "format": "time_series",
               "fullMetaSearch": false,
               "hide": false,
@@ -344,7 +344,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]) or on() vector(0))\n/ \n(\nsum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]))\n+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[$__range]) or on() vector(0))\n)",
+              "expr": "sum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]) or on() vector(0))\n/ \n(\nsum(increase(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]))\n+\nsum(increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[$__range]) or on() vector(0))\n)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": true,
@@ -589,7 +589,7 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]) or on() vector(0))",
+              "expr": "sum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]) or on() vector(0))",
               "instant": false,
               "legendFormat": "Requests per second",
               "range": true,
@@ -601,7 +601,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]) or on() vector(0))\n/\n(\nsum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m]) or on() vector(0))\n)",
+              "expr": "sum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]) or on() vector(0))\n/\n(\nsum(rate(envoy_cluster_upstream_rq{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]))\n+\nsum(rate(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m]) or on() vector(0))\n)",
               "hide": false,
               "instant": false,
               "legendFormat": "% Blocks",
@@ -723,7 +723,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum by (block_type) (increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m] offset -1m))/(60000/$__interval_ms)",
+              "expr": "sum by (block_type) (increase(microgateway_http_downstream_rq_threats_blocked_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m] offset -1m))/(60000/$__interval_ms)",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -1063,7 +1063,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.25, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+              "expr": "histogram_quantile(0.25, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
               "instant": false,
               "legendFormat": "25th Percentile",
               "range": true,
@@ -1075,7 +1075,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.5, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+              "expr": "histogram_quantile(0.5, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "50th Percentile",
@@ -1088,7 +1088,7 @@ data:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "histogram_quantile(0.95, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^httproute/.+`,upstream=~`${gateway_httproute:regex}`}[1m])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(microgateway_rq_processing_time_ms_bucket{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,upstream=~`${backend_service:regex}`}[1m])) by (le))",
               "hide": false,
               "instant": false,
               "legendFormat": "95th Percentile",
@@ -1196,11 +1196,11 @@ data:
               "uid": "${DS_PROMETHEUS}"
             },
             "definition": "label_values(envoy_cluster_bind_errors{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},upstream)",
-            "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching HTTPRoute.",
+            "description": "Allows filtering request metrics of the selected Gateway instances on the name of their matching backend Service.",
             "includeAll": true,
-            "label": "Gateway HTTPRoute",
+            "label": "Backend Service",
             "multi": true,
-            "name": "gateway_httproute",
+            "name": "backend_service",
             "options": [],
             "query": {
               "qryType": 1,
@@ -1233,6 +1233,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.4
+    app.kubernetes.io/version: 5.1.0-alpha1
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-overview

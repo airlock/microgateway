@@ -73,6 +73,14 @@ Operator rbac permission rules
     - patch
     - update
 - apiGroups:
+    - discovery.k8s.io
+  resources:
+    - endpointslices
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
     - events.k8s.io
   resources:
     - events
@@ -96,6 +104,7 @@ Operator rbac permission rules
     - gateways/finalizers
     - gateways/status
     - httproutes/status
+    - listenersets/status
   verbs:
     - patch
     - update
@@ -104,6 +113,7 @@ Operator rbac permission rules
   resources:
     - gateways
     - httproutes
+    - listenersets
     - referencegrants
   verbs:
     - get
@@ -153,6 +163,7 @@ Operator rbac permission rules
     - oidcrelyingparties
     - openapis
     - parsers
+    - ratelimitpolicies
     - redisproviders
     - sessionhandlings
     - telemetries
@@ -170,6 +181,7 @@ Operator rbac permission rules
     - envoyextensionpolicies/status
     - icappolicies/status
     - logmaskingpolicies/status
+    - ratelimitpolicies/status
   verbs:
     - patch
     - update

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.4
+    app.kubernetes.io/version: 5.1.0-alpha1
   name: sessionhandlings.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -295,9 +295,11 @@ spec:
               mode:
                 default: OnDemand
                 description: |-
-                  mode specifies the session handling mode. Meaning of the possible values:
-                  _Enforce_: All requests are aggregated into sessions. For requests without a session, a new session is created. For requests with an existing session, the session is reused and the idle time reset.
-                  _OnDemand_: Behaves like `Enforce` for routes which have access control with OIDC authentication configured. For all other routes, sessions will be neither created nor used.
+                  mode specifies the session handling mode.
+
+                  Meaning of the possible values:
+                  - _Enforce_: All requests are aggregated into sessions. For requests without a session, a new session is created. For requests with an existing session, the session is reused and the idle time reset.
+                  - _OnDemand_: Behaves like `Enforce` for routes which have access control with OIDC authentication configured. For all other routes, sessions will be neither created nor used.
                 enum:
                 - Enforce
                 - OnDemand

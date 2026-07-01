@@ -9,7 +9,9 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/latest.*"
       - matchRegexRaw:
-          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/latest/index/api/crds.*"
+          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/latest/index/api/crds.*"
+      - matchRegexRaw:
+          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/latest\?topic=MGW-00000056.*"
   - it: prerelease chart should describe latest doc links
     chart:
       appVersion: 4.2.0-ci
@@ -21,7 +23,9 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/4.2.*"
       - matchRegexRaw:
-          pattern: ".*CRD API reference documentation: https://docs.airlock.com/microgateway/4.2/index/api/crds.*"
+          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/4.2/index/api/crds.*"
+      - matchRegexRaw:
+          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/4.2\?topic=MGW-00000056.*"
   - it: should succeed if tests are enabled
     release:
       name: myoperator

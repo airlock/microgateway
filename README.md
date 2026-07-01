@@ -6,9 +6,9 @@
   <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled.svg" width="400">
 </picture>
 
-[![Release](https://img.shields.io/badge/Release-v5.0.5-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.0.5)
-[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.5.1-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.5.1/airlock-microgateway)
-[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.0.5)
+[![Release](https://img.shields.io/badge/Release-v5.1.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
+[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6.0-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6.0/airlock-microgateway)
+[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)
 
@@ -23,48 +23,25 @@ Modern application security is embedded in the development workflow and follows 
 * Reverse proxy functionality with request routing rules, TLS termination, and remote IP extraction
 * Easy-to-use Grafana dashboards which provide valuable insights in allowed and blocked traffic and other metrics
 
+A valid license is required unless Airlock Microgateway is used in the Community Edition.
 For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056)**.
-## Labs
-We offer a growing number of [Airlock Microgateway labs](https://airlock.instruqt.com/pages/airlock-microgateway-labs) that are designed to be easy-to-follow tutorials. All labs are fully guided and cover aspects of Airlock Microgateway from installation to configuration in a preconfigured cloud-based Kubernetes environment.
-
-Learn the basics and expand existing knowledge without any administration effort in a secure environment.
-
-## Documentation and links
-
-Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
-
-* [Getting Started](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000059)
-* [System Architecture](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000137)
-* [Installation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000138)
-* [Troubleshooting](https://docs.airlock.com/microgateway/latest/index/1659430054787.html)
-
 
 # Quick start guide
 
 The instructions below provide a quick start guide. Detailed information on the installation are provided in the **[manual](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000138)**.
 
 ## Prerequisites
-* [Airlock Microgateway License](#obtain-airlock-microgateway-license)
 * [Kubernetes Gateway API CRDs](https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api)
 * [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
 
-### Obtain Airlock Microgateway License
-1. Either request a community or premium license
-   * Community license (free): [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
-   * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
-2. Check your inbox and save the license file microgateway-license.txt locally.
-
-> See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
 
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.0/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
-
-> This guide assumes a microgateway-license.txt file is present in the working directory.
 
 1. Install CRDs and Operator:
 
@@ -72,15 +49,10 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     # Create namespace
     kubectl create namespace airlock-microgateway-system
 
-    # Install License
-    kubectl create secret generic airlock-microgateway-license \
-      -n airlock-microgateway-system \
-      --from-file=microgateway-license.txt
-
-    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
+    # Install the Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --wait
     ```
@@ -90,7 +62,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     ```console
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --set tests.enabled=true \
       --reuse-values
@@ -99,39 +71,17 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --set tests.enabled=false \
       --reuse-values
     ```
 
-### Upgrading CRDs
-
-The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
-CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
-
-```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=5.0.5 \
-  --server-side \
-  --force-conflicts
-```
-
-**Note**: Certain GitOps solutions such as e.g. Argo CD or Flux CD have their own mechanisms for automatically upgrading CRDs included with Helm charts.
 
 ## What’s next
-After installing the Airlock Microgateway Operator, the next steps describe how to deploy and configure a Gateway in your cluster and how to implement common scenarios.
 
-* [Gateway deployment](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000147)
-
-    Deploy the gateway either as an Ingress or as an in-cluster Gateway.
-
-* [Session handling](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000148)
-
-    Enable session handling to persist session information and correlate requests with a session ID. This is a prerequisite for OIDC-based authentication.
-
-* [Use cases](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000146)
-
-    Learn how to use Airlock Microgateway for other typical scenarios such as request routing, request filtering or authentication enforcement.
+After installing the Airlock Microgateway Operator, the various [Configuration Guides](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000146) describe how to deploy and configure a Gateway in your cluster and how to implement common scenarios.
+> Several features require a license. See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
 
 ## Support
 

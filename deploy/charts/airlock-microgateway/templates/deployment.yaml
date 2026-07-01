@@ -21,7 +21,6 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         kubectl.kubernetes.io/default-container: manager
         {{- with mustMerge .Values.podAnnotations .Values.commonAnnotations}}
           {{- toYaml . | nindent 8 }}
@@ -60,6 +59,8 @@ spec:
           value: {{ include "airlock-microgateway.toCommaSeparatedList" . | quote }}
         {{- end }}
         {{- end }}
+        - name: LICENSE_MODE
+          value: {{ .Values.license.mode }}
         {{- with .Values.extraEnv }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -102,9 +103,9 @@ spec:
         - mountPath: /app/config/license/
           name: airlock-microgateway-license
           readOnly: true
-        - mountPath: /app/config/engine_bootstrap_config_template.yaml
-          name: operator-config
-          subPath: engine_bootstrap_config_template.yaml
+        - mountPath: /app/config/bootstrap/
+          name: bootstrap-config
+          readOnly: true
       securityContext:
         runAsNonRoot: true
       serviceAccountName: {{ include "airlock-microgateway.serviceAccountName" . }}
@@ -136,5 +137,9 @@ spec:
           optional: true
           secretName: {{ .Values.license.secretName }}
       - configMap:
-          name: {{ include "airlock-microgateway.fullname" . }}-config
-        name: operator-config
+          name: {{ include "airlock-microgateway.fullname" . }}-bootstrap-config
+          items:
+            - key: config.yaml
+              path: config.yaml
+          optional: true
+        name: bootstrap-config

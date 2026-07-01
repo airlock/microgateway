@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.5
+    app.kubernetes.io/version: 5.1.0
   name: tokenexchanges.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -177,14 +177,13 @@ spec:
                                   properties:
                                     allowedSANs:
                                       description: |-
-                                        allowedSANs is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the
-                                        Subject Alternative Name of the presented certificate matches one of the specified matchers. The matching uses “any” semantics,
-                                        that is to say, the SAN is verified if at least one matcher is matched.
+                                        allowedSANs is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the Subject Alternative Name of the presented certificate matches one of the specified matchers.
+                                        The matching uses “any” semantics, i.e., the SAN is verified if at least one matcher is matched.
                                         AllowedSANs requires trustedCA to be set.
                                       items:
                                         description: |-
-                                          TLSValidationContextSANMatcher is a list of matchers to verify the Subject Alternative name. If specified, it will verify that the
-                                          Subject Alternative Name of the presented certificate matches one of the specified matchers.
+                                          TLSValidationContextSANMatcher is a list of matchers to verify the Subject Alternative name.
+                                          If specified, it will verify that the Subject Alternative Name of the presented certificate matches one of the specified matchers.
                                         properties:
                                           matcher:
                                             description: matcher defines the string matcher for the SAN value.
@@ -297,7 +296,7 @@ spec:
                                           items:
                                             properties:
                                               secretRef:
-                                                description: secretRef defines the reference to a secret containing one or more CRL's (in PEM format) under the key 'ca.crl'.
+                                                description: secretRef defines the reference to a Secret containing one or more CRL's (in PEM format) under the key 'ca.crl'.
                                                 properties:
                                                   name:
                                                     description: name of the resource
@@ -330,7 +329,7 @@ spec:
                                           items:
                                             properties:
                                               secretRef:
-                                                description: secretRef defines the reference to a secret containing one or more CA certificates under the key 'ca.crt'.
+                                                description: secretRef defines the reference to a Secret containing one or more CA certificates under the key 'ca.crt'.
                                                 properties:
                                                   name:
                                                     description: name of the resource

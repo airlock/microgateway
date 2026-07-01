@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.5
+    app.kubernetes.io/version: 5.1.0
   name: identitypropagations.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -116,7 +116,10 @@ spec:
                           description: jwt specifies to extract a value from a JWT.
                           properties:
                             claim:
-                              description: claim specifies the JWT claim to extract as value. If omitted, the entire JWT will be used as value.
+                              description: |-
+                                claim specifies the JWT claim to extract as value. If omitted, the entire JWT will be used as value.
+                                If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                Note: Extracting properties or claims with a name containing dots is currently not supported.
                               maxLength: 1024
                               minLength: 1
                               type: string
@@ -148,7 +151,10 @@ spec:
                               description: idToken specifies to extract the value from the OpenID Connect ID Token.
                               properties:
                                 claim:
-                                  description: claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                  description: |-
+                                    claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                    If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                    Note: Extracting properties or claims with a name containing dots is currently not supported.
                                   maxLength: 1024
                                   minLength: 1
                                   type: string
@@ -163,6 +169,8 @@ spec:
                             claim:
                               description: |-
                                 claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                Note: Extracting properties or claims with a name containing dots is currently not supported.
                                 Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
                               maxLength: 1024
                               minLength: 1
@@ -252,7 +260,10 @@ spec:
                               description: jwt specifies to extract a value from a JWT.
                               properties:
                                 claim:
-                                  description: claim specifies the JWT claim to extract as value. If omitted, the entire JWT will be used as value.
+                                  description: |-
+                                    claim specifies the JWT claim to extract as value. If omitted, the entire JWT will be used as value.
+                                    If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                    Note: Extracting properties or claims with a name containing dots is currently not supported.
                                   maxLength: 1024
                                   minLength: 1
                                   type: string
@@ -284,7 +295,10 @@ spec:
                                   description: idToken specifies to extract the value from the OpenID Connect ID Token.
                                   properties:
                                     claim:
-                                      description: claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                      description: |-
+                                        claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                        If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                        Note: Extracting properties or claims with a name containing dots is currently not supported.
                                       maxLength: 1024
                                       minLength: 1
                                       type: string
@@ -299,6 +313,8 @@ spec:
                                 claim:
                                   description: |-
                                     claim specifies the JWT claim to extract as value. If omitted, the entire token will be used as value.
+                                    If the claim value is a JSON object, the value of a nested property can be extracted using dot notation (e.g., `"user.name"` or `"org.unit.name"`).
+                                    Note: Extracting properties or claims with a name containing dots is currently not supported.
                                     Note: If claim is specified, identity propagation will fail if the token obtained from the exchange is not a JWT.
                                   maxLength: 1024
                                   minLength: 1

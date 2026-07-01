@@ -108,6 +108,11 @@ tests:
           content:
             name: LOG_LEVEL
             value: info
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LICENSE_MODE
+            value: optional
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -132,12 +137,18 @@ tests:
         labels:
             env: test
             foo: bar
+      license.mode: required
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: LOG_LEVEL
             value: debug
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LICENSE_MODE
+            value: required
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -269,16 +280,6 @@ tests:
           content:
             podAnnotation: foo
             myAnnotation: pod
-    templates:
-      - deployment.yaml
-
-  - it: should create checksum for configmap in annotations on pod spec
-    asserts:
-      - exists:
-          path: spec.template.metadata.annotations.checksum/config
-      - matchRegex:
-          path: spec.template.metadata.annotations.checksum/config
-          pattern: ^.{64}$
     templates:
       - deployment.yaml
 
@@ -502,7 +503,11 @@ tests:
           path: spec.template.spec.volumes
           content:
             configMap:
-              name: myoperator-microgateway-config
+              name: myoperator-microgateway-bootstrap-config
+              optional: true
+              items:
+                - key: config.yaml
+                  path: config.yaml
           count: 1
           any: true
       - contains:

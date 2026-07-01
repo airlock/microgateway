@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.5
+    app.kubernetes.io/version: 5.1.0
     gateway.networking.k8s.io/policy: direct
   name: accesscontrolpolicies.microgateway.airlock.com
 spec:
@@ -238,6 +238,7 @@ spec:
                                     acrInValues specifies that an ID token satisfying the following conditions must have been issued by the OIDC provider:
                                     1. contains an ACR claim matching any of these values
                                     2. not older than `authentication.oidc.timeouts.acrValues`
+
                                     If no such claim is available, the client is redirected to the authorization endpoint of the OIDC provider with an `acr_values` parameter matching containing the specified values in the specified order (order of preference).
                                   items:
                                     maxLength: 1024
@@ -291,8 +292,8 @@ spec:
                                         properties:
                                           values:
                                             description: values is a list of hex encoded
-                                              SHA256 hashes (e.g., df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a)
-                                              or fingerprints (e.g., DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A).
+                                              SHA256 hashes (e.g., `df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a`)
+                                              or fingerprints (e.g., `DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A`).
                                             items:
                                               maxLength: 95
                                               minLength: 64
@@ -305,12 +306,12 @@ spec:
                                           valuesFrom:
                                             description: valuesFrom selects the source
                                               from which to extract the list of hex
-                                              encoded SHA256 hashes (e.g., df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a)
-                                              or fingerprints (e.g., DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A).
+                                              encoded SHA256 hashes (e.g., `df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a`)
+                                              or fingerprints (e.g., `DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A`).
                                             properties:
                                               configMapRef:
                                                 description: configMapRef defines
-                                                  the reference to a configmap containing
+                                                  the reference to a ConfigMap containing
                                                   a list of hex-encoded SHA-256 hashes
                                                   under the key 'fingerprints.txt'.
                                                   Each line represents one fingerprint,
@@ -871,8 +872,8 @@ spec:
                                         properties:
                                           values:
                                             description: values is a list of hex encoded
-                                              SHA256 hashes (e.g., df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a)
-                                              or fingerprints (e.g., DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A).
+                                              SHA256 hashes (e.g., `df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a`)
+                                              or fingerprints (e.g., `DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A`).
                                             items:
                                               maxLength: 95
                                               minLength: 64
@@ -885,12 +886,12 @@ spec:
                                           valuesFrom:
                                             description: valuesFrom selects the source
                                               from which to extract the list of hex
-                                              encoded SHA256 hashes (e.g., df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a)
-                                              or fingerprints (e.g., DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A).
+                                              encoded SHA256 hashes (e.g., `df6ff72fe9116521268f6f2dd4966f51df479883fe7037b39f75916ac3049d1a`)
+                                              or fingerprints (e.g., `DF:6F:F7:2F:E9:11:65:21:26:8F:6F:2D:D4:96:6F:51:DF:47:98:83:FE:70:37:B3:9F:75:91:6A:C3:04:9D:1A`).
                                             properties:
                                               configMapRef:
                                                 description: configMapRef defines
-                                                  the reference to a configmap containing
+                                                  the reference to a ConfigMap containing
                                                   a list of hex-encoded SHA-256 hashes
                                                   under the key 'fingerprints.txt'.
                                                   Each line represents one fingerprint,
@@ -1477,12 +1478,15 @@ spec:
                             - identityPropagationRef
                             type: object
                           maxItems: 64
+                          minItems: 1
                           type: array
                           x-kubernetes-list-type: atomic
                         onFailure:
                           description: |-
-                            onFailure configures what should happen, if an identity propagation fails. Meaning of the possible values:
-                            _Pass_: The request should be forwarded to the upstream, without including the information from the failed identity propagations.
+                            onFailure configures what should happen, if an identity propagation fails.
+
+                            Meaning of the possible values:
+                            - _Pass_: The request should be forwarded to the upstream, without including the information from the failed identity propagations.
                           enum:
                           - Pass
                           type: string
@@ -1818,9 +1822,11 @@ spec:
                         onFailure:
                           default: Block
                           description: |-
-                            onFailure configures what should happen, if the token exchange fails. Meaning of the possible values:
-                            _Block_: The downstream request is blocked.
-                            _Pass_: Processing of the downstream request will proceed, but no exchanged token will be available (e.g. for identity propagation).
+                            onFailure configures what should happen, if the token exchange fails.
+
+                            Meaning of the possible values:
+                            - _Block_: The downstream request is blocked.
+                            - _Pass_: Processing of the downstream request will proceed, but no exchanged token will be available (e.g. for identity propagation).
                           enum:
                           - Block
                           - Pass

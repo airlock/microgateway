@@ -6,16 +6,16 @@
   <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled.svg" width="400">
 </picture>
 
-[![Release](https://img.shields.io/badge/Release-v5.0.5-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.0.5)
-[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.5.1-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.5.1/airlock-microgateway)
-[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.0.5)
+[![Release](https://img.shields.io/badge/Release-v5.1.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
+[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6.0-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6.0/airlock-microgateway)
+[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)
 
 *Airlock Microgateway is a Kubernetes native WAAP (Web Application and API Protection) solution to protect microservices.*
 
 Modern application security is embedded in the development workflow and follows DevSecOps paradigms. Airlock Microgateway is the perfect fit for these requirements. It is a lightweight alternative to the Airlock Gateway appliance, optimized for Kubernetes environments. Airlock Microgateway protects your applications and microservices with the tried-and-tested Airlock security features against attacks, while also providing a high degree of scalability.
-__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/5.0.5).__
+__This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https://github.com/airlock/microgateway/tree/5.1.0).__
 
 ### Features
 * Kubernetes native integration with Gateway API
@@ -24,44 +24,24 @@ __This Helm chart is part of Airlock Microgateway. See our [GitHub repo](https:/
 * Reverse proxy functionality with request routing rules, TLS termination, and remote IP extraction
 * Easy-to-use Grafana dashboards which provide valuable insights in allowed and blocked traffic and other metrics
 
+A valid license is required unless Airlock Microgateway is used in the Community Edition.
 For a list of all features, view the **[comparison of the community and premium edition](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056)**.
-
-## Documentation and links
-
-Check the official documentation at **[docs.airlock.com](https://docs.airlock.com/microgateway/latest/)** or the product website at **[airlock.com/microgateway](https://www.airlock.com/en/microgateway)**. The links below point out the most interesting documentation sites when starting with Airlock Microgateway.
-
-* [Getting Started](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000059)
-* [System Architecture](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000137)
-* [Installation](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000138)
-* [Troubleshooting](https://docs.airlock.com/microgateway/latest/index/1659430054787.html)
-* [GitHub](https://github.com/airlock/microgateway)
 
 # Quick start guide
 
 The instructions below provide a quick start guide. Detailed information on the installation are provided in the **[manual](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000138)**.
 
 ## Prerequisites
-* [Airlock Microgateway License](#obtain-airlock-microgateway-license)
 * [Kubernetes Gateway API CRDs](https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api)
 * [helm](https://helm.sh/docs/intro/install/) (>= v3.8.0)
-
-### Obtain Airlock Microgateway License
-1. Either request a community or premium license
-   * Community license (free): [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
-   * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
-2. Check your inbox and save the license file microgateway-license.txt locally.
-
-> See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
 
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.0/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
-
-> This guide assumes a microgateway-license.txt file is present in the working directory.
 
 1. Install CRDs and Operator:
 
@@ -69,15 +49,10 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     # Create namespace
     kubectl create namespace airlock-microgateway-system
 
-    # Install License
-    kubectl create secret generic airlock-microgateway-license \
-      -n airlock-microgateway-system \
-      --from-file=microgateway-license.txt
-
-    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
+    # Install the Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --wait
     ```
@@ -87,7 +62,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     ```console
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --set tests.enabled=true \
       --reuse-values
@@ -96,39 +71,16 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.5' \
+      --version '5.1.0' \
       -n airlock-microgateway-system \
       --set tests.enabled=false \
       --reuse-values
     ```
 
-### Upgrading CRDs
-
-The `helm install/upgrade` command currently does not support upgrading CRDs that already exist in the cluster.
-CRDs should instead be manually upgraded before upgrading the Operator itself via the following command:
-
-```console
-kubectl apply -k https://github.com/airlock/microgateway/deploy/charts/airlock-microgateway/crds/?ref=5.0.5 \
-  --server-side \
-  --force-conflicts
-```
-
-**Note**: Certain GitOps solutions such as e.g. Argo CD or Flux CD have their own mechanisms for automatically upgrading CRDs included with Helm charts.
-
 ## What’s next
-After installing the Airlock Microgateway Operator, the next steps describe how to deploy and configure a Gateway in your cluster and how to implement common scenarios.
 
-* [Gateway deployment](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000147)
-
-    Deploy the gateway either as an Ingress or as an in-cluster Gateway.
-
-* [Session handling](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000148)
-
-    Enable session handling to persist session information and correlate requests with a session ID. This is a prerequisite for OIDC-based authentication.
-
-* [Use cases](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000146)
-
-    Learn how to use Airlock Microgateway for other typical scenarios such as request routing, request filtering or authentication enforcement.
+After installing the Airlock Microgateway Operator, the various [Configuration Guides](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000146) describe how to deploy and configure a Gateway in your cluster and how to implement common scenarios.
+> Several features require a license. See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/?topic=MGW-00000056) to choose the right license type.
 
 ## Support
 
@@ -144,17 +96,17 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | affinity | object | `{}` | Custom affinity to apply to the operator Deployment. Used to influence the scheduling. |
 | commonAnnotations | object | `{}` | Annotations to add to all resources. |
 | commonLabels | object | `{}` | Labels to add to all resources. |
-| config.engineImage.digest | string | `"sha256:0d26c4a5701093cfbab566377eb151bbded4cfbe050e34e4c9202f3b77c603a5"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| config.engineImage.digest | string | `"sha256:4dc406e65ef1cf4209233649e113aa44c0823c8047f3dfce5cc0f2fffb37812f"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | config.engineImage.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | config.engineImage.repository | string | `"quay.io/airlock/microgateway-engine"` | Image repository from which to pull the Airlock Microgateway Engine image. |
-| config.engineImage.tag | string | `"5.0.5"` | Image tag to pull. |
+| config.engineImage.tag | string | `"5.1.0"` | Image tag to pull. |
 | config.gatewayPodMonitor.create | bool | `false` | Whether the controller should create a PodMonitor per Gateway. Requires that the monitoring.coreos.com/v1 resources are installed on the cluster. |
 | config.gatewayPodMonitor.labels | object | `{}` | Allows to define additional labels that should be set on the PodMonitors. |
 | config.logLevel | string | `"info"` | Operator application log level. |
-| config.sessionAgentImage.digest | string | `"sha256:5360aac41248197e994de25276143da798c6941426787cc005a807faa7b75753"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
+| config.sessionAgentImage.digest | string | `"sha256:20871dd503c3148303c5a097df2a9a1f8826f1b586617bdecb1bdc440a8e1402"` | SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3"). Overrides tag when specified. |
 | config.sessionAgentImage.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | config.sessionAgentImage.repository | string | `"quay.io/airlock/microgateway-session-agent"` | Image repository from which to pull the Airlock Microgateway Session Agent image. |
-| config.sessionAgentImage.tag | string | `"5.0.5"` | Image tag to pull. |
+| config.sessionAgentImage.tag | string | `"5.1.0"` | Image tag to pull. |
 | controllerName | string | `"microgateway.airlock.com/gatewayclass-controller"` | Controller name referred in the GatewayClasses managed by this operator. The value must be a path prefixed by the domain `microgateway.airlock.com`. |
 | crds.skipGatewayAPICheck | bool | `false` | Whether to skip the sanity check which prevents installing/upgrading the helm chart in a cluster which does not have GatewayAPI v1 CRDs installed. |
 | crds.skipVersionCheck | bool | `false` | Whether to skip the sanity check which prevents installing/upgrading the helm chart in a cluster with outdated Airlock Microgateway CRDs. The check aims to prevent unexpected behavior and issues due to Helm v3 not automatically upgrading CRDs which are already present in the cluster when performing a "helm install/upgrade". |
@@ -180,11 +132,12 @@ For the community edition, check our **[Airlock community forum](https://forum.a
 | fullnameOverride | string | `""` | Allows overriding the name to use as full name of resources. |
 | gatewayClass.create | bool | `true` | Whether to create a default GatewayClass during installation. |
 | gatewayClass.name | string | `"airlock-microgateway"` | Name of the default GatewayClass. The name must adhere to the DNS Subdomain Name format as defined in RFC1123. See https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names for details. |
-| image.digest | string | `"sha256:ba53e64b7edf562edf627a7f22b78d9d328d81c4bbc54e6fc3e4bd1e18f9e71c"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
+| image.digest | string | `"sha256:657e6a8138144e084b1a74b5b3256a51eed770395dda53b25d110862c9be18be"` | SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63"). Overrides tag when specified. |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull policy for this image. |
 | image.repository | string | `"quay.io/airlock/microgateway-operator"` | Image repository from which to pull the Airlock Microgateway Operator image. |
-| image.tag | string | `"5.0.5"` | Image tag to pull. |
+| image.tag | string | `"5.1.0"` | Image tag to pull. |
 | imagePullSecrets | list | `[]` | ImagePullSecrets to use when pulling images. Can be defined either as a list of objects or as a list of strings. |
+| license.mode | string | `"optional"` | License enforcement mode, controls whether a license is required for Gateways to be accepted. With "required", Gateways are rejected unless a valid license is configured, surfacing a missing or misconfigured license as an error early. With "optional", Gateways are always accepted, if no license is configured, the operator falls back to the Community edition. It is recommended to set to "required" when a Premium license is obtained. |
 | license.secretName | string | `"airlock-microgateway-license"` | Name of the secret containing the "microgateway-license.txt" key. |
 | nameOverride | string | `""` | Allows overriding the name to use instead of "microgateway". |
 | nodeSelector | object | `{}` | Custom nodeSelector to apply to the operator Deployment to constrain its Pods to certain nodes. |

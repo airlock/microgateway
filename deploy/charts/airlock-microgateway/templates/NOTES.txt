@@ -1,18 +1,9 @@
 Thank you for installing Airlock Microgateway.
 
-Please ensure the following prerequisites are fulfilled:
-* A valid Airlock Microgateway license is deployed in the Kubernetes secret '{{ .Release.Namespace }}/{{ .Values.license.secretName }}'
-  * Get a free Community license: https://airlock.com/en/microgateway-community
-  * Order a Premium license: https://airlock.com/en/microgateway-premium
-* Gateway API is installed. Either install from the Standard or Experimental channel.
-  https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api
-  The Experimental channel is necessary for some incubating Airlock Microgateway features.
-  For more information about incubating features, see https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/?topic=MGW-00000144
-
 Further information:
 * Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}
-* CRD API reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/index/api/crds
-* Airlock Microgateway Labs: https://airlock.instruqt.com/pages/airlock-microgateway-labs
+* CRD reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/index/api/crds
+* Comparison of the community and premium edition: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}?topic=MGW-00000056
 {{- if .Values.crds.skipVersionCheck }}
 
 Warning: CRD version check skipped

@@ -25,6 +25,7 @@ resources:
 - oidcrelyingparties.microgateway.airlock.com.yaml
 - openapis.microgateway.airlock.com.yaml
 - parsers.microgateway.airlock.com.yaml
+- ratelimitpolicies.microgateway.airlock.com.yaml
 - redisproviders.microgateway.airlock.com.yaml
 - sessionhandlings.microgateway.airlock.com.yaml
 - telemetries.microgateway.airlock.com.yaml

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.5
+    app.kubernetes.io/version: 5.1.0
     gateway.networking.k8s.io/policy: direct
   name: icappolicies.microgateway.airlock.com
 spec:
@@ -83,9 +83,9 @@ spec:
                                     onError specifies the behavior for a request if an unexpected error occurs while connecting to the ICAP server or during ICAP processing.
                                     Note: Certain errors during ICAP processing are not recoverable, in such cases the request will always be blocked regardless of this setting.
 
-                                    Possible values:
-                                    _Block_: The current request is blocked.
-                                    _Pass_: Request processing continuous as if the ICAP action had succeeded.
+                                    Meaning of the possible values:
+                                    - _Block_: The current request is blocked.
+                                    - _Pass_: Request processing continuous as if the ICAP action had succeeded.
                                   enum:
                                     - Block
                                     - Pass

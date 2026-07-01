@@ -7,16 +7,16 @@ metadata:
     app.kubernetes.io/name: airlock-microgateway-operator
     app.kubernetes.io/version: 5.1.0
     gateway.networking.k8s.io/policy: direct
-  name: logmaskingpolicies.microgateway.airlock.com
+  name: ratelimitpolicies.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
   names:
     categories:
       - airlock-microgateway
-    kind: LogMaskingPolicy
-    listKind: LogMaskingPolicyList
-    plural: logmaskingpolicies
-    singular: logmaskingpolicy
+    kind: RateLimitPolicy
+    listKind: RateLimitPolicyList
+    plural: ratelimitpolicies
+    singular: ratelimitpolicy
   scope: Namespaced
   versions:
     - additionalPrinterColumns:
@@ -27,8 +27,8 @@ spec:
       schema:
         openAPIV3Schema:
           description: |-
-            LogMaskingPolicy is a Direct Attached Policy for the Kubernetes Gateway API.
-            It defines rules for masking sensitive data before being written to logs.
+            RateLimitPolicy is a Direct Attached Policy for the Kubernetes Gateway API.
+            It defines a rule-based policy for enforcing rate limits.
           properties:
             apiVersion:
               description: |-
@@ -48,37 +48,219 @@ spec:
             metadata:
               type: object
             spec:
-              description: spec defines the desired log masking configuration.
+              description: spec defines the desired rate limit configuration.
               properties:
-                request:
-                  description: request specifies log masking rules that are applied to HTTP request data.
-                  minProperties: 1
-                  properties:
-                    fieldCategories:
-                      description: |-
-                        fieldCategories specifies built-in groups of request fields whose values must be masked before being written to logs.
-                        If not specified, the default categories ["Credentials", "Tokens"] are applied.
-                      items:
+                policies:
+                  description: |-
+                    policies configures rate limit policies. The first matching policy (from top to bottom) applies.
+                    Rate limits are enforced independently per policy item. Requests matched by one policy do not count towards the rate limit of other policies.
+                  items:
+                    properties:
+                      blockResponse:
+                        description: blockResponse configures the "429 Too Many Requests" response sent when the rate limit is exceeded.
+                        properties:
+                          retryAfter:
+                            description: |-
+                              retryAfter configures the Retry-After header sent in the response.
+                              If not specified, no Retry-After header is sent.
+                            properties:
+                              value:
+                                description: |-
+                                  value defines the duration sent in the Retry-After header.
+                                  If not set, the value will be determined dynamically based on the time remaining until the current rate limit window resets.
+
+                                  Must have second precision and be strictly positive (i.e., 0s or 1.5s are not allowed).
+                                type: string
+                                x-kubernetes-validations:
+                                  - message: duration must be greater than 0 and must have second precision
+                                    rule: duration(self) > duration('0') && duration(self).getMilliseconds() % 1000 == 0
+                            type: object
+                        type: object
+                        x-kubernetes-validations:
+                          - message: at least one of the fields in [retryAfter] must be set
+                            rule: '[has(self.retryAfter)].filter(x,x==true).size() >= 1'
+                      countBy:
+                        description: |-
+                          countBy applies the rate limit separately per request property, e.g., per client IP.
+                          If not set, all requests share a single counter.
+                        properties:
+                          ip:
+                            description: ip applies the rate limit per client IP.
+                            properties:
+                              numberOfCounters:
+                                default: 10000
+                                description: |-
+                                  numberOfCounters specifies the maximum number of distinct client IP addresses tracked.
+                                  This has implications on the memory usage. Consult the documentation for more information.
+                                format: int64
+                                minimum: 1
+                                type: integer
+                            type: object
+                        type: object
+                        x-kubernetes-validations:
+                          - message: exactly one of the fields in [ip] must be set
+                            rule: '[has(self.ip)].filter(x,x==true).size() == 1'
+                      local:
+                        description: |-
+                          local configures rate limiting enforced per Airlock Microgateway Engine pod.
+                          If not set, no rate limiting is applied.
+                        properties:
+                          limit:
+                            description: limit configures the applied rate limit.
+                            properties:
+                              per:
+                                default: 1s
+                                description: per is the time window of the requests/time rate.
+                                type: string
+                                x-kubernetes-validations:
+                                  - message: duration must be greater than 0
+                                    rule: duration(self) > duration('0')
+                              requests:
+                                description: requests specifies the number of requests allowed per the given time window.
+                                format: int32
+                                minimum: 1
+                                type: integer
+                            required:
+                              - requests
+                            type: object
+                        required:
+                          - limit
+                        type: object
+                      rateLimitHeaders:
+                        default: Disabled
+                        description: |-
+                          rateLimitHeaders configures whether rate limit headers are sent with responses.
+
+                          Meaning of the possible values:
+                          - _Disabled_: No rate limit headers are sent.
+                          - _DraftVersion3_: The X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers are sent.
                         enum:
-                          - Credentials
-                          - Tokens
+                          - Disabled
+                          - DraftVersion3
                         type: string
-                      maxItems: 16
-                      minItems: 0
-                      type: array
-                      x-kubernetes-list-type: set
-                    headers:
-                      description: headers specifies matchers for HTTP request headers whose values must be masked before being written to logs.
-                      items:
-                        description: |-
-                          HeaderMatcher defines a matcher for an HTTP header.
-                          At least one of name and value must be set.
+                      requestConditions:
+                        description: requestConditions defines additional request properties which must all be matched in order for this policy to apply. A policy without request conditions will always match.
                         properties:
-                          name:
-                            description: name defines the name of a header.
+                          header:
+                            description: header defines the matching headers of a request.
+                            properties:
+                              name:
+                                description: name defines the name of a header.
+                                properties:
+                                  matcher:
+                                    description: matcher defines the way to match a string. In comparison to a normal StringMatcher, a value is always matched ignoring the case and can't be inverted.
+                                    properties:
+                                      contains:
+                                        description: |-
+                                          contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      exact:
+                                        description: |-
+                                          exact defines an explicit match on the string specified here.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      prefix:
+                                        description: |-
+                                          prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      regex:
+                                        description: |-
+                                          regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                          The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 256
+                                        minLength: 1
+                                        type: string
+                                      suffix:
+                                        description: |-
+                                          suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                    type: object
+                                    x-kubernetes-validations:
+                                      - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
+                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                required:
+                                  - matcher
+                                type: object
+                              value:
+                                description: value defines the value of a header.
+                                properties:
+                                  matcher:
+                                    description: StringMatcher defines the way to match a string.
+                                    properties:
+                                      contains:
+                                        description: |-
+                                          contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      exact:
+                                        description: |-
+                                          exact defines an explicit match on the string specified here.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      ignoreCase:
+                                        default: false
+                                        description: ignoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
+                                        type: boolean
+                                      prefix:
+                                        description: |-
+                                          prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                      regex:
+                                        description: |-
+                                          regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                          The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 256
+                                        minLength: 1
+                                        type: string
+                                      suffix:
+                                        description: |-
+                                          suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                          Only one of exact, prefix, suffix, regex or contains can be set.
+                                        maxLength: 1024
+                                        minLength: 1
+                                        type: string
+                                    type: object
+                                    x-kubernetes-validations:
+                                      - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
+                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                required:
+                                  - matcher
+                                type: object
+                            type: object
+                            x-kubernetes-validations:
+                              - message: at least one of the fields in [name value] must be set
+                                rule: '[has(self.name),has(self.value)].filter(x,x==true).size() >= 1'
+                          invert:
+                            default: false
+                            description: invert indicates whether the request condition should be inverted.
+                            type: boolean
+                          mediaType:
+                            description: mediaType defines the matching media type from the content-type header of a request.
                             properties:
                               matcher:
-                                description: matcher defines the way to match a string. In comparison to a normal StringMatcher, a value is always matched ignoring the case and can't be inverted.
+                                description: |-
+                                  NonInvertableCaseInsensitiveStringMatcher defines the way to match a string.
+                                  In comparison to a normal StringMatcher, a value is always matched ignoring the case and can't be inverted.
                                 properties:
                                   contains:
                                     description: |-
@@ -123,8 +305,26 @@ spec:
                             required:
                               - matcher
                             type: object
-                          value:
-                            description: value defines the value of a header.
+                          method:
+                            description: method defines the matching methods of a request.
+                            items:
+                              description: Method defines common HTTP methods.
+                              enum:
+                                - GET
+                                - HEAD
+                                - POST
+                                - PUT
+                                - PATCH
+                                - DELETE
+                                - CONNECT
+                                - OPTIONS
+                                - TRACE
+                              type: string
+                            maxItems: 16
+                            type: array
+                            x-kubernetes-list-type: set
+                          path:
+                            description: path defines the matching path of a request.
                             properties:
                               matcher:
                                 description: StringMatcher defines the way to match a string.
@@ -175,137 +375,53 @@ spec:
                                     rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
                             required:
                               - matcher
+                            type: object
+                          remoteIP:
+                            description: |-
+                              remoteIP defines the matching remote IPs of a request.
+                              Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
+                            properties:
+                              cidrRanges:
+                                description: cidrRanges defines the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28``.
+                                items:
+                                  description: CIDRRange defines an IPv4 or IPv6 CIDR range, e.g. “196.148.3.128/26“ or “2001:db8::/28“.
+                                  format: cidr
+                                  maxLength: 49
+                                  minLength: 1
+                                  type: string
+                                maxItems: 1024
+                                minItems: 1
+                                type: array
+                                x-kubernetes-list-type: set
+                              invert:
+                                default: false
+                                description: invert indicates whether the match should be inverted.
+                                type: boolean
+                            required:
+                              - cidrRanges
                             type: object
                         type: object
                         x-kubernetes-validations:
-                          - message: at least one of the fields in [name value] must be set
-                            rule: '[has(self.name),has(self.value)].filter(x,x==true).size() >= 1'
-                      maxItems: 128
-                      minItems: 1
-                      type: array
-                      x-kubernetes-list-type: atomic
-                    parameters:
-                      description: parameters specifies matchers for request parameters whose values must be masked before being written to logs.
-                      items:
-                        description: |-
-                          ParameterMatcher defines a matcher for an HTTP parameter.
-                          At least one of name and value must be set.
-                        properties:
-                          name:
-                            description: name defines the name of a parameter.
-                            properties:
-                              matcher:
-                                description: StringMatcher defines the way to match a string.
-                                properties:
-                                  contains:
-                                    description: |-
-                                      contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  exact:
-                                    description: |-
-                                      exact defines an explicit match on the string specified here.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  ignoreCase:
-                                    default: false
-                                    description: ignoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
-                                    type: boolean
-                                  prefix:
-                                    description: |-
-                                      prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  regex:
-                                    description: |-
-                                      regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
-                                      The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 256
-                                    minLength: 1
-                                    type: string
-                                  suffix:
-                                    description: |-
-                                      suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                type: object
-                                x-kubernetes-validations:
-                                  - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
-                            required:
-                              - matcher
-                            type: object
-                          value:
-                            description: value defines the value of a parameter.
-                            properties:
-                              matcher:
-                                description: StringMatcher defines the way to match a string.
-                                properties:
-                                  contains:
-                                    description: |-
-                                      contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  exact:
-                                    description: |-
-                                      exact defines an explicit match on the string specified here.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  ignoreCase:
-                                    default: false
-                                    description: ignoreCase indicates whether the matching should be case-insensitive. In case of a regex match, the regex gets wrapped with a group `(?i:...)`.
-                                    type: boolean
-                                  prefix:
-                                    description: |-
-                                      prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                  regex:
-                                    description: |-
-                                      regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
-                                      The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 256
-                                    minLength: 1
-                                    type: string
-                                  suffix:
-                                    description: |-
-                                      suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
-                                      Only one of exact, prefix, suffix, regex or contains can be set.
-                                    maxLength: 1024
-                                    minLength: 1
-                                    type: string
-                                type: object
-                                x-kubernetes-validations:
-                                  - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
-                            required:
-                              - matcher
-                            type: object
-                        type: object
-                        x-kubernetes-validations:
-                          - message: at least one of the fields in [name value] must be set
-                            rule: '[has(self.name),has(self.value)].filter(x,x==true).size() >= 1'
-                      maxItems: 128
-                      minItems: 1
-                      type: array
-                      x-kubernetes-list-type: atomic
-                  type: object
+                          - message: at least one of the fields in [path header method remoteIP mediaType] must be set
+                            rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size() >= 1'
+                      threatHandlingMode:
+                        default: Block
+                        description: threatHandlingMode specifies how a threat is handled when the rate limit is exceeded.
+                        enum:
+                          - Block
+                          - LogOnly
+                        type: string
+                    type: object
+                    x-kubernetes-validations:
+                      - message: blockResponse, countBy and rateLimitHeaders may only be set when 'local' is configured
+                        rule: has(self.local) || (!has(self.blockResponse) && !has(self.countBy) && self.rateLimitHeaders == 'Disabled')
+                  maxItems: 128
+                  minItems: 1
+                  type: array
+                  x-kubernetes-list-type: atomic
+                  x-kubernetes-validations:
+                    - message: Only the last policy may omit 'requestConditions'
+                      rule: self.all(p, has(p.requestConditions)) || (self.exists_one(p, !has(p.requestConditions)) && !has(self[self.size()-1].requestConditions))
                 targetRefs:
                   description: |-
                     targetRefs are the resources this policy is being attached to. Referenced resources must be in the same namespace as the policy.
@@ -355,10 +471,11 @@ spec:
                     - message: Combination of name, group and kind must be unique for each TargetRef
                       rule: self.all(t1, self.exists_one(t2, t1.group == t2.group && t1.kind == t2.kind && t1.name == t2.name))
               required:
+                - policies
                 - targetRefs
               type: object
             status:
-              description: status describes the current status of the LogMaskingPolicy.
+              description: status describes the current status of the RateLimitPolicy.
               properties:
                 ancestors:
                   description: |-

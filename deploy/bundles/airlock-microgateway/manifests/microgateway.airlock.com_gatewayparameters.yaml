@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.20.1
+    controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.0.5
+    app.kubernetes.io/version: 5.1.0
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -55,26 +55,24 @@ spec:
                   for the Gateway.
                 properties:
                   contentSecurity:
-                    description: |-
-                      contentSecurity defines the default ContentSecurity configuration for the Gateway.
-
-                      Note: This field should be set explicitly before upgrading from versions <5.1 to prevent breaking behavior changes after the upgrade.
-
-                      In versions prior to 5.1, when no ContentSecurityPolicy was attached to an HTTPRoute, the default filter and mutation rules were implicitly applied.
-                      This implicit behavior is removed in 5.1, and HTTPRoutes without an explicit ContentSecurityPolicy no longer have default filter and mutation rules applied after the upgrade.
-
-                      To maintain the previous behavior, explicitly set this field to `secured: {}` before upgrading.
-                      This ensures that the default ContentSecurity configuration continues to be applied to HTTPRoutes that don't have a custom ContentSecurityPolicy attached.
+                    description: contentSecurity defines the default ContentSecurity
+                      configuration for the Gateway.
                     properties:
                       secured:
-                        description: secured is ignored by Microgateway <5.1. It was
-                          made available in the CRDs to facilitate migration to >=
-                          5.1.
+                        description: |-
+                          secured enables WAF processing in general with the default configuration of filter and mutation rules.
+                          This default can be customized on a per-route basis by attaching a ContentSecurityPolicy.
+                        type: object
+                      unsecured:
+                        description: unsecured disables all WAF functionality and
+                          therefore protection for the upstream applications.
                         type: object
                     type: object
                     x-kubernetes-validations:
-                    - message: at most one of the fields in [secured] may be set
-                      rule: '[has(self.secured)].filter(x,x==true).size() <= 1'
+                    - message: at most one of the fields in [unsecured secured] may
+                        be set
+                      rule: '[has(self.unsecured),has(self.secured)].filter(x,x==true).size()
+                        <= 1'
                   customResponses:
                     description: customResponses configures response replacement for
                       the Gateway.
@@ -131,7 +129,7 @@ spec:
                           - 403 (CSRF protection, wrong scheme)
                           - 404 (request does not match any route)
                           - 408 (request timeout)
-                          - 429 (community rate limit reached)
+                          - 429 (rate limit reached)
                           - 500 (invalid route/backend/policy configuration)
                           - 502 | 503 (other errors)
                           - 504 (backend timeout)
@@ -332,7 +330,7 @@ spec:
                           proxyProtocol:
                             description: |-
                               proxyProtocol configures to use the proxy protocol connection header for IP extraction. The proxy protocol adds a header to TCP connections to preserve the client's IP address.
-                              For more details, refer to the protocol specification: https://www.haproxy.org/download/3.1/doc/proxy-protocol.txt
+                              For more details, refer to the [protocol specification](https://www.haproxy.org/download/3.1/doc/proxy-protocol.txt).
                               Note: When this field is set, all incoming connections must use the proxy protocol, otherwise, the connection will be closed.
                             properties:
                               version:
@@ -424,7 +422,7 @@ spec:
                         description: |-
                           backend describes the TLS configuration for the Gateway when connecting to backends.
 
-                          Note: This contains only details for the Gateway as a TLS client and does _not_ imply behavior about how to choose which backend should get a TLS connection. That is determined by the presence of a BackendTLSPolicy. More info: https://gateway-api.sigs.k8s.io/api-types/backendtlspolicy/
+                          Note: This contains only details for the Gateway as a TLS client and does _not_ imply behavior about how to choose which backend should get a TLS connection. That is determined by the presence of a BackendTLSPolicy. More info: https://gateway-api.sigs.k8s.io/reference/api-types/policy/backendtlspolicy/
                           Note: If `.spec.tls.backend` is specified in the Gateway resource, this field will be ignored.
                         properties:
                           clientCertificateRef:
@@ -731,11 +729,33 @@ spec:
                       Because ExternalName services can reference arbitrary CNAME DNS records, they may also redirect traffic to unintended external targets.
                       Enable this option with caution. To mitigate risks, ensure TLS validation is enforced for all backends, use trusted DNS resolvers, apply appropriate NetworkPolicies, and separate Gateways serving internal and external traffic.
                     type: boolean
+                  httpRouteRegexPathMatchEnabled:
+                    default: false
+                    description: |-
+                      httpRouteRegexPathMatchEnabled specifies whether HTTPRoutes are accepted when using path matching of type RegularExpression.
+                      Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                      Path matching precedence order (from highest to lowest priority):
+                      1. Exact
+                      2. RegularExpression (if enabled)
+                      3. PathPrefix with largest number of characters
+
+                      The precedence of RegularExpression path matches is determined by the order in which they are defined within a HTTPRoute.
+                      If multiple applicable HTTPRoutes exist, the precedence is determined by the following criteria, in order:
+                      1. The oldest Route based on creation timestamp
+                      2. The Route appearing first in alphabetical order by "{namespace}/{name}"
+                    type: boolean
                   insecureTLSAllowed:
                     default: false
                     description: |-
                       insecureTLSAllowed specifies whether the Gateway accepts BackendTLSPolicies that disable certificate validation. Allowing insecure TLS may expose the Gateway to man-in-the-middle attacks and other vulnerabilities.
                       THIS IS INSECURE AND SHOULD ONLY BE USED FOR TESTING.
+                    type: boolean
+                  unrestrictedEnvoyAdminInterface:
+                    default: false
+                    description: |-
+                      unrestrictedEnvoyAdminInterface specifies whether the Gateway exposes all paths of the Envoy admin interface.
+                      By default, access is restricted to a minimal set of read-only endpoints. The admin interface can expose sensitive configuration and operational endpoints (e.g., modifying runtime settings, draining listeners, or retrieving secrets), which may be abused if reachable from untrusted networks.
+                      Enable this option with caution and only for testing or debugging purposes.
                     type: boolean
                 type: object
               kubernetes:
@@ -2119,9 +2139,9 @@ spec:
                             x-kubernetes-list-type: map
                         type: object
                       replicas:
-                        default: 2
-                        description: replicas sets the number of Gateway Deployment
-                          replicas.
+                        description: |-
+                          replicas sets the number of Gateway Deployment replicas.
+                          If undefined, the number of replicas either defaults to 1 and is managed by the Kubernetes control plane, or is managed by a HorizontalPodAutoscaler (HPA) targeting the Gateway deployment.
                         format: int32
                         minimum: 1
                         type: integer
@@ -3102,7 +3122,7 @@ spec:
                                 A failure to resolve or pull the image during pod startup will block containers from starting and may add significant latency. Failures will be retried using normal volume backoff and will be reported on the pod reason and message.
                                 The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                                 The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
-                                The volume will be mounted read-only (ro) and non-executable files (noexec).
+                                The volume will be mounted read-only (ro).
                                 Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                                 The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                               properties:
@@ -3274,8 +3294,7 @@ spec:
                               description: |-
                                 portworxVolume represents a portworx volume attached and mounted on kubelets host machine.
                                 Deprecated: PortworxVolume is deprecated. All operations for the in-tree portworxVolume type
-                                are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate
-                                is on.
+                                are redirected to the pxd.portworx.com CSI driver.
                               properties:
                                 fsType:
                                   description: |-
@@ -4128,9 +4147,12 @@ spec:
                           rule: self.all(key, size(self[key]) <= 4096)
                       externalTrafficPolicy:
                         description: |-
-                          externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses (NodePorts, and LoadBalancer IPs). Meaning of the possible values:
-                          _Local_: preserves the source IP of the traffic by routing only to endpoints on the same node as the traffic was received on (dropping the traffic if there are no local endpoints).
-                          _Cluster_: routes traffic to all endpoints. Be aware that this may break client IP detection and dependent features (e.g., deny rule exceptions or access control policies with request conditions matching remote IPs).
+                          externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service's "externally-facing" addresses (NodePorts, and LoadBalancer IPs).
+
+                          Meaning of the possible values:
+                          - _Local_: preserves the source IP of the traffic by routing only to endpoints on the same node as the traffic was received on (dropping the traffic if there are no local endpoints).
+                          - _Cluster_: routes traffic to all endpoints. Be aware that this may break client IP detection and dependent features (e.g., deny rule exceptions or access control policies with request conditions matching remote IPs).
+
                           If undefined, the `Local` policy is applied.
                         enum:
                         - Cluster
@@ -4140,15 +4162,25 @@ spec:
                         description: |-
                           loadBalancerClass describes which load balancer implementation is responsible for this Service.
                           If undefined, the default load balancer implementation is used (typically provided by the cloud provider).
+
+                          Note: This field is immutable once the service type is `LoadBalancer` (which it is by default). To set loadBalancerClass, ensure that the GatewayParameters configuring a loadBalancerClass are already referenced by the Gateway during its initial creation.
+                          If possible, it is recommended to avoid setting loadBalancerClass and configuring the LoadBalancer over annotations instead.
+
+                          **WARNING:**
+                          - Changing loadBalancerClass once the Gateway has already been created is only possible by temporarily switching the service type to ClusterIP or NodePort and then switching it back to LoadBalancer while simultaneously configuring a loadBalancerClass. THIS MAY RESULT IN A CHANGE IN THE LOAD BALANCER IP / TRAFFIC DISRUPTION.
+                          - Any other way of changing loadBalancerClass (e.g., by removing or adding a GatewayParameters reference with loadBalancerClass configured to an already running Gateway) is not supported and may lead to reconciliation errors.
                         maxLength: 253
                         minLength: 1
                         pattern: ^(([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])$
                         type: string
                       sessionAffinity:
                         description: |-
-                          sessionAffinity describes how client requests are associated with service endpoints. Meaning of the possible values:
-                          _ClientIP_: ensures that requests from the same client IP address are routed to the same endpoint.
-                          _None_: disables session affinity, allowing requests to be routed to any available endpoint.
+                          sessionAffinity describes how client requests are associated with service endpoints.
+
+                          Meaning of the possible values:
+                          - _ClientIP_: ensures that requests from the same client IP address are routed to the same endpoint.
+                          - _None_: disables session affinity, allowing requests to be routed to any available endpoint.
+
                           If undefined, sessionAffinity defaults to `None`.
                         enum:
                         - ClientIP
@@ -4187,7 +4219,7 @@ spec:
                         - PreferSameNode
                         type: string
                       type:
-                        default: ClusterIP
+                        default: LoadBalancer
                         description: type specifies how the Service of the Gateway
                           is exposed.
                         enum:
@@ -4208,9 +4240,6 @@ spec:
                     - message: loadBalancerClass can only be set for service type
                         LoadBalancer
                       rule: '!has(self.loadBalancerClass) || self.type == "LoadBalancer"'
-                    - message: loadBalancerClass may not change once set
-                      rule: self.type != "LoadBalancer" || !has(oldSelf.loadBalancerClass)
-                        || self.loadBalancerClass == oldSelf.loadBalancerClass
                 type: object
               logging:
                 description: logging specifies Envoy system logging settings for the
@@ -4231,6 +4260,16 @@ spec:
                     type: string
                 type: object
             type: object
+            x-kubernetes-validations:
+            - message: kubernetes.service.loadBalancerClass is immutable if service
+                is of type LoadBalancer
+              optionalOldSelf: true
+              rule: '!oldSelf.hasValue() || self.?kubernetes.service.type.orValue("LoadBalancer")
+                != "LoadBalancer" || oldSelf.kubernetes.service.type.orValue("LoadBalancer")
+                != "LoadBalancer" || self.?kubernetes.service.loadBalancerClass ==
+                oldSelf.kubernetes.service.loadBalancerClass'
+        required:
+        - spec
         type: object
     served: true
     storage: true

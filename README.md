@@ -7,7 +7,7 @@
 </picture>
 
 [![Release](https://img.shields.io/badge/Release-v5.1.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
-[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6.0-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6.0/airlock-microgateway)
+[![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6/airlock-microgateway)
 [![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.1.0)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)

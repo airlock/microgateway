@@ -3,8 +3,8 @@ name: microgateway
 description: A Helm chart for deploying the Airlock Microgateway
 type: application
 home: https://www.airlock.com/en/microgateway
-version: "5.1.0"
-appVersion: "5.1.0"
+version: "5.1.1"
+appVersion: "5.1.1"
 annotations:
   charts.openshift.io/name: Airlock Microgateway
   artifacthub.io/category: security
@@ -16,6 +16,12 @@ annotations:
     - name: Airlock Microgateway Forum
       url: https://forum.airlock.com/
   artifacthub.io/license: MIT
+  artifacthub.io/operator: "true"
+  artifacthub.io/operatorCapabilities: Seamless Upgrades
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: CFB1AEC6275529B7DD681691594C8F4B7423CA8FEDA8AFE8634682D00F853242
+    url: https://raw.githubusercontent.com/airlock/microgateway/main/cosign/cosign.pub
 sources:
   - https://github.com/airlock/microgateway
 icon: https://raw.githubusercontent.com/airlock/microgateway/main/media/icon.svg

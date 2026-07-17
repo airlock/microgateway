@@ -3,8 +3,8 @@ name: microgateway
 description: A Helm chart for deploying the Airlock Microgateway
 type: application
 home: https://www.airlock.com/en/microgateway
-version: "5.1.2"
-appVersion: "5.1.2"
+version: "5.1.3"
+appVersion: "5.1.3"
 annotations:
   charts.openshift.io/name: Airlock Microgateway
   artifacthub.io/category: security

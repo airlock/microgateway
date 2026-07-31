@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 4.8.10
+    app.kubernetes.io/version: 4.8.11
   name: gatewayparameters.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -469,6 +469,8 @@ spec:
                                   validation holds configuration information for validating the frontend (client).
                                   Setting this field will result in mutual authentication when connecting to the Gateway.
                                   In browsers this may result in a dialog appearing that requests a user to specify the client certificate.
+
+                                  Note: TLS session resumption is not supported for connections using mutual authentication.
                                 properties:
                                   caCertificateRefs:
                                     description: |-
@@ -584,6 +586,8 @@ spec:
                                         validation holds configuration information for validating the frontend (client).
                                         Setting this field will result in mutual authentication when connecting to the Gateway.
                                         In browsers this may result in a dialog appearing that requests a user to specify the client certificate.
+
+                                        Note: TLS session resumption is not supported for connections using mutual authentication.
                                       properties:
                                         caCertificateRefs:
                                           description: |-

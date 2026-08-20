@@ -48,10 +48,10 @@ image:
   # -- Image repository from which to pull the Airlock Microgateway Operator image.
   repository: "quay.io/airlock/microgateway-operator"
   # -- Image tag to pull.
-  tag: "5.0.7"
+  tag: "5.0.8"
   # -- SHA256 image digest to pull (in the format "sha256:c79ee3f85862fb386e9dd62b901b607161d27807f512d7fbdece05e9ee3d7c63").
   # Overrides tag when specified.
-  digest: "sha256:ab7c6a2d51418561b94b99e8a7558e8962efa629a457a12508b8a801a9997b73"
+  digest: "sha256:75606aeac358c12d9592a73f51c1c7f298081d7803bd3a1e52e0edae2441133a"
   # -- Pull policy for this image.
   pullPolicy: IfNotPresent
 # -- Labels to add to all operator Pods.
@@ -111,10 +111,10 @@ config:
     # -- Image repository from which to pull the Airlock Microgateway Engine image.
     repository: "quay.io/airlock/microgateway-engine"
     # -- Image tag to pull.
-    tag: "5.0.7"
+    tag: "5.0.8"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:a512c1a6424c012328b236f508766e409a5d4abc3a81a8ce68b6d09c80f62d50"
+    digest: "sha256:68f5402c934a1eb61ebd2dd5805d708a8194c914e0f7a2972d68fd8f09886176"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # Specifies the Airlock Microgateway Session Agent image.
@@ -122,10 +122,10 @@ config:
     # -- Image repository from which to pull the Airlock Microgateway Session Agent image.
     repository: "quay.io/airlock/microgateway-session-agent"
     # -- Image tag to pull.
-    tag: "5.0.7"
+    tag: "5.0.8"
     # -- SHA256 image digest to pull (in the format "sha256:a3051f42d3013813b05f7513bb86ed6a3209cb3003f1bb2f7b72df249aa544d3").
     # Overrides tag when specified.
-    digest: "sha256:7308f22b8ba18b9c27aba89f12ce478e7dc91b9bf75f30caa68389d0fa073212"
+    digest: "sha256:c7199a7e7be7d12d2eaf603aa10e615fd0eb8d01d3d0fba3b12454cc1c2ab31e"
     # -- Pull policy for this image.
     pullPolicy: IfNotPresent
   # Configures PodMonitor resources for Gateway Pods.

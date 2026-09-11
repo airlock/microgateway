@@ -267,5 +267,5 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.0.8
+    app.kubernetes.io/version: 5.0.9
   name: airlock-microgateway-config

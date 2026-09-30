@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: redisproviders.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -197,8 +197,8 @@ spec:
                 x-kubernetes-validations:
                 - message: exactly one of the fields in [standalone sentinel cluster]
                     must be set
-                  rule: '[has(self.standalone),has(self.sentinel),has(self.cluster)].filter(x,x==true).size()
-                    == 1'
+                  rule: (has(self.standalone)?1:0)+(has(self.sentinel)?1:0)+(has(self.cluster)?1:0)
+                    == 1
               timeouts:
                 description: timeouts specifies the timeouts when interacting with
                   the Redis endpoint.
@@ -282,8 +282,8 @@ spec:
                     x-kubernetes-validations:
                     - message: at most one of the fields in [disabled publicCAs custom]
                         may be set
-                      rule: '[has(self.disabled),has(self.publicCAs),has(self.custom)].filter(x,x==true).size()
-                        <= 1'
+                      rule: (has(self.disabled)?1:0)+(has(self.publicCAs)?1:0)+(has(self.custom)?1:0)
+                        <= 1
                   clientCertificate:
                     description: clientCertificate configures client certificate authentication.
                       If not specified, TLS-based client authentication is disabled.

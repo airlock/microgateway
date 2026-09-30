@@ -137,6 +137,21 @@ Operator rbac permission rules
     - patch
     - update
 - apiGroups:
+    - gateway.networking.x-k8s.io
+  resources:
+    - xbackends
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - gateway.networking.x-k8s.io
+  resources:
+    - xbackends/status
+  verbs:
+    - patch
+    - update
+- apiGroups:
     - microgateway.airlock.com
   resources:
     - accesscontrolpolicies

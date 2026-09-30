@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: icapproviders.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -124,8 +124,8 @@ spec:
                                         - message: exactly one of the fields in [exact
                                             prefix suffix regex contains] must be
                                             set
-                                          rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                            == 1'
+                                          rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                            == 1
                                       sanType:
                                         description: sanType defines the type of SAN
                                           matcher.
@@ -184,8 +184,7 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [allowedSPKIs
                                       allowedHashes] must be set
-                                    rule: '[has(self.allowedSPKIs),has(self.allowedHashes)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.allowedSPKIs)||has(self.allowedHashes)
                                 crl:
                                   description: crl defines the Certificate Revocation
                                     List (CRL) settings.
@@ -272,8 +271,7 @@ spec:
                                 rule: '!has(self.allowedSANs) || has(self.trustedCA)'
                               - message: at least one of the fields in [trustedCA
                                   certificatePinning] must be set
-                                rule: '[has(self.trustedCA),has(self.certificatePinning)].filter(x,x==true).size()
-                                  >= 1'
+                                rule: has(self.trustedCA)||has(self.certificatePinning)
                             disabled:
                               description: |-
                                 disabled specifies to trust any certificate without verification.
@@ -290,8 +288,8 @@ spec:
                           x-kubernetes-validations:
                           - message: at most one of the fields in [disabled publicCAs
                               custom] may be set
-                            rule: '[has(self.disabled),has(self.publicCAs),has(self.custom)].filter(x,x==true).size()
-                              <= 1'
+                            rule: (has(self.disabled)?1:0)+(has(self.publicCAs)?1:0)+(has(self.custom)?1:0)
+                              <= 1
                         ciphers:
                           description: ciphers defines a list of the supported TLS
                             cipher suites. For details on cipher list refer to the

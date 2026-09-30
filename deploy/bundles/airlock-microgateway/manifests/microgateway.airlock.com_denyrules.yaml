@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: denyrules.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -72,7 +72,7 @@ spec:
                                 graphQL:
                                   description: |-
                                     graphQL defines an exception based on a blocked GraphQL query.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     argument:
                                       description: |-
@@ -131,8 +131,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -193,8 +193,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -255,8 +255,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -264,12 +264,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [field
                                       argument value] must be set
-                                    rule: '[has(self.field),has(self.argument),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.field)||has(self.argument)||has(self.value)
                                 header:
                                   description: |-
                                     header defines an exception based on a blocked header.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     name:
                                       description: name defines the name of a header.
@@ -321,8 +320,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -381,8 +380,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -390,12 +389,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 json:
                                   description: |-
                                     json defines an exception based on a blocked JSON property.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     jsonPath:
                                       description: |-
@@ -461,8 +459,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -523,8 +521,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -532,16 +530,15 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at most one of the fields in [key value]
                                       may be set
-                                    rule: '[has(self.key),has(self.value)].filter(x,x==true).size()
-                                      <= 1'
+                                    rule: (has(self.key)?1:0)+(has(self.value)?1:0)
+                                      <= 1
                                   - message: at least one of the fields in [jsonPath
                                       key value] must be set
-                                    rule: '[has(self.jsonPath),has(self.key),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.jsonPath)||has(self.key)||has(self.value)
                                 parameter:
                                   description: |-
                                     parameter defines an exception based on a blocked parameter.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     name:
                                       description: name defines the name of a parameter.
@@ -598,8 +595,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -667,8 +664,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -676,12 +673,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 path:
                                   description: |-
                                     path defines an exception based on the blocked path.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     matcher:
                                       description: StringMatcher defines the way to
@@ -734,15 +730,15 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
                                 pathSegment:
                                   description: |-
                                     pathSegment defines an exception based on a blocked path segment.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     segments:
                                       description: segments defines the position of
@@ -758,8 +754,7 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [index]
                                           must be set
-                                        rule: '[has(self.index)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.index)?1:0) == 1
                                     value:
                                       description: value defines the value of a path
                                         segment.
@@ -816,8 +811,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -825,14 +820,162 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [segments
                                       value] must be set
-                                    rule: '[has(self.segments),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.segments)||has(self.value)
+                                pathSegmentParameter:
+                                  description: |-
+                                    pathSegmentParameter defines an exception based on a blocked path segment parameter.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
+                                  properties:
+                                    name:
+                                      description: name defines the name of a path
+                                        segment parameter.
+                                      properties:
+                                        matcher:
+                                          description: StringMatcher defines the way
+                                            to match a string.
+                                          properties:
+                                            contains:
+                                              description: |-
+                                                contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            exact:
+                                              description: |-
+                                                exact defines an explicit match on the string specified here.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            ignoreCase:
+                                              default: false
+                                              description: ignoreCase indicates whether
+                                                the matching should be case-insensitive.
+                                                In case of a regex match, the regex
+                                                gets wrapped with a group `(?i:...)`.
+                                              type: boolean
+                                            prefix:
+                                              description: |-
+                                                prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            regex:
+                                              description: |-
+                                                regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 256
+                                              minLength: 1
+                                              type: string
+                                            suffix:
+                                              description: |-
+                                                suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                          type: object
+                                          x-kubernetes-validations:
+                                          - message: exactly one of the fields in
+                                              [exact prefix suffix regex contains]
+                                              must be set
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
+                                      required:
+                                      - matcher
+                                      type: object
+                                    segments:
+                                      description: |-
+                                        segments restrict which path segments are filtered by this rule.
+                                        If not specified, all segments of a path are filtered.
+                                      properties:
+                                        index:
+                                          description: index specifies an exact path
+                                            segment position by index (0-based).
+                                          format: int64
+                                          minimum: 0
+                                          type: integer
+                                      type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [index]
+                                          must be set
+                                        rule: (has(self.index)?1:0) == 1
+                                    value:
+                                      description: value defines the value of a path
+                                        segment parameter.
+                                      properties:
+                                        matcher:
+                                          description: StringMatcher defines the way
+                                            to match a string.
+                                          properties:
+                                            contains:
+                                              description: |-
+                                                contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            exact:
+                                              description: |-
+                                                exact defines an explicit match on the string specified here.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            ignoreCase:
+                                              default: false
+                                              description: ignoreCase indicates whether
+                                                the matching should be case-insensitive.
+                                                In case of a regex match, the regex
+                                                gets wrapped with a group `(?i:...)`.
+                                              type: boolean
+                                            prefix:
+                                              description: |-
+                                                prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            regex:
+                                              description: |-
+                                                regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 256
+                                              minLength: 1
+                                              type: string
+                                            suffix:
+                                              description: |-
+                                                suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                          type: object
+                                          x-kubernetes-validations:
+                                          - message: exactly one of the fields in
+                                              [exact prefix suffix regex contains]
+                                              must be set
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
+                                      required:
+                                      - matcher
+                                      type: object
+                                  type: object
+                                  x-kubernetes-validations:
+                                  - message: at least one of the fields in [name value]
+                                      must be set
+                                    rule: has(self.name)||has(self.value)
                               type: object
                               x-kubernetes-validations:
                               - message: exactly one of the fields in [parameter header
-                                  path pathSegment json graphQL] must be set
-                                rule: '[has(self.parameter),has(self.header),has(self.path),has(self.pathSegment),has(self.json),has(self.graphQL)].filter(x,x==true).size()
-                                  == 1'
+                                  path pathSegment pathSegmentParameter json graphQL]
+                                  must be set
+                                rule: (has(self.parameter)?1:0)+(has(self.header)?1:0)+(has(self.path)?1:0)+(has(self.pathSegment)?1:0)+(has(self.pathSegmentParameter)?1:0)+(has(self.json)?1:0)+(has(self.graphQL)?1:0)
+                                  == 1
                             requestConditions:
                               description: requestConditions defines an exception
                                 based on request properties (all must match), without
@@ -893,8 +1036,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -953,8 +1096,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -962,8 +1105,7 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 invert:
                                   default: false
                                   description: invert indicates whether the request
@@ -1018,8 +1160,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -1097,8 +1239,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -1108,13 +1250,13 @@ spec:
                                     Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
                                   properties:
                                     cidrRanges:
-                                      description: cidrRanges defines the IPv4 or
-                                        IPv6 CIDR ranges, e.g. ``196.148.3.128/26``
-                                        or ``2001:db8::/28``.
+                                      description: |-
+                                        cidrRanges defines IPv4 or IPv6 CIDR ranges to match, e.g., `196.148.3.128/26` or `2001:db8::/28`.
+                                        Only one of cidrRanges or geoLocation can be set.
                                       items:
                                         description: CIDRRange defines an IPv4 or
-                                          IPv6 CIDR range, e.g. “196.148.3.128/26“
-                                          or “2001:db8::/28“.
+                                          IPv6 CIDR range, e.g. `196.148.3.128/26`
+                                          or `2001:db8::/28`.
                                         format: cidr
                                         maxLength: 49
                                         minLength: 1
@@ -1123,20 +1265,48 @@ spec:
                                       minItems: 1
                                       type: array
                                       x-kubernetes-list-type: set
+                                    geoLocation:
+                                      description: |-
+                                        geoLocation defines geographical locations to match based on IP geolocation.
+                                        Only one of cidrRanges or geoLocation can be set.
+                                      properties:
+                                        countryISOCodes:
+                                          description: countryISOCodes defines a list
+                                            of ISO 3166-1 alpha-2 country codes to
+                                            match, e.g., `CH` or `US`.
+                                          items:
+                                            description: CountryISOCode defines an
+                                              ISO 3166-1 alpha-2 country code, e.g.
+                                              `CH` or `US`.
+                                            maxLength: 2
+                                            minLength: 2
+                                            pattern: ^[A-Z]{2}$
+                                            type: string
+                                          maxItems: 256
+                                          minItems: 1
+                                          type: array
+                                          x-kubernetes-list-type: set
+                                      type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [countryISOCodes]
+                                          must be set
+                                        rule: (has(self.countryISOCodes)?1:0) == 1
                                     invert:
                                       default: false
                                       description: invert indicates whether the match
                                         should be inverted.
                                       type: boolean
-                                  required:
-                                  - cidrRanges
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [cidrRanges
+                                      geoLocation] must be set
+                                    rule: (has(self.cidrRanges)?1:0)+(has(self.geoLocation)?1:0)
+                                      == 1
                               type: object
                               x-kubernetes-validations:
                               - message: at least one of the fields in [path header
                                   method remoteIP mediaType] must be set
-                                rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size()
-                                  >= 1'
+                                rule: has(self.path)||has(self.header)||has(self.method)||has(self.remoteIP)||has(self.mediaType)
                             ruleKeys:
                               description: ruleKeys restricts the exception to a set
                                 of deny rules.
@@ -1191,8 +1361,7 @@ spec:
                           x-kubernetes-validations:
                           - message: at least one of the fields in [blockedData requestConditions]
                               must be set
-                            rule: '[has(self.blockedData),has(self.requestConditions)].filter(x,x==true).size()
-                              >= 1'
+                            rule: has(self.blockedData)||has(self.requestConditions)
                         maxItems: 4096
                         type: array
                         x-kubernetes-list-type: atomic
@@ -1263,18 +1432,15 @@ spec:
                                     defined without any RuleKeys the override is applied
                                     to all deny rules.
                                   items:
-                                    description: |-
-                                      A deny rule override type name can be any of the following values:
-                                      Header |
-                                      Parameter |
-                                      Path |
-                                      JSON |
-                                      GraphQL
+                                    description: DenyRuleOverrideType defines the
+                                      type of attribute the override should be applied
+                                      on.
                                     enum:
                                     - Header
                                     - Parameter
                                     - Path
                                     - PathSegment
+                                    - PathSegmentParameter
                                     - JSON
                                     - GraphQL
                                     type: string
@@ -1344,7 +1510,7 @@ spec:
                                 graphQL:
                                   description: |-
                                     graphQL specifies to block requests containing a matching GraphQL property.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     argument:
                                       description: |-
@@ -1403,8 +1569,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1465,8 +1631,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1527,8 +1693,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1536,12 +1702,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [field
                                       argument value] must be set
-                                    rule: '[has(self.field),has(self.argument),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.field)||has(self.argument)||has(self.value)
                                 header:
                                   description: |-
                                     header specifies to block requests containing a matching header.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     name:
                                       description: name defines the name of a header.
@@ -1592,8 +1757,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1652,8 +1817,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1661,12 +1826,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 json:
                                   description: |-
                                     json specifies to block requests containing a matching JSON property in the body.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     key:
                                       description: key defines the key of a JSON object.
@@ -1723,8 +1887,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1784,8 +1948,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1793,12 +1957,12 @@ spec:
                                   x-kubernetes-validations:
                                   - message: exactly one of the fields in [key value]
                                       must be set
-                                    rule: '[has(self.key),has(self.value)].filter(x,x==true).size()
-                                      == 1'
+                                    rule: (has(self.key)?1:0)+(has(self.value)?1:0)
+                                      == 1
                                 parameter:
                                   description: |-
                                     parameter specifies to block requests containing a matching parameter.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     name:
                                       description: name defines the name of a parameter.
@@ -1855,8 +2019,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1915,8 +2079,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -1924,12 +2088,11 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 path:
                                   description: |-
                                     path specifies to block requests with a matching path.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     matcher:
                                       description: matcher specifies which path to
@@ -1982,15 +2145,15 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
                                 pathSegment:
                                   description: |-
                                     pathSegment specifies to block requests containing a matching path segment.
-                                    Only one of graphQL, header, json, parameter, path or pathSegment can be set.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
                                   properties:
                                     segments:
                                       description: |-
@@ -2007,8 +2170,7 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [index]
                                           must be set
-                                        rule: '[has(self.index)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.index)?1:0) == 1
                                     value:
                                       description: value specifies which path segment
                                         values to block.
@@ -2065,20 +2227,169 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
                                   required:
                                   - value
                                   type: object
+                                pathSegmentParameter:
+                                  description: |-
+                                    pathSegmentParameter specifies to block requests containing a matching path segment parameter.
+                                    Only one of graphQL, header, json, parameter, path, pathSegment, or pathSegmentParameter can be set.
+                                  properties:
+                                    name:
+                                      description: name defines the name of a path
+                                        segment parameter.
+                                      properties:
+                                        matcher:
+                                          description: StringMatcher defines the way
+                                            to match a string.
+                                          properties:
+                                            contains:
+                                              description: |-
+                                                contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            exact:
+                                              description: |-
+                                                exact defines an explicit match on the string specified here.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            ignoreCase:
+                                              default: false
+                                              description: ignoreCase indicates whether
+                                                the matching should be case-insensitive.
+                                                In case of a regex match, the regex
+                                                gets wrapped with a group `(?i:...)`.
+                                              type: boolean
+                                            prefix:
+                                              description: |-
+                                                prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            regex:
+                                              description: |-
+                                                regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 256
+                                              minLength: 1
+                                              type: string
+                                            suffix:
+                                              description: |-
+                                                suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                          type: object
+                                          x-kubernetes-validations:
+                                          - message: exactly one of the fields in
+                                              [exact prefix suffix regex contains]
+                                              must be set
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
+                                      required:
+                                      - matcher
+                                      type: object
+                                    segments:
+                                      description: |-
+                                        segments restrict which path segments are filtered by this rule.
+                                        If not specified, all segments of a path are filtered.
+                                      properties:
+                                        index:
+                                          description: index specifies an exact path
+                                            segment position by index (0-based).
+                                          format: int64
+                                          minimum: 0
+                                          type: integer
+                                      type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [index]
+                                          must be set
+                                        rule: (has(self.index)?1:0) == 1
+                                    value:
+                                      description: value defines the value of a path
+                                        segment parameter.
+                                      properties:
+                                        matcher:
+                                          description: StringMatcher defines the way
+                                            to match a string.
+                                          properties:
+                                            contains:
+                                              description: |-
+                                                contains defines a substring match on the substring specified here. Empty contains match is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            exact:
+                                              description: |-
+                                                exact defines an explicit match on the string specified here.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            ignoreCase:
+                                              default: false
+                                              description: ignoreCase indicates whether
+                                                the matching should be case-insensitive.
+                                                In case of a regex match, the regex
+                                                gets wrapped with a group `(?i:...)`.
+                                              type: boolean
+                                            prefix:
+                                              description: |-
+                                                prefix defines a prefix match on the prefix specified here. Empty prefix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                            regex:
+                                              description: |-
+                                                regex defines a regex match on the regular expression specified here. Google's [RE2 regex engine](https://github.com/google/re2/wiki/Syntax) is used.
+                                                The regex matches only single-line by default, even with ".*". To match a multi-line string prepend (?s) to your regex.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 256
+                                              minLength: 1
+                                              type: string
+                                            suffix:
+                                              description: |-
+                                                suffix defines a suffix match on the suffix specified here. Empty suffix is not allowed, please use regex instead.
+                                                Only one of exact, prefix, suffix, regex or contains can be set.
+                                              maxLength: 1024
+                                              minLength: 1
+                                              type: string
+                                          type: object
+                                          x-kubernetes-validations:
+                                          - message: exactly one of the fields in
+                                              [exact prefix suffix regex contains]
+                                              must be set
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
+                                      required:
+                                      - matcher
+                                      type: object
+                                  type: object
+                                  x-kubernetes-validations:
+                                  - message: at least one of the fields in [name value]
+                                      must be set
+                                    rule: has(self.name)||has(self.value)
                               type: object
                               x-kubernetes-validations:
                               - message: exactly one of the fields in [parameter header
-                                  path pathSegment json graphQL] must be set
-                                rule: '[has(self.parameter),has(self.header),has(self.path),has(self.pathSegment),has(self.json),has(self.graphQL)].filter(x,x==true).size()
-                                  == 1'
+                                  path pathSegment pathSegmentParameter json graphQL]
+                                  must be set
+                                rule: (has(self.parameter)?1:0)+(has(self.header)?1:0)+(has(self.path)?1:0)+(has(self.pathSegment)?1:0)+(has(self.pathSegmentParameter)?1:0)+(has(self.json)?1:0)+(has(self.graphQL)?1:0)
+                                  == 1
                             requestConditions:
                               description: requestConditions defines additional request
                                 properties which must all be matched in order for
@@ -2138,8 +2449,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -2198,8 +2509,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -2207,8 +2518,7 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 invert:
                                   default: false
                                   description: invert indicates whether the request
@@ -2263,8 +2573,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -2342,8 +2652,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -2353,13 +2663,13 @@ spec:
                                     Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
                                   properties:
                                     cidrRanges:
-                                      description: cidrRanges defines the IPv4 or
-                                        IPv6 CIDR ranges, e.g. ``196.148.3.128/26``
-                                        or ``2001:db8::/28``.
+                                      description: |-
+                                        cidrRanges defines IPv4 or IPv6 CIDR ranges to match, e.g., `196.148.3.128/26` or `2001:db8::/28`.
+                                        Only one of cidrRanges or geoLocation can be set.
                                       items:
                                         description: CIDRRange defines an IPv4 or
-                                          IPv6 CIDR range, e.g. “196.148.3.128/26“
-                                          or “2001:db8::/28“.
+                                          IPv6 CIDR range, e.g. `196.148.3.128/26`
+                                          or `2001:db8::/28`.
                                         format: cidr
                                         maxLength: 49
                                         minLength: 1
@@ -2368,20 +2678,48 @@ spec:
                                       minItems: 1
                                       type: array
                                       x-kubernetes-list-type: set
+                                    geoLocation:
+                                      description: |-
+                                        geoLocation defines geographical locations to match based on IP geolocation.
+                                        Only one of cidrRanges or geoLocation can be set.
+                                      properties:
+                                        countryISOCodes:
+                                          description: countryISOCodes defines a list
+                                            of ISO 3166-1 alpha-2 country codes to
+                                            match, e.g., `CH` or `US`.
+                                          items:
+                                            description: CountryISOCode defines an
+                                              ISO 3166-1 alpha-2 country code, e.g.
+                                              `CH` or `US`.
+                                            maxLength: 2
+                                            minLength: 2
+                                            pattern: ^[A-Z]{2}$
+                                            type: string
+                                          maxItems: 256
+                                          minItems: 1
+                                          type: array
+                                          x-kubernetes-list-type: set
+                                      type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [countryISOCodes]
+                                          must be set
+                                        rule: (has(self.countryISOCodes)?1:0) == 1
                                     invert:
                                       default: false
                                       description: invert indicates whether the match
                                         should be inverted.
                                       type: boolean
-                                  required:
-                                  - cidrRanges
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [cidrRanges
+                                      geoLocation] must be set
+                                    rule: (has(self.cidrRanges)?1:0)+(has(self.geoLocation)?1:0)
+                                      == 1
                               type: object
                               x-kubernetes-validations:
                               - message: at least one of the fields in [path header
                                   method remoteIP mediaType] must be set
-                                rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size()
-                                  >= 1'
+                                rule: has(self.path)||has(self.header)||has(self.method)||has(self.remoteIP)||has(self.mediaType)
                             ruleKey:
                               description: ruleKey defines a technical key for the
                                 deny rule. Must be unique.

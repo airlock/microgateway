@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: oidcrelyingparties.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -167,8 +167,8 @@ spec:
                         x-kubernetes-validations:
                         - message: exactly one of the fields in [exact prefix suffix
                             regex contains] must be set
-                          rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                            == 1'
+                          rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                            == 1
                     required:
                     - matcher
                     type: object
@@ -227,8 +227,8 @@ spec:
                         x-kubernetes-validations:
                         - message: exactly one of the fields in [exact prefix suffix
                             regex contains] must be set
-                          rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                            == 1'
+                          rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                            == 1
                     required:
                     - matcher
                     type: object

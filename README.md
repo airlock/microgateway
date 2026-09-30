@@ -6,9 +6,9 @@
   <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled.svg" width="400">
 </picture>
 
-[![Release](https://img.shields.io/badge/Release-v5.1.6-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.1.6)
+[![Release](https://img.shields.io/badge/Release-v5.2.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.2.0)
 [![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6/airlock-microgateway)
-[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.1.6)
+[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.2.0)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)
 
@@ -38,7 +38,7 @@ The instructions below provide a quick start guide. Detailed information on the 
 ### Deploy Kubernetes Gateway API CRDs
 
 ```console
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.0/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.2/standard-install.yaml
 ```
 
 ## Deploy Airlock Microgateway Operator
@@ -46,33 +46,31 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 1. Install CRDs and Operator:
 
     ```console
-    # Create namespace
-    kubectl create namespace airlock-microgateway-system
-
-    # Install the Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.1.6' \
-      -n airlock-microgateway-system \
+      --version '5.2.0' \
+      --namespace airlock-microgateway-system \
+      --create-namespace \
       --wait
     ```
+   > Note: CRDs are included via the standard Helm mechanism, i.e. Helm will handle initial installation but not upgrades.
 
 2. Verify the correctness of the installation (Recommended):
 
     ```console
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.1.6' \
-      -n airlock-microgateway-system \
+      --version '5.2.0' \
+      --namespace airlock-microgateway-system \
       --set tests.enabled=true \
       --reuse-values
 
-    helm test airlock-microgateway -n airlock-microgateway-system --logs
+    helm test airlock-microgateway --namespace airlock-microgateway-system --logs
 
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.1.6' \
-      -n airlock-microgateway-system \
+      --version '5.2.0' \
+      --namespace airlock-microgateway-system \
       --set tests.enabled=false \
       --reuse-values
     ```

@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
     gateway.networking.k8s.io/policy: direct
   name: accesscontrolpolicies.microgateway.airlock.com
 spec:
@@ -160,7 +160,7 @@ spec:
                                         type: object
                                         x-kubernetes-validations:
                                           - message: at most one of the fields in [always random periodic] may be set
-                                            rule: '[has(self.always),has(self.random),has(self.periodic)].filter(x,x==true).size() <= 1'
+                                            rule: (has(self.always)?1:0)+(has(self.random)?1:0)+(has(self.periodic)?1:0) <= 1
                                     type: object
                                   oidcRelyingPartyRef:
                                     description: oidcRelyingPartyRef configures how the Airlock Microgateway Engine interacts with the OpenID provider.
@@ -190,7 +190,7 @@ spec:
                             type: object
                             x-kubernetes-validations:
                               - message: exactly one of the fields in [oidc jwt] must be set
-                                rule: '[has(self.oidc),has(self.jwt)].filter(x,x==true).size() == 1'
+                                rule: (has(self.oidc)?1:0)+(has(self.jwt)?1:0) == 1
                           deny:
                             description: deny specifies to deny access for all requests matching this policy.
                             type: object
@@ -232,7 +232,7 @@ spec:
                             type: object
                             x-kubernetes-validations:
                               - message: exactly one of the fields in [oidc] must be set
-                                rule: '[has(self.oidc)].filter(x,x==true).size() == 1'
+                                rule: (has(self.oidc)?1:0) == 1
                           requireAll:
                             description: requireAll specifies conditions which must all be satisfied for the request to be authorized.
                             items:
@@ -279,7 +279,7 @@ spec:
                                           type: object
                                           x-kubernetes-validations:
                                             - message: exactly one of the fields in [values valuesFrom] must be set
-                                              rule: '[has(self.values),has(self.valuesFrom)].filter(x,x==true).size() == 1'
+                                              rule: (has(self.values)?1:0)+(has(self.valuesFrom)?1:0) == 1
                                       required:
                                         - in
                                       type: object
@@ -349,7 +349,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -419,7 +419,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -493,7 +493,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -504,7 +504,7 @@ spec:
                                   type: object
                                   x-kubernetes-validations:
                                     - message: exactly one of the fields in [hash issuer subject san] must be set
-                                      rule: '[has(self.hash),has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size() == 1'
+                                      rule: (has(self.hash)?1:0)+(has(self.issuer)?1:0)+(has(self.subject)?1:0)+(has(self.san)?1:0) == 1
                                 jwt:
                                   description: jwt specifies a condition on the JWT.
                                   properties:
@@ -571,7 +571,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -647,7 +647,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -723,7 +723,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -736,7 +736,7 @@ spec:
                               type: object
                               x-kubernetes-validations:
                                 - message: exactly one of the fields in [jwt oidc tokenExchange clientCertificate] must be set
-                                  rule: '[has(self.jwt),has(self.oidc),has(self.tokenExchange),has(self.clientCertificate)].filter(x,x==true).size() == 1'
+                                  rule: (has(self.jwt)?1:0)+(has(self.oidc)?1:0)+(has(self.tokenExchange)?1:0)+(has(self.clientCertificate)?1:0) == 1
                             maxItems: 64
                             minItems: 1
                             type: array
@@ -786,7 +786,7 @@ spec:
                                           type: object
                                           x-kubernetes-validations:
                                             - message: exactly one of the fields in [values valuesFrom] must be set
-                                              rule: '[has(self.values),has(self.valuesFrom)].filter(x,x==true).size() == 1'
+                                              rule: (has(self.values)?1:0)+(has(self.valuesFrom)?1:0) == 1
                                       required:
                                         - in
                                       type: object
@@ -856,7 +856,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -926,7 +926,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -1000,7 +1000,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -1011,7 +1011,7 @@ spec:
                                   type: object
                                   x-kubernetes-validations:
                                     - message: exactly one of the fields in [hash issuer subject san] must be set
-                                      rule: '[has(self.hash),has(self.issuer),has(self.subject),has(self.san)].filter(x,x==true).size() == 1'
+                                      rule: (has(self.hash)?1:0)+(has(self.issuer)?1:0)+(has(self.subject)?1:0)+(has(self.san)?1:0) == 1
                                 jwt:
                                   description: jwt specifies a condition on the JWT.
                                   properties:
@@ -1078,7 +1078,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -1154,7 +1154,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -1230,7 +1230,7 @@ spec:
                                               type: object
                                               x-kubernetes-validations:
                                                 - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                                  rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                                  rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                           required:
                                             - matcher
                                           type: object
@@ -1243,7 +1243,7 @@ spec:
                               type: object
                               x-kubernetes-validations:
                                 - message: exactly one of the fields in [jwt oidc tokenExchange clientCertificate] must be set
-                                  rule: '[has(self.jwt),has(self.oidc),has(self.tokenExchange),has(self.clientCertificate)].filter(x,x==true).size() == 1'
+                                  rule: (has(self.jwt)?1:0)+(has(self.oidc)?1:0)+(has(self.tokenExchange)?1:0)+(has(self.clientCertificate)?1:0) == 1
                             maxItems: 64
                             minItems: 1
                             type: array
@@ -1256,9 +1256,9 @@ spec:
                           - message: cannot specify ensured.oidc without authentication.oidc
                             rule: '!(has(self.ensured) && has(self.ensured.oidc)) || (has(self.authentication) && has(self.authentication.oidc))'
                           - message: at most one of the fields in [requireAny requireAll deny] may be set
-                            rule: '[has(self.requireAny),has(self.requireAll),has(self.deny)].filter(x,x==true).size() <= 1'
+                            rule: (has(self.requireAny)?1:0)+(has(self.requireAll)?1:0)+(has(self.deny)?1:0) <= 1
                           - message: at most one of the fields in [deny authentication] may be set
-                            rule: '[has(self.deny),has(self.authentication)].filter(x,x==true).size() <= 1'
+                            rule: (has(self.deny)?1:0)+(has(self.authentication)?1:0) <= 1
                       identityPropagation:
                         description: identityPropagation configures how the authenticated user's identity is communicated to the protected application.
                         properties:
@@ -1351,7 +1351,7 @@ spec:
                                     type: object
                                     x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                 required:
                                   - matcher
                                 type: object
@@ -1404,14 +1404,14 @@ spec:
                                     type: object
                                     x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                                 required:
                                   - matcher
                                 type: object
                             type: object
                             x-kubernetes-validations:
                               - message: at least one of the fields in [name value] must be set
-                                rule: '[has(self.name),has(self.value)].filter(x,x==true).size() >= 1'
+                                rule: has(self.name)||has(self.value)
                           invert:
                             default: false
                             description: invert indicates whether the request condition should be inverted.
@@ -1463,7 +1463,7 @@ spec:
                                 type: object
                                 x-kubernetes-validations:
                                   - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                    rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                             required:
                               - matcher
                             type: object
@@ -1534,7 +1534,7 @@ spec:
                                 type: object
                                 x-kubernetes-validations:
                                   - message: exactly one of the fields in [exact prefix suffix regex contains] must be set
-                                    rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size() == 1'
+                                    rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0) == 1
                             required:
                               - matcher
                             type: object
@@ -1544,9 +1544,11 @@ spec:
                               Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
                             properties:
                               cidrRanges:
-                                description: cidrRanges defines the IPv4 or IPv6 CIDR ranges, e.g. ``196.148.3.128/26`` or ``2001:db8::/28``.
+                                description: |-
+                                  cidrRanges defines IPv4 or IPv6 CIDR ranges to match, e.g., `196.148.3.128/26` or `2001:db8::/28`.
+                                  Only one of cidrRanges or geoLocation can be set.
                                 items:
-                                  description: CIDRRange defines an IPv4 or IPv6 CIDR range, e.g. “196.148.3.128/26“ or “2001:db8::/28“.
+                                  description: CIDRRange defines an IPv4 or IPv6 CIDR range, e.g. `196.148.3.128/26` or `2001:db8::/28`.
                                   format: cidr
                                   maxLength: 49
                                   minLength: 1
@@ -1555,17 +1557,39 @@ spec:
                                 minItems: 1
                                 type: array
                                 x-kubernetes-list-type: set
+                              geoLocation:
+                                description: |-
+                                  geoLocation defines geographical locations to match based on IP geolocation.
+                                  Only one of cidrRanges or geoLocation can be set.
+                                properties:
+                                  countryISOCodes:
+                                    description: countryISOCodes defines a list of ISO 3166-1 alpha-2 country codes to match, e.g., `CH` or `US`.
+                                    items:
+                                      description: CountryISOCode defines an ISO 3166-1 alpha-2 country code, e.g. `CH` or `US`.
+                                      maxLength: 2
+                                      minLength: 2
+                                      pattern: ^[A-Z]{2}$
+                                      type: string
+                                    maxItems: 256
+                                    minItems: 1
+                                    type: array
+                                    x-kubernetes-list-type: set
+                                type: object
+                                x-kubernetes-validations:
+                                  - message: exactly one of the fields in [countryISOCodes] must be set
+                                    rule: (has(self.countryISOCodes)?1:0) == 1
                               invert:
                                 default: false
                                 description: invert indicates whether the match should be inverted.
                                 type: boolean
-                            required:
-                              - cidrRanges
                             type: object
+                            x-kubernetes-validations:
+                              - message: exactly one of the fields in [cidrRanges geoLocation] must be set
+                                rule: (has(self.cidrRanges)?1:0)+(has(self.geoLocation)?1:0) == 1
                         type: object
                         x-kubernetes-validations:
                           - message: at least one of the fields in [path header method remoteIP mediaType] must be set
-                            rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size() >= 1'
+                            rule: has(self.path)||has(self.header)||has(self.method)||has(self.remoteIP)||has(self.mediaType)
                       tokenExchange:
                         description: tokenExchange configures how downstream authentication tokens (e.g. JWT or OIDC Access Token) are exchanged with an OAuth2 Token Exchange Server.
                         properties:
@@ -1603,6 +1627,83 @@ spec:
                               - Block
                               - Pass
                             type: string
+                          subjectToken:
+                            description: |-
+                              subjectToken configures the token to exchange.
+                              If no authentication is configured, `subjectToken.extractionSources` must be specified.
+                              If authentication is configured, specifying `subjectToken` is optional as the token to exchange is inferred by default (`jwt` if authentication is JWT, `oidc.accessToken` if authentication is OIDC).
+                            properties:
+                              extractionSources:
+                                description: |-
+                                  extractionSources specifies to exchange the token obtained from the first matching source (in list order) that is present in the request. If none of the sources is present in the request, the token exchange will fail.
+                                  Note: The data extracted from the request is passed unsanitized and unfiltered to the token endpoint. It is the responsibility of the token endpoint to sanitize the data before using it.
+                                items:
+                                  properties:
+                                    bearerToken:
+                                      description: bearerToken specifies to extract the bearer token from the Authorization header.
+                                      type: object
+                                    cookie:
+                                      description: cookie from which to extract the token.
+                                      properties:
+                                        name:
+                                          description: name of the cookie.
+                                          maxLength: 256
+                                          minLength: 1
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                    header:
+                                      description: header from which to extract the token.
+                                      properties:
+                                        name:
+                                          description: name of the header (case-insensitive).
+                                          maxLength: 256
+                                          minLength: 1
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                    queryParameter:
+                                      description: queryParameter from which to extract the token.
+                                      properties:
+                                        name:
+                                          description: name of the parameter.
+                                          maxLength: 256
+                                          minLength: 1
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                  type: object
+                                  x-kubernetes-validations:
+                                    - message: exactly one of the fields in [bearerToken header queryParameter cookie] must be set
+                                      rule: (has(self.bearerToken)?1:0)+(has(self.header)?1:0)+(has(self.queryParameter)?1:0)+(has(self.cookie)?1:0) == 1
+                                maxItems: 16
+                                minItems: 1
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              jwt:
+                                description: |-
+                                  jwt specifies to exchange the authenticated JWT.
+                                  Note: This requires `authorization.authentication.jwt` to be configured.
+                                type: object
+                              oidc:
+                                description: |-
+                                  oidc specifies to exchange a token obtained from the OIDC flow.
+                                  Note: This requires `authorization.authentication.oidc` to be configured.
+                                properties:
+                                  accessToken:
+                                    description: accessToken specifies to exchange the access token obtained from the OIDC flow.
+                                    type: object
+                                type: object
+                                x-kubernetes-validations:
+                                  - message: exactly one of the fields in [accessToken] must be set
+                                    rule: (has(self.accessToken)?1:0) == 1
+                            type: object
+                            x-kubernetes-validations:
+                              - message: exactly one of the fields in [extractionSources jwt oidc] must be set
+                                rule: (has(self.extractionSources)?1:0)+(has(self.jwt)?1:0)+(has(self.oidc)?1:0) == 1
                         required:
                           - actions
                         type: object
@@ -1612,10 +1713,16 @@ spec:
                     x-kubernetes-validations:
                       - message: policy with authorization.deny must not specify identityPropagation
                         rule: '!(has(self.authorization.deny) && has(self.identityPropagation))'
-                      - message: policy with tokenExchange must specify authentication with either JWT or OIDC
-                        rule: '!has(self.tokenExchange) || (has(self.authorization.authentication) && (has(self.authorization.authentication.oidc) || has(self.authorization.authentication.jwt)))'
                       - message: cannot specify authorization.requireAny[*].tokenExchange or authorization.requireAll[*].tokenExchange without tokenExchange
                         rule: has(self.tokenExchange) || ((!has(self.authorization.requireAny) || self.authorization.requireAny.all(r, !has(r.tokenExchange))) && (!has(self.authorization.requireAll) || self.authorization.requireAll.all(r, !has(r.tokenExchange))))
+                      - message: policy with tokenExchange without authorization.authentication must specify tokenExchange.subjectToken with extractionSources
+                        rule: '!has(self.tokenExchange) || has(self.authorization.authentication) || has(self.tokenExchange.subjectToken)'
+                      - message: policy with tokenExchange without authorization.authentication must set tokenExchange.onFailure to 'Block'
+                        rule: '!has(self.tokenExchange) || has(self.authorization.authentication) || self.tokenExchange.onFailure == ''Block'''
+                      - message: tokenExchange.subjectToken.jwt may only be selected if authorization.authentication.jwt is configured
+                        rule: '!self.?tokenExchange.?subjectToken.?jwt.hasValue() || self.authorization.?authentication.jwt.hasValue()'
+                      - message: tokenExchange.subjectToken.oidc may only be selected if authorization.authentication.oidc is configured
+                        rule: '!self.?tokenExchange.?subjectToken.?oidc.hasValue() || self.authorization.?authentication.oidc.hasValue()'
                   maxItems: 128
                   minItems: 1
                   type: array

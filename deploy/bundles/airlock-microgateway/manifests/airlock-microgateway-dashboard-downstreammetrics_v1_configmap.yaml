@@ -6,7 +6,7 @@ data:
       "kind": "Dashboard",
       "metadata": {
         "name": "microgateway-downstream-metrics",
-        "generation": 1,
+        "generation": 2,
         "creationTimestamp": "2026-06-12T12:53:12Z",
         "labels": {},
         "annotations": {}
@@ -20,19 +20,13 @@ data:
                 "kind": "DataQuery",
                 "group": "grafana",
                 "version": "v0",
-                "spec": {},
-                "labels": {
-                  "grafana.app/export-label": "grafana-1"
-                }
+                "spec": {}
               },
               "enable": true,
               "hide": true,
               "iconColor": "rgba(0, 211, 255, 1)",
               "name": "Annotations & Alerts",
-              "builtIn": true,
-              "legacyOptions": {
-                "type": "dashboard"
-              }
+              "builtIn": true
             }
           }
         ],
@@ -66,6 +60,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "Connections per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Connections per second",
@@ -80,7 +78,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -178,6 +176,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "2xx Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "2xx Requests per second",
@@ -192,7 +194,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -290,6 +292,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"2\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total 2xx Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total 2xx Requests",
@@ -304,7 +310,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -371,6 +377,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "4xx Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "4xx Requests per second",
@@ -385,7 +395,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -483,6 +493,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total 3xx Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total 3xx Requests",
@@ -497,7 +511,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -576,6 +590,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total 5xx Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total 5xx Requests",
@@ -590,7 +608,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -673,6 +691,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"4\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total 4xx Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total 4xx Requests",
@@ -687,7 +709,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -770,6 +792,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"3\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "3xx Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "3xx Requests per second",
@@ -784,7 +810,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -881,6 +907,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"5\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "5xx Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "5xx Requests per second",
@@ -895,7 +925,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -993,6 +1023,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "A",
@@ -1007,7 +1041,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -1074,6 +1108,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Requests per second",
@@ -1096,6 +1134,10 @@ data:
                             "instant": false,
                             "legendFormat": "Error rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Error rate",
@@ -1110,7 +1152,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -1256,6 +1298,10 @@ data:
                             "instant": false,
                             "legendFormat": "Data received",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Data received",
@@ -1270,7 +1316,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -1368,6 +1414,10 @@ data:
                             "expr": "sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=~\"[45]\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_http_downstream_rq_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
                             "legendFormat": "Request Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Request Error Rate",
@@ -1382,7 +1432,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -1476,6 +1526,10 @@ data:
                             "expr": "round(sum(increase(envoy_http_downstream_cx_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total Connections",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total Connections",
@@ -1490,7 +1544,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -1557,6 +1611,10 @@ data:
                             "expr": "sum(increase(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
                             "legendFormat": "Data sent",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Data sent",
@@ -1571,7 +1629,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -1638,6 +1696,10 @@ data:
                             "expr": "sum(increase(envoy_http_downstream_cx_rx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
                             "legendFormat": "Data received",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Data received",
@@ -1652,7 +1714,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -1719,6 +1781,10 @@ data:
                             "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_rq_time_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                             "legendFormat": "25th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "25th Percentile",
@@ -1741,6 +1807,10 @@ data:
                             "instant": false,
                             "legendFormat": "50th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "50th Percentile",
@@ -1763,6 +1833,10 @@ data:
                             "instant": false,
                             "legendFormat": "95th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "95th Percentile",
@@ -1777,7 +1851,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -1920,6 +1994,10 @@ data:
                             "expr": "round(sum (increase(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "Total 1xx Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Total 1xx Requests",
@@ -1934,7 +2012,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -2001,6 +2079,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_rq_xx{envoy_response_code_class=\"1\", envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "1xx Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "1xx Requests per second",
@@ -2015,7 +2097,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -2113,6 +2195,10 @@ data:
                             "expr": "sum(rate(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "TLS handshakes per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS handshakes per second",
@@ -2135,6 +2221,10 @@ data:
                             "instant": false,
                             "legendFormat": "TLS connection errors per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS connection errors per second",
@@ -2149,7 +2239,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -2287,6 +2377,10 @@ data:
                             "instant": false,
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Ciphers",
@@ -2328,7 +2422,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "barchart",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "barRadius": 0,
@@ -2426,6 +2520,10 @@ data:
                             "instant": false,
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Protocols",
@@ -2467,7 +2565,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "barchart",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "barRadius": 0,
@@ -2563,6 +2661,10 @@ data:
                             "expr": "round(sum(increase(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "TLS Connection Handshakes",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Connection Handshakes",
@@ -2577,7 +2679,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -2644,6 +2746,10 @@ data:
                             "expr": "sum (increase(envoy_listener_ssl_connection_error{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))/\nsum (increase(envoy_listener_ssl_handshake{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))",
                             "legendFormat": "TLS Connection Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Connection Error Rate",
@@ -2658,7 +2764,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -2756,6 +2862,10 @@ data:
                             "instant": false,
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Supported Groups",
@@ -2797,7 +2907,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "barchart",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "barRadius": 0,
@@ -2893,6 +3003,10 @@ data:
                             "expr": "round(sum (increase(envoy_listener_ssl_connection_error{envoy_listener_address!~\"^(dynamic-probe|probe|metrics|admin)$\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
                             "legendFormat": "TLS Connection Errors",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Connection Errors",
@@ -2907,7 +3021,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -2992,6 +3106,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "TLS Signature Algorithms",
@@ -3032,7 +3150,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "barchart",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "barRadius": 0,
@@ -3101,6 +3219,300 @@ data:
               }
             }
           },
+          "panel-41": {
+            "kind": "Panel",
+            "spec": {
+              "id": 41,
+              "title": "Request Origins",
+              "description": "Origin of requests by country.",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "editorMode": "code",
+                            "exemplar": false,
+                            "expr": "sum by (country_iso_code) (round(increase(microgateway_license_http_rq_total{managed_by=~\"${operator:regex}\",namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range])))",
+                            "format": "table",
+                            "instant": true,
+                            "legendFormat": "__auto",
+                            "range": false
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "geomap",
+                "version": "13.0.0",
+                "spec": {
+                  "options": {
+                    "basemap": {
+                      "config": {
+                        "maxZoom": 5,
+                        "server": "streets",
+                        "showLabels": true,
+                        "theme": "auto"
+                      },
+                      "name": "Layer 0",
+                      "noRepeat": true,
+                      "opacity": 1,
+                      "type": "osm-standard"
+                    },
+                    "controls": {
+                      "mouseWheelZoom": true,
+                      "showAttribution": true,
+                      "showDebug": false,
+                      "showMeasure": false,
+                      "showScale": false,
+                      "showZoom": true
+                    },
+                    "layers": [
+                      {
+                        "config": {
+                          "showLegend": false,
+                          "style": {
+                            "color": {
+                              "fixed": "blue"
+                            },
+                            "opacity": 0.7,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "field": "Value",
+                              "fixed": 5,
+                              "max": 60,
+                              "min": 10
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "text": {
+                              "field": "country_iso_code",
+                              "fixed": "",
+                              "mode": "field"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        "filterData": {
+                          "id": "byRefId",
+                          "options": "A"
+                        },
+                        "layer-tooltip": true,
+                        "location": {
+                          "lookup": "country_iso_code",
+                          "mode": "lookup"
+                        },
+                        "name": "Requests",
+                        "tooltip": true,
+                        "type": "markers"
+                      }
+                    ],
+                    "tooltip": {
+                      "mode": "details"
+                    },
+                    "view": {
+                      "allLayers": true,
+                      "dashboardVariable": false,
+                      "id": "zero",
+                      "lastOnly": false,
+                      "lat": 0,
+                      "layer": "Requests",
+                      "lon": 0,
+                      "noRepeat": true,
+                      "shared": false,
+                      "zoom": 1
+                    }
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "green"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "custom": {
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        }
+                      }
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-42": {
+            "kind": "Panel",
+            "spec": {
+              "id": 42,
+              "title": "Top Ten Country of Origin",
+              "description": "Top Ten countries of origin.",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "datasource": {
+                            "name": "${DS_PROMETHEUS}"
+                          },
+                          "spec": {
+                            "editorMode": "code",
+                            "exemplar": false,
+                            "expr": "topk(10, sum by (country_iso_code) (round(increase(microgateway_license_http_rq_total{managed_by=~\"${operator:regex}\",namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[$__range]))))",
+                            "format": "time_series",
+                            "instant": true,
+                            "legendFormat": "__auto",
+                            "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "reduce",
+                      "spec": {
+                        "options": {
+                          "labelsToFields": true,
+                          "reducers": [
+                            "sum"
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "barchart",
+                "version": "13.0.0",
+                "spec": {
+                  "options": {
+                    "barRadius": 0.05,
+                    "barWidth": 0.95,
+                    "colorByField": "Total",
+                    "fullHighlight": false,
+                    "groupWidth": 0.8,
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "bottom",
+                      "showLegend": false
+                    },
+                    "orientation": "horizontal",
+                    "showValue": "never",
+                    "stacking": "none",
+                    "tooltip": {
+                      "hideZeros": false,
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    },
+                    "xField": "country_iso_code",
+                    "xTickLabelRotation": 0,
+                    "xTickLabelSpacing": 100
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "short",
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "blue"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "lineWidth": 0,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      }
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
           "panel-5": {
             "kind": "Panel",
             "spec": {
@@ -3127,6 +3539,10 @@ data:
                             "expr": "sum(rate(envoy_http_downstream_cx_tx_bytes_total{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m]))",
                             "legendFormat": "Data sent",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "Data sent",
@@ -3141,7 +3557,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -3239,6 +3655,10 @@ data:
                             "expr": "histogram_quantile(0.25, sum(rate(envoy_http_downstream_cx_length_ms_bucket{envoy_http_conn_manager_prefix=~\".*/hcm$\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\"}[1m])) by (le))",
                             "legendFormat": "25th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "25th Percentile",
@@ -3261,6 +3681,10 @@ data:
                             "instant": false,
                             "legendFormat": "50th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "50th Percentile",
@@ -3283,6 +3707,10 @@ data:
                             "instant": false,
                             "legendFormat": "95th Percentile",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                           }
                         },
                         "refId": "95th Percentile",
@@ -3297,7 +3725,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -3618,8 +4046,48 @@ data:
               {
                 "kind": "RowsLayoutRow",
                 "spec": {
-                  "title": "Downstream TLS Connection Metrics",
+                  "title": "Downstream Request Origins",
                   "collapse": false,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 9,
+                            "height": 17,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-41"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 9,
+                            "y": 0,
+                            "width": 15,
+                            "height": 17,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-42"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Downstream TLS Connection Metrics",
+                  "collapse": true,
                   "layout": {
                     "kind": "GridLayout",
                     "spec": {
@@ -3928,9 +4396,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info,managed_by)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                 }
               },
               "regex": ".*",
+              "regexApplyTo": "value",
               "sort": "disabled",
               "definition": "label_values(microgateway_build_info,managed_by)",
               "options": [],
@@ -3964,9 +4437,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                 }
               },
               "regex": "",
+              "regexApplyTo": "value",
               "sort": "disabled",
               "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
               "options": [],
@@ -4000,9 +4478,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "${DS_PROMETHEUS}"
                 }
               },
               "regex": "",
+              "regexApplyTo": "value",
               "sort": "alphabeticalAsc",
               "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
               "options": [],
@@ -4023,6 +4506,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-downstreammetrics

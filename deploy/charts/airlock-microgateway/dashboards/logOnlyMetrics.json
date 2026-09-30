@@ -3,8 +3,8 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "microgateway-threats-logged-metrics",
-    "generation": 1,
-    "creationTimestamp": "2026-06-22T09:11:18Z",
+    "generation": 2,
+    "creationTimestamp": "2026-09-14T14:16:19Z",
     "labels": {},
     "annotations": {}
   },
@@ -17,19 +17,13 @@
             "kind": "DataQuery",
             "group": "grafana",
             "version": "v0",
-            "spec": {},
-            "labels": {
-              "grafana.app/export-label": "grafana-1"
-            }
+            "spec": {}
           },
           "enable": true,
           "hide": true,
           "iconColor": "rgba(0, 211, 255, 1)",
           "name": "Annotations & Alerts",
-          "builtIn": true,
-          "legacyOptions": {
-            "type": "dashboard"
-          }
+          "builtIn": true
         }
       }
     ],
@@ -69,6 +63,10 @@
                         "legendFormat": "Logged threats in LogOnly mode",
                         "range": false,
                         "useBackend": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
                       }
                     },
                     "refId": "A",
@@ -83,7 +81,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "12.3.0",
+            "version": "13.0.0",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -153,6 +151,10 @@
                         "instant": false,
                         "legendFormat": "Number of threats per second",
                         "range": true
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
                       }
                     },
                     "refId": "LogOnly Events",
@@ -167,7 +169,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "timeseries",
-            "version": "12.3.0",
+            "version": "13.0.0",
             "spec": {
               "options": {
                 "legend": {
@@ -272,6 +274,10 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
                       }
                     },
                     "refId": "A",
@@ -301,7 +307,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "12.3.0",
+            "version": "13.0.0",
             "spec": {
               "options": {
                 "barRadius": 0,
@@ -401,6 +407,10 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
                       }
                     },
                     "refId": "A",
@@ -428,7 +438,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "12.3.0",
+            "version": "13.0.0",
             "spec": {
               "options": {
                 "barRadius": 0,
@@ -527,6 +537,10 @@
                         "instant": true,
                         "legendFormat": "__auto",
                         "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
                       }
                     },
                     "refId": "A",
@@ -580,7 +594,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "12.3.0",
+            "version": "13.0.0",
             "spec": {
               "options": {
                 "barRadius": 0,
@@ -636,6 +650,301 @@
                       "viz": false
                     },
                     "lineWidth": 1,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-8": {
+        "kind": "Panel",
+        "spec": {
+          "id": 8,
+          "title": "Logged Threats by Origin Country",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "spec": {
+                        "editorMode": "code",
+                        "exemplar": false,
+                        "expr": "sum by (country_iso_code) (round(increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "__auto",
+                        "range": false
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.0.0",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {
+                    "maxZoom": 5,
+                    "server": "streets",
+                    "showLabels": true,
+                    "theme": "auto"
+                  },
+                  "name": "Layer 0",
+                  "noRepeat": true,
+                  "opacity": 1,
+                  "type": "osm-standard"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "showLegend": false,
+                      "style": {
+                        "color": {
+                          "fixed": "dark-orange"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "field": "Value",
+                          "fixed": 5,
+                          "max": 60,
+                          "min": 10
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "text": {
+                          "field": "country_iso_code",
+                          "fixed": "",
+                          "mode": "field"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "filterData": {
+                      "id": "byRefId",
+                      "options": "A"
+                    },
+                    "layer-tooltip": true,
+                    "location": {
+                      "lookup": "country_iso_code",
+                      "mode": "lookup"
+                    },
+                    "name": "Requests",
+                    "tooltip": true,
+                    "type": "markers"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "zero",
+                  "lastOnly": false,
+                  "lat": 0,
+                  "layer": "Requests",
+                  "lon": 0,
+                  "noRepeat": true,
+                  "shared": false,
+                  "zoom": 1
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-9": {
+        "kind": "Panel",
+        "spec": {
+          "id": 9,
+          "title": "Top 10 Threats Logged by Origin Country",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${DS_PROMETHEUS}"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "exemplar": false,
+                        "expr": "topk(10, sum by (country_iso_code) (round(increase(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"${block_type:regex}\", block_subtype=~\"${block_subtype:regex}\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range]))))",
+                        "format": "time_series",
+                        "instant": true,
+                        "legendFormat": "__auto",
+                        "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1",
+                        "grafana.app/export-datasource-name": "Prometheus"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "reduce",
+                  "spec": {
+                    "options": {
+                      "labelsToFields": true,
+                      "reducers": [
+                        "sum"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "barchart",
+            "version": "13.0.0",
+            "spec": {
+              "options": {
+                "barRadius": 0.05,
+                "barWidth": 0.95,
+                "colorByField": "Total",
+                "fullHighlight": false,
+                "groupWidth": 0.8,
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "orientation": "horizontal",
+                "showValue": "never",
+                "stacking": "none",
+                "tooltip": {
+                  "hideZeros": false,
+                  "maxHeight": 600,
+                  "mode": "single",
+                  "sort": "none"
+                },
+                "xField": "country_iso_code",
+                "xTickLabelRotation": 0,
+                "xTickLabelSpacing": 100
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "orange"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "light-orange"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "fillOpacity": 100,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "lineWidth": 0,
                     "scaleDistribution": {
                       "type": "linear"
                     },
@@ -726,6 +1035,46 @@
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-7"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "Logged Threats by Origin",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 9,
+                        "height": 17,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-8"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 9,
+                        "y": 0,
+                        "width": 11,
+                        "height": 17,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-9"
                         }
                       }
                     }
@@ -844,9 +1193,14 @@
               "qryType": 1,
               "query": "label_values(microgateway_build_info,managed_by)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": ".*",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(microgateway_build_info,managed_by)",
           "options": [],
@@ -880,9 +1234,14 @@
               "qryType": 1,
               "query": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": "",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
           "options": [],
@@ -915,9 +1274,14 @@
               "qryType": 1,
               "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": "",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
           "options": [],
@@ -950,9 +1314,14 @@
               "qryType": 1,
               "query": "label_values(envoy_vhost_route_upstream_rq{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},envoy_route)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": "",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(envoy_vhost_route_upstream_rq{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},envoy_route)",
           "options": [],
@@ -985,9 +1354,14 @@
               "qryType": 1,
               "query": "label_values(microgateway_http_downstream_rq_threats_logged_total,block_type)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": "",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(microgateway_http_downstream_rq_threats_logged_total,block_type)",
           "options": [],
@@ -1021,9 +1395,14 @@
               "qryType": 1,
               "query": "label_values(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"$block_type\"},block_subtype)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "labels": {
+              "grafana.app/export-label": "prometheus-1",
+              "grafana.app/export-datasource-name": "Prometheus"
             }
           },
           "regex": "",
+          "regexApplyTo": "value",
           "sort": "disabled",
           "definition": "label_values(microgateway_http_downstream_rq_threats_logged_total{block_type=~\"$block_type\"},block_subtype)",
           "options": [],

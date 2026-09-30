@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: parsers.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -80,8 +80,8 @@ spec:
                                   x-kubernetes-validations:
                                   - message: exactly one of the fields in [json form
                                       multipart] must be set
-                                    rule: '[has(self.json),has(self.form),has(self.multipart)].filter(x,x==true).size()
-                                      == 1'
+                                    rule: (has(self.json)?1:0)+(has(self.form)?1:0)+(has(self.multipart)?1:0)
+                                      == 1
                                 skip:
                                   description: skip disables any content parsing
                                   type: object
@@ -89,8 +89,8 @@ spec:
                               x-kubernetes-validations:
                               - message: exactly one of the fields in [parse skip]
                                   must be set
-                                rule: '[has(self.parse),has(self.skip)].filter(x,x==true).size()
-                                  == 1'
+                                rule: (has(self.parse)?1:0)+(has(self.skip)?1:0) ==
+                                  1
                             requestConditions:
                               description: requestConditions defines additional request
                                 properties which must all be matched in order for
@@ -150,8 +150,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -210,8 +210,8 @@ spec:
                                           - message: exactly one of the fields in
                                               [exact prefix suffix regex contains]
                                               must be set
-                                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                              == 1'
+                                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                              == 1
                                       required:
                                       - matcher
                                       type: object
@@ -219,8 +219,7 @@ spec:
                                   x-kubernetes-validations:
                                   - message: at least one of the fields in [name value]
                                       must be set
-                                    rule: '[has(self.name),has(self.value)].filter(x,x==true).size()
-                                      >= 1'
+                                    rule: has(self.name)||has(self.value)
                                 invert:
                                   default: false
                                   description: invert indicates whether the request
@@ -275,8 +274,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -354,8 +353,8 @@ spec:
                                       x-kubernetes-validations:
                                       - message: exactly one of the fields in [exact
                                           prefix suffix regex contains] must be set
-                                        rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                                          == 1'
+                                        rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                                          == 1
                                   required:
                                   - matcher
                                   type: object
@@ -365,13 +364,13 @@ spec:
                                     Note: Depending on your setup you may need to adapt the `remoteIP` configuration in the `GatewayParameters` resource to ensure correct client IP detection.
                                   properties:
                                     cidrRanges:
-                                      description: cidrRanges defines the IPv4 or
-                                        IPv6 CIDR ranges, e.g. ``196.148.3.128/26``
-                                        or ``2001:db8::/28``.
+                                      description: |-
+                                        cidrRanges defines IPv4 or IPv6 CIDR ranges to match, e.g., `196.148.3.128/26` or `2001:db8::/28`.
+                                        Only one of cidrRanges or geoLocation can be set.
                                       items:
                                         description: CIDRRange defines an IPv4 or
-                                          IPv6 CIDR range, e.g. “196.148.3.128/26“
-                                          or “2001:db8::/28“.
+                                          IPv6 CIDR range, e.g. `196.148.3.128/26`
+                                          or `2001:db8::/28`.
                                         format: cidr
                                         maxLength: 49
                                         minLength: 1
@@ -380,20 +379,48 @@ spec:
                                       minItems: 1
                                       type: array
                                       x-kubernetes-list-type: set
+                                    geoLocation:
+                                      description: |-
+                                        geoLocation defines geographical locations to match based on IP geolocation.
+                                        Only one of cidrRanges or geoLocation can be set.
+                                      properties:
+                                        countryISOCodes:
+                                          description: countryISOCodes defines a list
+                                            of ISO 3166-1 alpha-2 country codes to
+                                            match, e.g., `CH` or `US`.
+                                          items:
+                                            description: CountryISOCode defines an
+                                              ISO 3166-1 alpha-2 country code, e.g.
+                                              `CH` or `US`.
+                                            maxLength: 2
+                                            minLength: 2
+                                            pattern: ^[A-Z]{2}$
+                                            type: string
+                                          maxItems: 256
+                                          minItems: 1
+                                          type: array
+                                          x-kubernetes-list-type: set
+                                      type: object
+                                      x-kubernetes-validations:
+                                      - message: exactly one of the fields in [countryISOCodes]
+                                          must be set
+                                        rule: (has(self.countryISOCodes)?1:0) == 1
                                     invert:
                                       default: false
                                       description: invert indicates whether the match
                                         should be inverted.
                                       type: boolean
-                                  required:
-                                  - cidrRanges
                                   type: object
+                                  x-kubernetes-validations:
+                                  - message: exactly one of the fields in [cidrRanges
+                                      geoLocation] must be set
+                                    rule: (has(self.cidrRanges)?1:0)+(has(self.geoLocation)?1:0)
+                                      == 1
                               type: object
                               x-kubernetes-validations:
                               - message: at least one of the fields in [path header
                                   method remoteIP mediaType] must be set
-                                rule: '[has(self.path),has(self.header),has(self.method),has(self.remoteIP),has(self.mediaType)].filter(x,x==true).size()
-                                  >= 1'
+                                rule: has(self.path)||has(self.header)||has(self.method)||has(self.remoteIP)||has(self.mediaType)
                           required:
                           - action
                           - requestConditions

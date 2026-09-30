@@ -6,8 +6,8 @@ data:
       "kind": "Dashboard",
       "metadata": {
         "name": "microgateway-access-control-metrics",
-        "generation": 1,
-        "creationTimestamp": "2026-06-12T12:53:12Z",
+        "generation": 2,
+        "creationTimestamp": "2026-09-14T14:30:44Z",
         "labels": {},
         "annotations": {}
       },
@@ -20,19 +20,13 @@ data:
                 "kind": "DataQuery",
                 "group": "grafana",
                 "version": "v0",
-                "spec": {},
-                "labels": {
-                  "grafana.app/export-label": "grafana-1"
-                }
+                "spec": {}
               },
               "enable": true,
               "hide": true,
               "iconColor": "rgba(0, 211, 255, 1)",
               "name": "Annotations & Alerts",
-              "builtIn": true,
-              "legacyOptions": {
-                "type": "dashboard"
-              }
+              "builtIn": true
             }
           }
         ],
@@ -66,6 +60,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -147,6 +145,10 @@ data:
                             "expr": "sum by (authorized) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "Authorized: {{authorized}}",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Requests per second",
@@ -161,7 +163,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -274,6 +276,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Request Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Request Error Rate",
@@ -382,6 +388,10 @@ data:
                             "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`, result!=\"success\"}[$__rate_interval]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "25th Percentile",
@@ -496,6 +506,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -634,6 +648,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -770,6 +788,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -851,6 +873,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Request Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Request Error Rate",
@@ -959,6 +985,10 @@ data:
                             "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Requests per second",
@@ -981,6 +1011,10 @@ data:
                             "instant": false,
                             "legendFormat": "Error rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Error rate",
@@ -1136,6 +1170,10 @@ data:
                             "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"token_refresh\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`, result!=\"success\"}[$__rate_interval]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "25th Percentile",
@@ -1266,6 +1304,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -1404,6 +1446,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -1540,6 +1586,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -1621,6 +1671,10 @@ data:
                             "expr": "round(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Request Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Request Error Rate",
@@ -1729,6 +1783,10 @@ data:
                             "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Requests per second",
@@ -1751,6 +1809,10 @@ data:
                             "instant": false,
                             "legendFormat": "Error rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Error rate",
@@ -1906,6 +1968,10 @@ data:
                             "expr": "sum by (result) (rate(microgateway_oidc_backchannel_requests_total{request=\"introspection\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`, result!=\"success\"}[$__rate_interval]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "25th Percentile",
@@ -2020,6 +2086,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -2158,6 +2228,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -2294,6 +2368,10 @@ data:
                             "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -2375,6 +2453,10 @@ data:
                             "expr": "round(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`,result!='success'}[$__range])))/\nround(sum (increase(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Request Error Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Request Error Rate",
@@ -2483,6 +2565,10 @@ data:
                             "expr": "sum(rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Requests per second",
@@ -2505,6 +2591,10 @@ data:
                             "instant": false,
                             "legendFormat": "Error rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Error rate",
@@ -2660,6 +2750,10 @@ data:
                             "expr": "sum by (result) (rate(microgateway_token_exchanges_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`, result!=\"success\"}[$__rate_interval]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "25th Percentile",
@@ -2774,6 +2868,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -2912,6 +3010,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -3048,6 +3150,10 @@ data:
                             "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "A",
@@ -3062,7 +3168,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -3204,6 +3310,10 @@ data:
                             "expr": "sum by (authentication_method) (rate(microgateway_authenticated_requests_total{authorized=\"false\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "__auto",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "A",
@@ -3218,7 +3328,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "timeseries",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "legend": {
@@ -3360,6 +3470,10 @@ data:
                             "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`, authorized=\"false\"}[$__range])))/\nround(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Non Authorized Request Rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Non Authorized Request Rate",
@@ -3374,7 +3488,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -3468,6 +3582,10 @@ data:
                             "expr": "round(sum (increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -3482,7 +3600,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -3549,6 +3667,10 @@ data:
                             "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"oidc\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -3563,7 +3685,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -3630,6 +3752,10 @@ data:
                             "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"jwt\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -3644,7 +3770,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -3724,6 +3850,10 @@ data:
                             "expr": "round(sum (increase(microgateway_authenticated_requests_total{authentication_method=\"client_certificate\", managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
                             "legendFormat": "Total Requests",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Total Requests",
@@ -3738,7 +3868,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "stat",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "colorMode": "value",
@@ -3820,6 +3950,10 @@ data:
                             "instant": true,
                             "legendFormat": "__auto",
                             "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Top 5 Policies",
@@ -3860,7 +3994,7 @@ data:
               "vizConfig": {
                 "kind": "VizConfig",
                 "group": "barchart",
-                "version": "12.3.0",
+                "version": "13.0.0",
                 "spec": {
                   "options": {
                     "barRadius": 0,
@@ -3956,6 +4090,10 @@ data:
                             "expr": "sum(rate(microgateway_oidc_backchannel_requests_total{request=\"grant_exchange\",managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[1m]))",
                             "legendFormat": "Requests per second",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Requests per second",
@@ -3978,6 +4116,10 @@ data:
                             "instant": false,
                             "legendFormat": "Error rate",
                             "range": true
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
                           }
                         },
                         "refId": "Error rate",
@@ -4102,6 +4244,301 @@ data:
                         ]
                       }
                     ]
+                  }
+                }
+              }
+            }
+          },
+          "panel-80": {
+            "kind": "Panel",
+            "spec": {
+              "id": 80,
+              "title": "Authenticated Requests by Origin Country",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "editorMode": "code",
+                            "exemplar": false,
+                            "expr": "sum by (country_iso_code) (round(increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range])))",
+                            "format": "table",
+                            "instant": true,
+                            "legendFormat": "__auto",
+                            "range": false
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "geomap",
+                "version": "13.0.0",
+                "spec": {
+                  "options": {
+                    "basemap": {
+                      "config": {
+                        "maxZoom": 5,
+                        "server": "streets",
+                        "showLabels": true,
+                        "theme": "auto"
+                      },
+                      "name": "Layer 0",
+                      "noRepeat": true,
+                      "opacity": 1,
+                      "type": "osm-standard"
+                    },
+                    "controls": {
+                      "mouseWheelZoom": true,
+                      "showAttribution": true,
+                      "showDebug": false,
+                      "showMeasure": false,
+                      "showScale": false,
+                      "showZoom": true
+                    },
+                    "layers": [
+                      {
+                        "config": {
+                          "showLegend": false,
+                          "style": {
+                            "color": {
+                              "fixed": "blue"
+                            },
+                            "opacity": 0.7,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "field": "Value",
+                              "fixed": 5,
+                              "max": 60,
+                              "min": 10
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "text": {
+                              "field": "country_iso_code",
+                              "fixed": "",
+                              "mode": "field"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        "filterData": {
+                          "id": "byRefId",
+                          "options": "A"
+                        },
+                        "layer-tooltip": true,
+                        "location": {
+                          "lookup": "country_iso_code",
+                          "mode": "lookup"
+                        },
+                        "name": "Requests",
+                        "tooltip": true,
+                        "type": "markers"
+                      }
+                    ],
+                    "tooltip": {
+                      "mode": "details"
+                    },
+                    "view": {
+                      "allLayers": true,
+                      "dashboardVariable": false,
+                      "id": "zero",
+                      "lastOnly": false,
+                      "lat": 0,
+                      "layer": "Requests",
+                      "lon": 0,
+                      "noRepeat": true,
+                      "shared": false,
+                      "zoom": 1
+                    }
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "green"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "custom": {
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        }
+                      }
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-81": {
+            "kind": "Panel",
+            "spec": {
+              "id": 81,
+              "title": "Top 10 Authenticated Requests by Origin Country",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "datasource": {
+                            "name": "${DS_PROMETHEUS}"
+                          },
+                          "spec": {
+                            "editorMode": "code",
+                            "exemplar": false,
+                            "expr": "topk(10, sum by (country_iso_code) (round(increase(microgateway_authenticated_requests_total{managed_by=~\"${operator:regex}\", namespace=~\"${namespace:regex}\", gateway=~\"${gateway_name:regex}\", envoy_cluster_name=~`^service/.+`,envoy_route=~`${route:regex}`}[$__range]))))",
+                            "format": "time_series",
+                            "instant": true,
+                            "legendFormat": "__auto",
+                            "range": false
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "Prometheus"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "reduce",
+                      "spec": {
+                        "options": {
+                          "labelsToFields": true,
+                          "reducers": [
+                            "sum"
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "barchart",
+                "version": "13.0.0",
+                "spec": {
+                  "options": {
+                    "barRadius": 0.05,
+                    "barWidth": 0.95,
+                    "colorByField": "Total",
+                    "fullHighlight": false,
+                    "groupWidth": 0.8,
+                    "legend": {
+                      "calcs": [],
+                      "displayMode": "list",
+                      "placement": "bottom",
+                      "showLegend": false
+                    },
+                    "orientation": "horizontal",
+                    "showValue": "never",
+                    "stacking": "none",
+                    "tooltip": {
+                      "hideZeros": false,
+                      "maxHeight": 600,
+                      "mode": "single",
+                      "sort": "none"
+                    },
+                    "xField": "country_iso_code",
+                    "xTickLabelRotation": 0,
+                    "xTickLabelSpacing": 100
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "short",
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "blue"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "fixed",
+                        "fixedColor": "blue"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "lineWidth": 0,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      }
+                    },
+                    "overrides": []
                   }
                 }
               }
@@ -4235,6 +4672,46 @@ data:
                             "element": {
                               "kind": "ElementReference",
                               "name": "panel-68"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Authenticated Request by Origin Country",
+                  "collapse": false,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 9,
+                            "height": 17,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-80"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 9,
+                            "y": 0,
+                            "width": 15,
+                            "height": 17,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-81"
                             }
                           }
                         }
@@ -4701,9 +5178,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info,managed_by)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "Prometheus"
                 }
               },
               "regex": ".*",
+              "regexApplyTo": "value",
               "sort": "disabled",
               "definition": "label_values(microgateway_build_info,managed_by)",
               "options": [],
@@ -4737,9 +5219,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "Prometheus"
                 }
               },
               "regex": "",
+              "regexApplyTo": "value",
               "sort": "disabled",
               "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\"},namespace)",
               "options": [],
@@ -4773,9 +5260,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "Prometheus"
                 }
               },
               "regex": "",
+              "regexApplyTo": "value",
               "sort": "alphabeticalAsc",
               "definition": "label_values(microgateway_build_info{managed_by=~\"$operator\", namespace=~\"$namespace\"},gateway)",
               "options": [],
@@ -4808,9 +5300,14 @@ data:
                   "qryType": 1,
                   "query": "label_values(envoy_vhost_route_upstream_rq{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},envoy_route)",
                   "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "Prometheus"
                 }
               },
               "regex": "",
+              "regexApplyTo": "value",
               "sort": "disabled",
               "definition": "label_values(envoy_vhost_route_upstream_rq{managed_by=~\"$operator\", namespace=~\"$namespace\", gateway=~\"$gateway_name\"},envoy_route)",
               "options": [],
@@ -4831,6 +5328,6 @@ metadata:
     app.kubernetes.io/instance: airlock-microgateway
     app.kubernetes.io/name: microgateway-operator
     app.kubernetes.io/part-of: microgateway
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
     grafana_dashboard: "1"
   name: airlock-microgateway-dashboard-accessctrlmetrics

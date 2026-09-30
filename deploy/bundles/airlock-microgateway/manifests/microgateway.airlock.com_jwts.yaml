@@ -2,10 +2,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.21.0
+    controller-gen.kubebuilder.io/version: v0.22.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.6
+    app.kubernetes.io/version: 5.2.0
   name: jwts.microgateway.airlock.com
 spec:
   group: microgateway.airlock.com
@@ -56,14 +56,15 @@ spec:
                 - message: duration must be greater than 0
                   rule: duration(self) > duration('0')
               expirationRequired:
+                default: true
                 description: |-
                   expirationRequired specifies whether the `exp` claim is mandatory.
                   If set to true and the extracted JWT does not contain a valid `exp` claim, the request will be blocked.
                 type: boolean
               extractionSources:
                 description: |-
-                  extractionSources defines possible JWT sources. The JWT is extracted from the first source (in list order) that is present in the request.
-                  If not specified, the JWT is extracted from the Authorization (Bearer) header.
+                  extractionSources specifies to extract the JWT from the first source (in list order) that is present in the request. If not specified, defaults to a single `bearerToken` source.
+                  If none of the sources is present in the request, the request will not be authorized.
                 items:
                   properties:
                     bearerToken:
@@ -107,8 +108,8 @@ spec:
                   x-kubernetes-validations:
                   - message: exactly one of the fields in [bearerToken header queryParameter
                       cookie] must be set
-                    rule: '[has(self.bearerToken),has(self.header),has(self.queryParameter),has(self.cookie)].filter(x,x==true).size()
-                      == 1'
+                    rule: (has(self.bearerToken)?1:0)+(has(self.header)?1:0)+(has(self.queryParameter)?1:0)+(has(self.cookie)?1:0)
+                      == 1
                 maxItems: 16
                 minItems: 1
                 type: array
@@ -210,8 +211,8 @@ spec:
                           x-kubernetes-validations:
                           - message: exactly one of the fields in [exact prefix suffix
                               regex contains] must be set
-                            rule: '[has(self.exact),has(self.prefix),has(self.suffix),has(self.regex),has(self.contains)].filter(x,x==true).size()
-                              == 1'
+                            rule: (has(self.exact)?1:0)+(has(self.prefix)?1:0)+(has(self.suffix)?1:0)+(has(self.regex)?1:0)+(has(self.contains)?1:0)
+                              == 1
                       required:
                       - matcher
                       type: object
@@ -223,7 +224,6 @@ spec:
                 type: array
                 x-kubernetes-list-type: atomic
             required:
-            - expirationRequired
             - requireAny
             type: object
             x-kubernetes-validations:

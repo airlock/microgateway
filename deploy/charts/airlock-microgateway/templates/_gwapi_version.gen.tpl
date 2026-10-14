@@ -4,5 +4,5 @@
 Latest supported Gateway API version
 */}}
 {{- define "airlock-microgateway-operator.latestSupportedGatewayAPIVersion" -}}
-v1.6.2
+v1.6.3
 {{- end }}

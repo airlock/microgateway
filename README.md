@@ -6,9 +6,9 @@
   <img alt="Microgateway" src="https://raw.githubusercontent.com/airlock/microgateway/main/media/Microgateway_Labeled.svg" width="400">
 </picture>
 
-[![Release](https://img.shields.io/badge/Release-v5.2.0-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.2.0)
+[![Release](https://img.shields.io/badge/Release-v5.2.1-6bba62)](https://github.com/airlock/microgateway/releases/tag/5.2.1)
 [![Gateway API Conformance](https://img.shields.io/badge/Gateway%20API%20Conformance-v1.6-6bba62?logo=kubernetes&logoColor=white)](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance/reports/v1.6/airlock-microgateway)
-[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.2.0)
+[![GitHub](https://img.shields.io/badge/GitHub-Published-6bba62?logo=github&logoColor=white)](https://github.com/airlock/microgateway/releases/tag/5.2.1)
 [![Artifact Hub](https://img.shields.io/badge/Artifact%20Hub-Published-6bba62?logo=artifacthub&logoColor=white)](https://artifacthub.io/packages/helm/airlock-microgateway/microgateway)
 [![OpenShift Certified](https://img.shields.io/badge/OpenShift%20Certification-Passed-6bba62?logo=redhatopenshift)](https://catalog.redhat.com/en/software/container-stacks/detail/67177f927cfedb209761e48f)
 
@@ -48,7 +48,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     ```console
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.2.0' \
+      --version '5.2.1' \
       --namespace airlock-microgateway-system \
       --create-namespace \
       --wait
@@ -60,7 +60,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
     ```console
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.2.0' \
+      --version '5.2.1' \
       --namespace airlock-microgateway-system \
       --set tests.enabled=true \
       --reuse-values
@@ -69,7 +69,7 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 
     helm upgrade airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.2.0' \
+      --version '5.2.1' \
       --namespace airlock-microgateway-system \
       --set tests.enabled=false \
       --reuse-values

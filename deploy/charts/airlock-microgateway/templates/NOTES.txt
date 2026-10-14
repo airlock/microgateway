@@ -2,8 +2,8 @@ Thank you for installing Airlock Microgateway.
 
 Further information:
 * Documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}
-* CRD reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/index/api/crds
-* Comparison of the community and premium edition: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}?topic=MGW-00000056
+* CRD reference documentation: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/technical-reference/crd-reference
+* Comparison of the community and premium edition: https://docs.airlock.com/microgateway/{{ include "airlock-microgateway.docsVersion" . }}/topic/MGW-00000056
 {{- if .Values.crds.skipVersionCheck }}
 
 Warning: CRD version check skipped

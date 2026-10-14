@@ -9,9 +9,9 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/latest.*"
       - matchRegexRaw:
-          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/latest/index/api/crds.*"
+          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/latest/technical-reference/crd-reference.*"
       - matchRegexRaw:
-          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/latest\?topic=MGW-00000056.*"
+          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/latest/topic/MGW-00000056.*"
   - it: prerelease chart should describe latest doc links
     chart:
       appVersion: 4.2.0-ci
@@ -23,9 +23,9 @@ tests:
       - matchRegexRaw:
           pattern: ".*Documentation: https://docs.airlock.com/microgateway/4.2.*"
       - matchRegexRaw:
-          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/4.2/index/api/crds.*"
+          pattern: ".*CRD reference documentation: https://docs.airlock.com/microgateway/4.2/technical-reference/crd-reference.*"
       - matchRegexRaw:
-          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/4.2\?topic=MGW-00000056.*"
+          pattern: ".*Comparison of the community and premium edition: https://docs.airlock.com/microgateway/4.2/topic/MGW-00000056.*"
   - it: should succeed if tests are enabled
     release:
       name: myoperator
@@ -56,7 +56,7 @@ tests:
           metadata:
             name: default
     asserts:
-      - notFailedTemplate: { }
+      - notFailedTemplate: {}
       - matchRegexRaw:
           pattern: "Warning: Gateway API check skipped"
   - it: gateway API check should fail if cluster available without gateway CRD

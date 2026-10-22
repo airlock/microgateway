@@ -31,7 +31,7 @@
     # Install the Operator
     helm install airlock-microgateway \
       oci://quay.io/airlockcharts/microgateway \
-      --version '5.0.10' \
+      --version '5.0.11' \
       -n airlock-microgateway-system \
       --wait
     ```

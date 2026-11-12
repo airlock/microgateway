@@ -5,7 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.21.0
   labels:
     app.kubernetes.io/name: airlock-microgateway-operator
-    app.kubernetes.io/version: 5.1.8
+    app.kubernetes.io/version: 5.1.9
     gateway.networking.k8s.io/policy: direct
   name: ratelimitpolicies.microgateway.airlock.com
 spec:
@@ -139,7 +139,9 @@ spec:
                           - DraftVersion3
                         type: string
                       requestConditions:
-                        description: requestConditions defines additional request properties which must all be matched in order for this policy to apply. A policy without request conditions will always match.
+                        description: |-
+                          requestConditions defines additional request properties which must all be matched in order for this policy to apply.
+                          A policy without request conditions will always match. Only the last policy may omit request conditions.
                         properties:
                           header:
                             description: header defines the matching headers of a request.
